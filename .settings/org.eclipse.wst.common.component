@@ -3,7 +3,6 @@
     <wb-module deploy-name="game">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/controller"/>
         <property name="context-root" value="game"/>
         <property name="java-output-path" value="/game/build/classes"/>
     </wb-module>
