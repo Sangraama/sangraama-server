@@ -15,6 +15,8 @@ import org.apache.catalina.websocket.WebSocketServlet;
 import org.apache.catalina.websocket.WsOutbound;
 
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Servlet implementation class EventHandle
@@ -30,7 +32,7 @@ public class EventHandler extends WebSocketServlet {
   }
 
   // private static LoggerFactory.getLogger Logger log = (EventHandler. class );
-  //private static Logger log = LoggerFactory.getLogger(EventHandler.class);
+  private static Logger log = LoggerFactory.getLogger(EventHandler.class);
 
   
 
@@ -45,7 +47,7 @@ public class EventHandler extends WebSocketServlet {
 
     @Override
     protected void onOpen(WsOutbound outbound) {
-      //log.info("Open connection");
+      log.info("Open connection");
       System.out.println("Open Connection");
     }
 
