@@ -1,4 +1,4 @@
-package map;
+package org.sangraama.asserts;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,7 +24,7 @@ public class map extends HttpServlet {
     Gson gson = new Gson();
     int[] ints = { 1, 2, 3, 4, 5 };
     String[] strings = { "abc", "def", "ghi" };
-    Player p = new Player();
+    Coordinate p = new Coordinate();
     p.setX(1);
     p.setY(2);
     // out.print(gson.toJson(ints));

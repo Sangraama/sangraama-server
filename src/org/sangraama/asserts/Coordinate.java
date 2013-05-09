@@ -1,13 +1,13 @@
-package map;
+package org.sangraama.asserts;
 
-public class Player {
+public class Coordinate {
 	private int x;
 	private int y;
 	
-	public Player(){
+	public Coordinate(){
 	  
 	}
-	public Player(int x,int y){
+	public Coordinate(int x,int y){
 	  this.x=x;
 	  this.y=y;
 	}

@@ -1,4 +1,4 @@
-package controller;
+package org.sangraama.controller;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -7,21 +7,20 @@ import java.nio.CharBuffer;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
-import map.Player;
-
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.StreamInbound;
 import org.apache.catalina.websocket.WebSocketServlet;
 import org.apache.catalina.websocket.WsOutbound;
-
-import com.google.gson.Gson;
+import org.sangraama.asserts.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
 
 /**
  * Servlet implementation class EventHandle
  */
-@WebServlet("/EventHandler")
+@WebServlet("/org/sangraama/controller/EventHandler")
 public class EventHandler extends WebSocketServlet {
 
   /**
@@ -70,7 +69,7 @@ public class EventHandler extends WebSocketServlet {
       String user = charBuffer.toString();
       //log.debug("Received message: {}", user);
       System.out.println("REcieved msg :"+user);
-      Player player = gson.fromJson(user, Player.class);
+      Coordinate player = gson.fromJson(user, Coordinate.class);
       System.out.println("x:"+player.getX()+" y:"+player.getY());
       getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(player)));
     }
