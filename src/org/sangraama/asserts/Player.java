@@ -1,77 +1,81 @@
 package org.sangraama.asserts;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
+import org.jbox2d.collision.shapes.CircleShape;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
+public class Player {
+    private int userID = 0;
+    private int x = 0, y = 0;
+    private BodyDef bodyDef = null;
+    private FixtureDef fixtureDef = null;
+    private Body body = null;
 
-import org.apache.catalina.websocket.MessageInbound;
-import org.apache.catalina.websocket.StreamInbound;
-import org.apache.catalina.websocket.WebSocketServlet;
-import org.apache.catalina.websocket.WsOutbound;
-import org.sangraama.controller.EventHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+    public Player(int userID) {
+	this.bodyDef = createBodyDef();
+	this.fixtureDef = createFixtureDef();
+	this.userID = userID;
+    }
 
-import com.google.gson.Gson;
+    private BodyDef createBodyDef() {
+	BodyDef bd = new BodyDef();
+	bd.position.set(50, 50);
+	bd.type = BodyType.DYNAMIC;
+	return bd;
+    }
 
-@WebServlet("/org/sangraama/EventHandler")
-public class Player extends WebSocketServlet {
+    public BodyDef getBodyDef() {
+	return this.bodyDef;
+    }
 
-  // private static LoggerFactory.getLogger Logger log = (EventHandler. class );
-  private static Logger log = LoggerFactory.getLogger(EventHandler.class);
-  private PlayerDef playerDef;
+    private FixtureDef createFixtureDef() {
+	CircleShape circle = new CircleShape();
+	circle.m_radius = 1f;
 
-  public Player() {
+	FixtureDef fd = new FixtureDef();
+	fd.density = 0.5f;
+	fd.shape = circle;
+	fd.friction = 0.2f;
+	fd.restitution = 0.5f;
+	return fd;
+    }
+
+    public FixtureDef getFixtureDef() {
+	return this.fixtureDef;
+    }
+
+    public void setBody(Body body) {
+	this.body = body;
+    }
+
+    public Body getBody() {
+	return this.body;
+    }
+
+    public void setX(int x) {
+	if (x > 0) {
+	    this.x = x;
+	}
+    }
+
+    public int getX() {
+	return x;
+    }
+
+    public void setY(int y) {
+	if (y > 0) {
+	    this.y = y;
+	}
+    }
     
-  }
-
-  @Override
-  protected StreamInbound createWebSocketInbound(String arg0,
-      HttpServletRequest arg1) {
-    System.out.println("Trigger createWebSocketInBound");
-    this.playerDef = new PlayerDef();
-    return new WebSocketConnection();
-  }
-  
-  public PlayerDef getPlayerDef(){
-    return this.playerDef;
-  }
-
-  private static class WebSocketConnection extends MessageInbound {
-
-    @Override
-    protected void onOpen(WsOutbound outbound) {
-      log.info("Open connection");
-      System.out.println("Open Connection");
+    public int getY() {
+	return this.y;
     }
 
-    @Override
-    protected void onClose(int status) {
-      // log.info("Connection closed");
-      System.out.println("Close connection");
+    public int getUserID() {
+	return this.userID;
     }
-
-    @Override
-    protected void onBinaryMessage(ByteBuffer byteBuffer) throws IOException {
-      // log.warn("binary messages are not supported");
-      System.out.println("Binary");
-      throw new UnsupportedOperationException("not supported binary messages");
-    }
-
-    @Override
-    protected void onTextMessage(CharBuffer charBuffer) throws IOException {
-      Gson gson = new Gson();
-      String user = charBuffer.toString();
-      // log.debug("Received message: {}", user);
-      System.out.println("REcieved msg :" + user);
-      Coordinate player = gson.fromJson(user, Coordinate.class);
-      System.out.println("x:" + player.getX() + " y:" + player.getY());
-      getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(player)));
-    }
-
-  }
 
 }
