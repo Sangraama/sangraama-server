@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
 
-@WebServlet("/maps")
+@WebServlet("/org/sangraama/asserts/maps")
 public class map extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -24,7 +24,7 @@ public class map extends HttpServlet {
     Gson gson = new Gson();
     int[] ints = { 1, 2, 3, 4, 5 };
     String[] strings = { "abc", "def", "ghi" };
-    Coordinate p = new Coordinate();
+    PlayerData p = new PlayerData(0,0);
     p.setX(1);
     p.setY(2);
     // out.print(gson.toJson(ints));
@@ -50,25 +50,5 @@ public class map extends HttpServlet {
     out.close();
     System.out.println("Executed the doGet method");
   }
-  
-  class Coordinate{
-      private int x,y;
 
-    public int getX() {
-	return x;
-    }
-
-    public void setX(int x) {
-	this.x = x;
-    }
-
-    public int getY() {
-	return y;
-    }
-
-    public void setY(int y) {
-	this.y = y;
-    }
-      
-  }
 }

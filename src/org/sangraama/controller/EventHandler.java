@@ -12,6 +12,7 @@ import org.apache.catalina.websocket.StreamInbound;
 import org.apache.catalina.websocket.WebSocketServlet;
 import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.asserts.Player;
+import org.sangraama.asserts.PlayerData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +25,13 @@ import com.google.gson.Gson;
 public class EventHandler extends WebSocketServlet {
 
   /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
+
+
+/**
    * @see WebSocketServlet#WebSocketServlet()
    */
   public EventHandler() {
@@ -39,6 +47,7 @@ public class EventHandler extends WebSocketServlet {
   protected StreamInbound createWebSocketInbound(String subprotocol,
       HttpServletRequest request) {
     System.out.println("Trigger createWebSocketInBound");
+    
     return new WebSocketConnection();
   }
 
@@ -69,7 +78,7 @@ public class EventHandler extends WebSocketServlet {
       String user = charBuffer.toString();
       //log.debug("Received message: {}", user);
       System.out.println("REcieved msg :"+user);
-      Player player = gson.fromJson(user, Player.class);
+      PlayerData player = gson.fromJson(user, PlayerData.class);
       System.out.println("x:"+player.getX()+" y:"+player.getY());
       getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(player)));
     }

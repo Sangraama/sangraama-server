@@ -2,8 +2,10 @@ package org.sangraama.serverstart;
 
 import javax.servlet.ServletContextEvent;
 
-public class Listner implements javax.servlet.ServletContextListener {
+import org.sangraama.gameLogic.GameEngine;
 
+public class Listner implements javax.servlet.ServletContextListener {
+    	//GameEngine gameEngine = GameEngine.getInstance();
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		// TODO Auto-generated method stub
