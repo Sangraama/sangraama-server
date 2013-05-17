@@ -19,7 +19,7 @@ import org.apache.catalina.websocket.WsOutbound;
 import org.jbox2d.dynamics.World;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.EventHandler;
-import org.sangraama.gameLogic.GameWorld;
+import org.sangraama.gameLogic.GameEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +29,10 @@ public class Player {
     private BodyDef bodyDef = null;
     private FixtureDef fixtureDef = null;
     private Body body = null;
+    // private static LoggerFactory.getLogger Logger log = (EventHandler. class
+    // );
+    private static Logger log = LoggerFactory.getLogger(EventHandler.class);
+    GameEngine sangraamaWorld = GameEngine.getInstance();
 
     public Player(int userID) {
 	this.bodyDef = createBodyDef();
@@ -42,11 +46,6 @@ public class Player {
 	bd.type = BodyType.DYNAMIC;
 	return bd;
     }
-
-    // private static LoggerFactory.getLogger Logger log = (EventHandler. class
-    // );
-    private static Logger log = LoggerFactory.getLogger(EventHandler.class);
-    GameWorld sangraamaWorld = GameWorld.getInstance();
 
     public BodyDef getBodyDef() {
 	return this.bodyDef;
@@ -62,13 +61,6 @@ public class Player {
 	fd.friction = 0.2f;
 	fd.restitution = 0.5f;
 	return fd;
-    }
-
-    public void init() {
-
-	new Thread(sangraamaWorld).start();
-	System.out.println("Simulating world");
-
     }
 
     public FixtureDef getFixtureDef() {
