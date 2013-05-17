@@ -8,7 +8,6 @@ import org.sangraama.controller.PlayerServlet;
 
 public class GameWorld implements Runnable {
     private static GameWorld gameWorld = null;
-    public World world;
     private boolean execute = true;
     private boolean isNewPlayerAvai = false;
     private ArrayList<JBoxPlayer> players = null;
