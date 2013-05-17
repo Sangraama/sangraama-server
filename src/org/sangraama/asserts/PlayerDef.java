@@ -50,5 +50,5 @@ public class PlayerDef {
   public Body getBody(){
     return this.body;
   }
-
+  
 }

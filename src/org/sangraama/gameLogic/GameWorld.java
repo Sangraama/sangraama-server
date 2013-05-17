@@ -7,40 +7,51 @@ import org.jbox2d.dynamics.World;
 import org.sangraama.asserts.Player;
 import org.sangraama.common.Constants;
 
-public class GameWorld {
-  static World world;
-  private ArrayList<Player> players = null;
+public class GameWorld implements Runnable{
+	private static GameWorld gameWorld=null;
+	public int i=0;
+  public World world;
+  private boolean execute=true;
+  private ArrayList<JBoxPlayer> players = null;
   private int WIDTH=600;
   private int HEIGHT=600;
   
   public GameWorld() {
-    this.world = new World(Constants.gravity, Constants.doSleep);
-    this.players = new ArrayList<Player>();
+		  world = new World(Constants.gravity, Constants.doSleep);
+		  players = new ArrayList<JBoxPlayer>();
+  }
+  
+  public static GameWorld getInstance(){
+	  if(gameWorld==null){
+		  gameWorld=new GameWorld();
+	  }
+	 return gameWorld;
+	  
   }
 
   public void init() {
-    Player p = new Player();
-    p.getPlayerDef().setBody( world.createBody(p.getPlayerDef().getBodyDef()) );
-    p.getPlayerDef().getBody().createFixture(p.getPlayerDef().getFixtureDef());
-    players.add(new Player());
+	  
   }
 
-  public void run() {
-    init();
-    while (true) {
-      update();
-      world.step(Constants.timeStep, Constants.velocityIterations,
-          Constants.positionIterations);
-      pushUpdate();
-    }
+  public void seti(){
+	 i++;
   }
-
+  
+  
   public void update() {
-    
+	 
   }
 
   public void pushUpdate() {
 
+//	  if(players!=null){
+//		  System.out.println("Player X :"+players.get(0).getPosX()+", Player Y :"+players.get(0).getPosY());
+//	  
+//	  }
+  }
+  
+  public void addPlayer(int id){
+	  players.add(new JBoxPlayer(id, 10, 10, 5));
   }
   
 //Convert a JBox2D x coordinate to a JavaFX pixel x coordinate
@@ -76,5 +87,19 @@ public class GameWorld {
   public  float toPixelHeight(float height) {
       return HEIGHT*height/100.0f;
   }
+
+@Override
+public void run() {
+	init();
+    while (execute) {
+      update();
+      world.step(Constants.timeStep, Constants.velocityIterations,Constants.positionIterations);
+      System.out.println("aaaaaaaaaaaaaaa");
+      pushUpdate();
+    }
+}
   
+	public void stopSimulating(){
+		execute=false;
+	}
 }

@@ -17,4 +17,7 @@
     <filter-name>CORS</filter-name>
     <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
   </filter>
+  <listener>
+   <listener-class>org.sangraama.serverstart.Listner</listener-class>
+  </listener>
 </web-app>
