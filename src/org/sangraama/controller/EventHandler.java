@@ -11,7 +11,7 @@ import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.StreamInbound;
 import org.apache.catalina.websocket.WebSocketServlet;
 import org.apache.catalina.websocket.WsOutbound;
-import org.sangraama.asserts.Coordinate;
+import org.sangraama.asserts.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +69,7 @@ public class EventHandler extends WebSocketServlet {
       String user = charBuffer.toString();
       //log.debug("Received message: {}", user);
       System.out.println("REcieved msg :"+user);
-      Coordinate player = gson.fromJson(user, Coordinate.class);
+      Player player = gson.fromJson(user, Player.class);
       System.out.println("x:"+player.getX()+" y:"+player.getY());
       getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(player)));
     }
