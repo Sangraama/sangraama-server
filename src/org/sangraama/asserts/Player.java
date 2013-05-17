@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.util.Random;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -40,10 +43,11 @@ public class Player {
 	return bd;
     }
 
-  // private static LoggerFactory.getLogger Logger log = (EventHandler. class );
-  private static Logger log = LoggerFactory.getLogger(EventHandler.class);
-  GameWorld sangraamaWorld=GameWorld.getInstance();
-  
+    // private static LoggerFactory.getLogger Logger log = (EventHandler. class
+    // );
+    private static Logger log = LoggerFactory.getLogger(EventHandler.class);
+    GameWorld sangraamaWorld = GameWorld.getInstance();
+
     public BodyDef getBodyDef() {
 	return this.bodyDef;
     }
@@ -60,18 +64,13 @@ public class Player {
 	return fd;
     }
 
-  public void init(){
-	  
-	  new Thread(sangraamaWorld).start();
-	  System.out.println("Simulating world");
-	  
-  }
-  @Override
-  protected StreamInbound createWebSocketInbound(String arg0,
-      HttpServletRequest arg1) {
-    System.out.println("Trigger createWebSocketInBound");
-    return new WebSocketConnection();
-  }
+    public void init() {
+
+	new Thread(sangraamaWorld).start();
+	System.out.println("Simulating world");
+
+    }
+
     public FixtureDef getFixtureDef() {
 	return this.fixtureDef;
     }
@@ -79,18 +78,7 @@ public class Player {
     public void setBody(Body body) {
 	this.body = body;
     }
-	  
-    @Override
-    protected void onOpen(WsOutbound outbound) {
-      log.info("Open connection");
-      System.out.println("Open Connection");
-    }
 
-    @Override
-    protected void onClose(int status) {
-      // log.info("Conne            ction closed");
-      System.out.println("Close connection");
-      
     public Body getBody() {
 	return this.body;
     }
@@ -105,27 +93,12 @@ public class Player {
 	return x;
     }
 
-    @Override
-    protected void onTextMessage(CharBuffer charBuffer) throws IOException {
-      Gson gson = new Gson();
-      int id;
-      Random rdmGen=new Random();
-      String recievedMsg = charBuffer.toString();
-      if("Start".equals(recievedMsg)){    	  
-    	  id=rdmGen.nextInt(100);
-    	  sangraamaWorld.addPlayer(id);
-    	  System.out.println("#########");
-    	  sangraamaWorld.stopSimulating();
-      }
-    }
-  }
-  
     public void setY(int y) {
 	if (y > 0) {
 	    this.y = y;
 	}
     }
-    
+
     public int getY() {
 	return this.y;
     }

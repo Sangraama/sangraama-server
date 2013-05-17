@@ -17,6 +17,10 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/slf4j-log4j12-1.7.5.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/slf4j-simple-1.7.5.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-1.2.6.jar"/>
-	<classpathentry kind="lib" path="/home/chandima/workspace/server_phase_I/WebContent/WEB-INF/lib/jbox2d/jbox2d-library-2.1.2.3-jar-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jbox2d/jbox2d-library-2.1.2.3-jar-with-dependencies.jar" sourcepath="WebContent/WEB-INF/lib/jbox2d/jbox2d-library-2.1.2.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/alpigc/juno/fyp/server_phase_I/WebContent/WEB-INF/lib/jbox2d/jbox2d-library-2.1.2.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
