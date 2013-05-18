@@ -53,10 +53,10 @@ public class WebSocketConnection extends MessageInbound {
 	System.out.println("REcieved msg :" + user);
 	
 	Player p = gson.fromJson(user, Player.class);
-	this.player.setX(p.getX());
-	this.player.setY(p.getY());
+	//this.player.setX(p.getX());
+	//this.player.setY(p.getY());
 	this.player.setV(p.v_x, p.v_y);
-	System.out.println("Player coor x:"+p.getX()+" y:"+p.getY());
+	System.out.println("Player coordinate x:"+p.getX()+" y:"+p.getY());
 	
     }
 

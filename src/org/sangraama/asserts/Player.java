@@ -13,12 +13,12 @@ import org.slf4j.LoggerFactory;
 
 public class Player {
     // Debug
- // Local Debug or logs
+    // Local Debug or logs
     private static boolean LL = true;
     private static boolean LD = true;
     public static final Logger log = LoggerFactory.getLogger(Player.class);
     private static final String TAG = "player :";
-    
+
     private int userID = 0;
 
     private BodyDef bodyDef = null;
@@ -35,10 +35,8 @@ public class Player {
 
     public Player() {
     }
-    
-    
-    
-    public Player(int userID,WebSocketConnection con) {
+
+    public Player(int userID, WebSocketConnection con) {
 	System.out.println(TAG + "init player");
 	this.bodyDef = this.createBodyDef();
 	this.fixtureDef = createFixtureDef();
@@ -50,10 +48,12 @@ public class Player {
 
     public void sendUpdate() {
 	// con.sendUpdate(this);
-	System.out.println(TAG + " x:"+ this.body.getPosition().x +" "+ "y:"+this.body.getPosition().y);
+	System.out.println(TAG + "id: " + this.userID + " x:"
+		+ this.body.getPosition().x + " " + "y:"
+		+ this.body.getPosition().y);
     }
-    
-    public void applyUpdate(){
+
+    public void applyUpdate() {
 	this.body.setLinearVelocity(this.getV());
     }
 
@@ -111,14 +111,14 @@ public class Player {
     public int getY() {
 	return this.y;
     }
-    
-    public Vec2 getV(){
+
+    public Vec2 getV() {
 	return this.v;
     }
-    
-    public void setV(float x , float y) {
+
+    public void setV(float x, float y) {
 	this.v.set(x, y);
-	//System.out.println(TAG + " set V :");
+	// System.out.println(TAG + " set V :");
     }
 
     public int getUserID() {
