@@ -82,7 +82,5 @@ public class EventHandler extends WebSocketServlet {
       System.out.println("x:"+player.getX()+" y:"+player.getY());
       getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(player)));
     }
-
   }
-
 }
