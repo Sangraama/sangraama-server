@@ -33,8 +33,6 @@ public class Player {
     private int x = 0, y = 0;
     public float v_x = 0, v_y = 0;
     private Vec2 v = new Vec2(0f, 0f);
-    // test only
-    private PlayerData coord = new PlayerData(10, 10);
 
     public Player() {
     }
@@ -54,7 +52,6 @@ public class Player {
     public void sendUpdate() {
 	// con.sendUpdate(this);
 	System.out.println(TAG + " x:"+ this.body.getPosition().x +" "+ "y:"+this.body.getPosition().y);
-	
     }
     
     public void applyUpdate(){
