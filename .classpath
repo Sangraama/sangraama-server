@@ -25,5 +25,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/sangraama-server/WebContent/WEB-INF/lib/jbox2d/jbox2d-library-2.1.2.3-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="/server_phase_I"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
