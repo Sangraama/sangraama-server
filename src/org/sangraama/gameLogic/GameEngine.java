@@ -13,6 +13,8 @@ public enum GameEngine implements Runnable {
     private String TAG = "Game Engine :";
     
     private World world = null;
+    private float gameWorldWidth;
+    private float gameWorldHeight;
     private boolean execute = true;
     private boolean isNewPlayerAvai = false;
     private ArrayList<Player> playerList = null;
@@ -39,7 +41,8 @@ public enum GameEngine implements Runnable {
     }
 
     public void init() {
-
+    	gameWorldWidth=1000f;
+    	gameWorldHeight=1000f;
     }
 
     public void update() {
@@ -72,5 +75,13 @@ public enum GameEngine implements Runnable {
     public void addToPlayerQueue(Player player) {
 	this.newPlayerQueue.add(player);
 	this.isNewPlayerAvai = true;
+    }
+    
+    public float getGameWorldWidth(){
+    	return gameWorldWidth;
+    }
+    
+    public float gameWorldHeight(){
+    	return gameWorldHeight;
     }
 }
