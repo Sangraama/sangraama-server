@@ -1,5 +1,7 @@
 package org.sangraama.asserts;
 
+import java.util.ArrayList;
+
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -28,13 +30,19 @@ public class Player {
     private GameEngine gameEngine = null;
     // WebSocket Connection
     private WebSocketConnection con = null;
+    private boolean isUpdate = false;
 
     // Player Dynamic Parameters
     private float x = 0, y = 0;
     public float v_x = 0, v_y = 0;
     private Vec2 v = new Vec2(0f, 0f);
+    private PlayerDelta delta = null;
 
     public Player() {
+    }
+    
+    public boolean isUpdate() {
+	return this.isUpdate;
     }
 
     public Player(int userID, WebSocketConnection con) {
@@ -46,18 +54,24 @@ public class Player {
 	this.gameEngine = GameEngine.INSTANCE;
 	this.gameEngine.addToPlayerQueue(this);
     }
+    
+    public PlayerDelta getPlayerDelta(){
+	if (!isUpdate) {
+	    System.out.println(TAG + "id: " + this.userID + " x:"
+		    + this.body.getPosition().x + " " + "y:"
+		    + this.body.getPosition().y);
+	    this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
+		    this.body.getPosition().y - this.y, this.userID);
+	    this.x = this.body.getPosition().x;
+	    this.y = this.body.getPosition().y;
+	    isUpdate = true;
+	}
+	return this.delta;
+    }
 
-    public void sendUpdate() {
-	// con.sendUpdate(this);
-	System.out.println(TAG + "id: " + this.userID + " x:"
-		+ this.body.getPosition().x + " " + "y:"
-		+ this.body.getPosition().y);
-	PlayerDelta delta = new PlayerDelta(
-		this.body.getPosition().x - this.x,
-		this.body.getPosition().y - this.y);
-	con.sendUpdate(delta);
-	this.x = this.body.getPosition().x;
-	this.y = this.body.getPosition().y;
+    public void sendUpdate(ArrayList<PlayerDelta> deltaList) {
+	con.sendUpdate(deltaList);
+	isUpdate = false;
     }
 
     public void applyUpdate() {

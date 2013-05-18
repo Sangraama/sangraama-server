@@ -10,6 +10,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 import org.sangraama.asserts.Player;
 import org.sangraama.common.Constants;
+import org.sangraama.controller.clientprotocol.PlayerDelta;
 
 public enum GameEngine implements Runnable {
     INSTANCE;
@@ -37,10 +38,9 @@ public enum GameEngine implements Runnable {
 	System.out.println(TAG + "GameEngine Start running.. fps:"
 		+ Constants.fps + " timesteps:" + Constants.timeStep);
 	init();
-	Timer timer = new Timer(100, new ActionListener() {
+	Timer timer = new Timer(500, new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent arg0) {
-		// Code to be executed
 		update();
 		world.step(Constants.timeStep, Constants.velocityIterations,
 			Constants.positionIterations);
@@ -71,6 +71,7 @@ public enum GameEngine implements Runnable {
 		newPlayer.setBody(world.createBody(newPlayer.getBodyDef()));
 		this.playerList.add(newPlayer);
 	    }
+	    this.newPlayerQueue.clear();
 	    this.isNewPlayerAvai = false;
 	}
 	for (Player player : playerList) {
@@ -81,10 +82,16 @@ public enum GameEngine implements Runnable {
     }
 
     public void pushUpdate() {
+	ArrayList<PlayerDelta> deltaList = new ArrayList<PlayerDelta>();
+	System.out.println(TAG+"delta list length :"+deltaList.size());
 	for (Player player : playerList) {
 	    // System.out.println(TAG + player.getUserID() +
 	    // " Sending player updates");
-	    player.sendUpdate();
+	    deltaList.add(player.getPlayerDelta());
+	}
+	System.out.println(TAG+"delta list length :"+deltaList.size());
+	for (Player player : playerList) {
+	    player.sendUpdate(deltaList);
 	}
     }
 

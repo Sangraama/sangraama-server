@@ -3,6 +3,7 @@ package org.sangraama.controller;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.util.ArrayList;
 
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
@@ -19,13 +20,14 @@ public class WebSocketConnection extends MessageInbound {
     private static boolean LL = true;
     private static boolean LD = true;
     private static final String TAG = "WebSocketConnection";
-    public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
+    public static final Logger log = LoggerFactory
+	    .getLogger(WebSocketConnection.class);
 
-     Player player = null;
-    
-     public void setPlayer(Player player) {
-     this.player = player;
-     }
+    Player player = null;
+
+    public void setPlayer(Player player) {
+	this.player = player;
+    }
 
     @Override
     protected void onOpen(WsOutbound outbound) {
@@ -50,25 +52,28 @@ public class WebSocketConnection extends MessageInbound {
     protected void onTextMessage(CharBuffer charBuffer) throws IOException {
 	Gson gson = new Gson();
 	String user = charBuffer.toString();
-	//Constants.log.debug("Received message: {}", user);
+	// Constants.log.debug("Received message: {}", user);
 	System.out.println("REcieved msg :" + user);
-	
+
 	Player p = gson.fromJson(user, Player.class);
-	//this.player.setX(p.getX());
-	//this.player.setY(p.getY());
+	// this.player.setX(p.getX());
+	// this.player.setY(p.getY());
 	this.player.setV(p.v_x, p.v_y);
-	System.out.println("Player coordinate x:"+p.getX()+" y:"+p.getY());
-	
+	System.out
+		.println("Player coordinate x:" + p.getX() + " y:" + p.getY());
+
     }
 
-    public void sendUpdate(PlayerDelta delta) {
+    public void sendUpdate(ArrayList<PlayerDelta> deltaList) {
 	Gson gson = new Gson();
-	try {
-	    getWsOutbound().writeTextMessage(
-		    CharBuffer.wrap(gson.toJson(delta)));
-	} catch (IOException e) {
-	    System.out.println(TAG + " Unable to send update");
-	    log.error(TAG, e);
+	for (PlayerDelta delta : deltaList) {
+	    try {
+		getWsOutbound().writeTextMessage(
+			CharBuffer.wrap(gson.toJson(delta)));
+	    } catch (IOException e) {
+		System.out.println(TAG + " Unable to send update");
+		log.error(TAG, e);
+	    }
 	}
     }
 }
