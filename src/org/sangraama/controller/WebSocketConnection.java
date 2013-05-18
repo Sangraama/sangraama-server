@@ -9,6 +9,8 @@ import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.asserts.Player;
 import org.sangraama.asserts.PlayerData;
 import org.sangraama.common.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
@@ -17,6 +19,7 @@ public class WebSocketConnection extends MessageInbound {
     private static boolean LL = true;
     private static boolean LD = true;
     private static final String TAG = "WebSocketConnection";
+    public static final Logger log = LoggerFactory.getLogger(EventHandler.class);
 
      Player player = null;
     
@@ -29,13 +32,13 @@ public class WebSocketConnection extends MessageInbound {
 
     @Override
     protected void onOpen(WsOutbound outbound) {
-	//Constants.log.info("Open Connection");
+	log.info("Open Connection");
 	System.out.println("Open Connection");
     }
 
     @Override
     protected void onClose(int status) {
-	Constants.log.info("Connection closed");
+	log.info("Connection closed");
 	System.out.println("Close connection");
     }
 
@@ -52,14 +55,17 @@ public class WebSocketConnection extends MessageInbound {
 	String user = charBuffer.toString();
 	//Constants.log.debug("Received message: {}", user);
 	System.out.println("REcieved msg :" + user);
-	PlayerData coord = gson.fromJson(user, PlayerData.class);
-	System.out.println("x:"+coord.getX()+" y:"+coord.getY());
-	getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(coord)));
+	//PlayerData coord = gson.fromJson(user, PlayerData.class);
+	//coord.setX(coord.getX()+1);
+	//coord.setY(coord.getY()+2);
+	//System.out.println("x:"+coord.getX()+" y:"+coord.getY());
+	//getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(coord)));
 	
-	/*Player p = gson.fromJson(user, Player.class);
+	Player p = gson.fromJson(user, Player.class);
 	this.player.setX(p.getX());
 	this.player.setY(p.getY());
-	this.player.se*/
+	this.player.setV(p.v_x, p.v_y);
+	System.out.println("Player coor x:"+p.getX()+" y:"+p.getY());
 	
     }
 
@@ -70,7 +76,7 @@ public class WebSocketConnection extends MessageInbound {
 		    CharBuffer.wrap(gson.toJson(player)));
 	} catch (IOException e) {
 	    System.out.println(TAG + " Unable to send update");
-	    Constants.log.error(TAG, e);
+	    log.error(TAG, e);
 	}
     }
 

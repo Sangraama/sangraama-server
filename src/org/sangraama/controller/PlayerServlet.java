@@ -28,9 +28,9 @@ public class PlayerServlet extends WebSocketServlet {
 	System.out.println("Player Data created");
 	PlayerData p = new PlayerData(0, 0);
 	System.out.println("Player creating");
-	Player player = new Player(r.nextInt(),con);
+	Player player = new Player(r.nextInt(100),con);
 	System.out.println("Player created");
-	//con.setPlayer(player);
+	con.setPlayer(player);
 	return con;
     }
 
