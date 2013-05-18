@@ -13,10 +13,10 @@ public final class Constants {
     public static final float gavityVertical = 0.0f;
     public static final Vec2 gravity = new Vec2(0f, 0f);
     public static final boolean doSleep = true;
-    public static final int fps = 1;
+    public static final int fps = 4; // Default greater than 30
     public static final float timeStep = 1.0f / fps;
-    public static final int velocityIterations = 6;
-    public static final int positionIterations = 2;
+    public static final int velocityIterations = 6; // Default 6
+    public static final int positionIterations = 2; // Defaults 2
     
     //Game Client Canvas width & height
     public static final int canvasWidth=600;

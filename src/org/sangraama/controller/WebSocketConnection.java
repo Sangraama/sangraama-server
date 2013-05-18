@@ -8,6 +8,7 @@ import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.asserts.Player;
 import org.sangraama.common.Constants;
+import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,11 +61,11 @@ public class WebSocketConnection extends MessageInbound {
 	
     }
 
-    public void sendUpdate(Player player) {
+    public void sendUpdate(PlayerDelta delta) {
 	Gson gson = new Gson();
 	try {
 	    getWsOutbound().writeTextMessage(
-		    CharBuffer.wrap(gson.toJson(player)));
+		    CharBuffer.wrap(gson.toJson(delta)));
 	} catch (IOException e) {
 	    System.out.println(TAG + " Unable to send update");
 	    log.error(TAG, e);

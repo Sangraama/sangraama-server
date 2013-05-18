@@ -1,6 +1,10 @@
 package org.sangraama.gameLogic;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
+import javax.swing.Timer;
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
@@ -11,7 +15,7 @@ public enum GameEngine implements Runnable {
     INSTANCE;
     // Debug
     private String TAG = "Game Engine :";
-    
+
     private World world = null;
     private float gameWorldWidth;
     private float gameWorldHeight;
@@ -27,22 +31,36 @@ public enum GameEngine implements Runnable {
 	this.playerList = new ArrayList<Player>();
 	this.newPlayerQueue = new ArrayList<Player>();
     }
-    
+
     @Override
     public void run() {
-	System.out.println(TAG + "GameEngine Start running..");
+	System.out.println(TAG + "GameEngine Start running.. fps:"
+		+ Constants.fps + " timesteps:" + Constants.timeStep);
 	init();
+	Timer timer = new Timer(100, new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent arg0) {
+		// Code to be executed
+		update();
+		world.step(Constants.timeStep, Constants.velocityIterations,
+			Constants.positionIterations);
+		pushUpdate();
+	    }
+	});
+
 	while (execute) {
-	    update();
-	    world.step(1, Constants.velocityIterations,
-		    Constants.positionIterations);
-	    pushUpdate();
+	    // update();
+	    // world.step(Constants.timeStep, Constants.velocityIterations,
+	    // Constants.positionIterations);
+	    // pushUpdate();
+
+	    timer.start();
 	}
     }
 
     public void init() {
-    	gameWorldWidth=1000f;
-    	gameWorldHeight=1000f;
+	gameWorldWidth = 1000f;
+	gameWorldHeight = 1000f;
     }
 
     public void update() {
@@ -56,14 +74,16 @@ public enum GameEngine implements Runnable {
 	    this.isNewPlayerAvai = false;
 	}
 	for (Player player : playerList) {
-	    //System.out.println(TAG + player.getUserID() +" Adding players Updates");
+	    // System.out.println(TAG + player.getUserID()
+	    // +" Adding players Updates");
 	    player.applyUpdate();
 	}
     }
 
     public void pushUpdate() {
 	for (Player player : playerList) {
-	    //System.out.println(TAG + player.getUserID() + " Sending player updates");
+	    // System.out.println(TAG + player.getUserID() +
+	    // " Sending player updates");
 	    player.sendUpdate();
 	}
     }
@@ -76,12 +96,12 @@ public enum GameEngine implements Runnable {
 	this.newPlayerQueue.add(player);
 	this.isNewPlayerAvai = true;
     }
-    
-    public float getGameWorldWidth(){
-    	return gameWorldWidth;
+
+    public float getGameWorldWidth() {
+	return gameWorldWidth;
     }
-    
-    public float gameWorldHeight(){
-    	return gameWorldHeight;
+
+    public float gameWorldHeight() {
+	return gameWorldHeight;
     }
 }

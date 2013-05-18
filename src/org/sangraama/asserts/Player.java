@@ -7,6 +7,7 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.controller.WebSocketConnection;
+import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.gameLogic.GameEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class Player {
     private WebSocketConnection con = null;
 
     // Player Dynamic Parameters
-    private int x = 0, y = 0;
+    private float x = 0, y = 0;
     public float v_x = 0, v_y = 0;
     private Vec2 v = new Vec2(0f, 0f);
 
@@ -51,6 +52,12 @@ public class Player {
 	System.out.println(TAG + "id: " + this.userID + " x:"
 		+ this.body.getPosition().x + " " + "y:"
 		+ this.body.getPosition().y);
+	PlayerDelta delta = new PlayerDelta(
+		this.body.getPosition().x - this.x,
+		this.body.getPosition().y - this.y);
+	con.sendUpdate(delta);
+	this.x = this.body.getPosition().x;
+	this.y = this.body.getPosition().y;
     }
 
     public void applyUpdate() {
@@ -92,23 +99,23 @@ public class Player {
 	return this.body;
     }
 
-    public void setX(int x) {
+    public void setX(float x) {
 	if (x > 0) {
 	    this.x = x;
 	}
     }
 
-    public int getX() {
+    public float getX() {
 	return x;
     }
 
-    public void setY(int y) {
+    public void setY(float y) {
 	if (y > 0) {
 	    this.y = y;
 	}
     }
 
-    public int getY() {
+    public float getY() {
 	return this.y;
     }
 

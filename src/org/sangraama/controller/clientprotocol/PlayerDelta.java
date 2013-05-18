@@ -1,9 +1,14 @@
 package org.sangraama.controller.clientprotocol;
 
 public class PlayerDelta {
-    private int dx = 0, dy = 0;
+    private float dx = 0, dy = 0;
+    
+    public PlayerDelta(float dx, float dy){
+	this.dx = dx;
+	this.dy = dy;
+    }
 
-    public int getDx() {
+    public float getDx() {
         return dx;
     }
 
@@ -11,7 +16,7 @@ public class PlayerDelta {
         this.dx = dx;
     }
 
-    public int getDy() {
+    public float getDy() {
         return dy;
     }
 
