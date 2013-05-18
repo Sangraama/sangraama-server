@@ -7,7 +7,6 @@ import java.nio.CharBuffer;
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.asserts.Player;
-import org.sangraama.asserts.PlayerData;
 import org.sangraama.common.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,16 +18,13 @@ public class WebSocketConnection extends MessageInbound {
     private static boolean LL = true;
     private static boolean LD = true;
     private static final String TAG = "WebSocketConnection";
-    public static final Logger log = LoggerFactory.getLogger(EventHandler.class);
+    public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
 
      Player player = null;
     
      public void setPlayer(Player player) {
      this.player = player;
      }
-
-    // tmp test only
-    PlayerData coord = null;
 
     @Override
     protected void onOpen(WsOutbound outbound) {
@@ -55,11 +51,6 @@ public class WebSocketConnection extends MessageInbound {
 	String user = charBuffer.toString();
 	//Constants.log.debug("Received message: {}", user);
 	System.out.println("REcieved msg :" + user);
-	//PlayerData coord = gson.fromJson(user, PlayerData.class);
-	//coord.setX(coord.getX()+1);
-	//coord.setY(coord.getY()+2);
-	//System.out.println("x:"+coord.getX()+" y:"+coord.getY());
-	//getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(coord)));
 	
 	Player p = gson.fromJson(user, Player.class);
 	this.player.setX(p.getX());
@@ -77,15 +68,6 @@ public class WebSocketConnection extends MessageInbound {
 	} catch (IOException e) {
 	    System.out.println(TAG + " Unable to send update");
 	    log.error(TAG, e);
-	}
-    }
-
-    public PlayerData getCoordinate() {
-	if (coord != null) {
-	    return this.coord;
-	} else {
-	    this.coord = new PlayerData(10,10);
-	    return this.coord;
 	}
     }
 }

@@ -6,7 +6,6 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
-import org.sangraama.controller.EventHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.gameLogic.GameEngine;
 import org.slf4j.Logger;
@@ -17,7 +16,7 @@ public class Player {
  // Local Debug or logs
     private static boolean LL = true;
     private static boolean LD = true;
-    public static final Logger log = LoggerFactory.getLogger(EventHandler.class);
+    public static final Logger log = LoggerFactory.getLogger(Player.class);
     private static final String TAG = "player :";
     
     private int userID = 0;

@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.websocket.StreamInbound;
 import org.apache.catalina.websocket.WebSocketServlet;
 import org.sangraama.asserts.Player;
-import org.sangraama.asserts.PlayerData;
 
 @WebServlet("/org/sangraama/controller/playerservlet")
 public class PlayerServlet extends WebSocketServlet {
@@ -26,7 +25,6 @@ public class PlayerServlet extends WebSocketServlet {
 	Random r = new Random();
 	WebSocketConnection con = new WebSocketConnection();
 	System.out.println("Player Data created");
-	PlayerData p = new PlayerData(0, 0);
 	System.out.println("Player creating");
 	Player player = new Player(r.nextInt(100),con);
 	System.out.println("Player created");
