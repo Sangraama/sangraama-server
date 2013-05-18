@@ -37,9 +37,9 @@ public class Utility {
         return canvasWidth*width / 100.0f;
     }
      
-    //Convert a JBox2D height to pixel height
+    //Convert a JBox2D height to pixel heights
     public float toPixelHeight(float height) {
-        return canvasHeight*height/100.0f;
+        return canvasHeight*height/100.0f;      
     } 
     
     
