@@ -18,7 +18,7 @@ This will consdier as a example of how to use Sangraama MMOG framework and will 
 ### Sangraama Community
 
 This project is a final year project of Department of Computer Science and Engineering, University of Moratuwa, Sri Lanaka.
-Project Members :
+Project Members:
 * Gihan Karunarathne
 * Denuwanthi De Silva
 * Dileepa Rajaguru
