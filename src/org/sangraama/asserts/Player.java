@@ -28,6 +28,7 @@ public class Player {
     private FixtureDef fixtureDef = null;
     private Body body = null;
     private GameEngine gameEngine = null;
+    private Map map = null;
     // WebSocket Connection
     private WebSocketConnection con = null;
     private boolean isUpdate = false;
@@ -38,9 +39,6 @@ public class Player {
     private Vec2 v = new Vec2(0f, 0f);
     private PlayerDelta delta = null;
 
-    public Player() {
-    }
-    
     public boolean isUpdate() {
 	return this.isUpdate;
     }
@@ -53,29 +51,47 @@ public class Player {
 	this.con = con;
 	this.gameEngine = GameEngine.INSTANCE;
 	this.gameEngine.addToPlayerQueue(this);
+	this.map = Map.INSTANCE;
     }
     
+    /**
+     * 
+     * @return null
+     */
     public PlayerDelta getPlayerDelta(){
-	if (!isUpdate) {
+	//if (!isUpdate) {
 	    System.out.println(TAG + "id: " + this.userID + " x:"
 		    + this.body.getPosition().x + " " + "y:"
 		    + this.body.getPosition().y);
+	    
 	    this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
 		    this.body.getPosition().y - this.y, this.userID);
 	    this.x = this.body.getPosition().x;
 	    this.y = this.body.getPosition().y;
-	    isUpdate = true;
-	}
+	    
+	    // Check whether player is inside the tile or not
+	    this.isInsideMap(this.x, this.y);
+	    
+	 //   isUpdate = true;
+	//}
 	return this.delta;
     }
 
     public void sendUpdate(ArrayList<PlayerDelta> deltaList) {
 	con.sendUpdate(deltaList);
-	isUpdate = false;
+	// isUpdate = false;
     }
 
     public void applyUpdate() {
 	this.body.setLinearVelocity(this.getV());
+    }
+    
+    private boolean isInsideMap(float x,float y){
+	if(0 <= x && x < map.getMapWidth() && 0 <= y && y <= map.getMapHeight()){
+	    return true;
+	}else{
+	    return false;
+	}
     }
 
     BodyDef createBodyDef() {

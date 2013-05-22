@@ -8,6 +8,7 @@ import javax.swing.Timer;
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
+import org.sangraama.asserts.Map;
 import org.sangraama.asserts.Player;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
@@ -18,8 +19,7 @@ public enum GameEngine implements Runnable {
     private String TAG = "Game Engine :";
 
     private World world = null;
-    private float gameWorldWidth;
-    private float gameWorldHeight;
+    private Map map = null;
     private boolean execute = true;
     private boolean isNewPlayerAvai = false;
     private ArrayList<Player> playerList = null;
@@ -31,6 +31,8 @@ public enum GameEngine implements Runnable {
 	this.world = new World(new Vec2(0.0f, 0.0f), true);
 	this.playerList = new ArrayList<Player>();
 	this.newPlayerQueue = new ArrayList<Player>();
+	this.map = Map.INSTANCE;
+	this.map.setMap(0f, 0f, 1000f, 1000f);
     }
 
     @Override
@@ -59,8 +61,7 @@ public enum GameEngine implements Runnable {
     }
 
     public void init() {
-	gameWorldWidth = 1000f;
-	gameWorldHeight = 1000f;
+
     }
 
     public void update() {
@@ -83,13 +84,13 @@ public enum GameEngine implements Runnable {
 
     public void pushUpdate() {
 	ArrayList<PlayerDelta> deltaList = new ArrayList<PlayerDelta>();
-	System.out.println(TAG+"delta list length :"+deltaList.size());
+	// System.out.println(TAG + "delta list length :" + deltaList.size());
 	for (Player player : playerList) {
 	    // System.out.println(TAG + player.getUserID() +
 	    // " Sending player updates");
 	    deltaList.add(player.getPlayerDelta());
 	}
-	System.out.println(TAG+"delta list length :"+deltaList.size());
+	// System.out.println(TAG + "delta list length :" + deltaList.size());
 	for (Player player : playerList) {
 	    player.sendUpdate(deltaList);
 	}
@@ -104,11 +105,4 @@ public enum GameEngine implements Runnable {
 	this.isNewPlayerAvai = true;
     }
 
-    public float getGameWorldWidth() {
-	return gameWorldWidth;
-    }
-
-    public float gameWorldHeight() {
-	return gameWorldHeight;
-    }
 }
