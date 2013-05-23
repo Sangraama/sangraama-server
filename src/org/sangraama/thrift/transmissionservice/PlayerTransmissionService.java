@@ -34,13 +34,13 @@ public class PlayerTransmissionService {
 
   public interface Iface {
 
-    public void passPlayer(org.sangraama.thrift.assets.Player player) throws org.apache.thrift.TException;
+    public void passPlayer(org.sangraama.thrift.assets.TPlayer player) throws org.apache.thrift.TException;
 
   }
 
   public interface AsyncIface {
 
-    public void passPlayer(org.sangraama.thrift.assets.Player player, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.passPlayer_call> resultHandler) throws org.apache.thrift.TException;
+    public void passPlayer(org.sangraama.thrift.assets.TPlayer player, org.apache.thrift.async.AsyncMethodCallback<AsyncClient.passPlayer_call> resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -64,12 +64,12 @@ public class PlayerTransmissionService {
       super(iprot, oprot);
     }
 
-    public void passPlayer(org.sangraama.thrift.assets.Player player) throws org.apache.thrift.TException
+    public void passPlayer(org.sangraama.thrift.assets.TPlayer player) throws org.apache.thrift.TException
     {
       send_passPlayer(player);
     }
 
-    public void send_passPlayer(org.sangraama.thrift.assets.Player player) throws org.apache.thrift.TException
+    public void send_passPlayer(org.sangraama.thrift.assets.TPlayer player) throws org.apache.thrift.TException
     {
       passPlayer_args args = new passPlayer_args();
       args.setPlayer(player);
@@ -94,7 +94,7 @@ public class PlayerTransmissionService {
       super(protocolFactory, clientManager, transport);
     }
 
-    public void passPlayer(org.sangraama.thrift.assets.Player player, org.apache.thrift.async.AsyncMethodCallback<passPlayer_call> resultHandler) throws org.apache.thrift.TException {
+    public void passPlayer(org.sangraama.thrift.assets.TPlayer player, org.apache.thrift.async.AsyncMethodCallback<passPlayer_call> resultHandler) throws org.apache.thrift.TException {
       checkReady();
       passPlayer_call method_call = new passPlayer_call(player, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
@@ -102,8 +102,8 @@ public class PlayerTransmissionService {
     }
 
     public static class passPlayer_call extends org.apache.thrift.async.TAsyncMethodCall {
-      private org.sangraama.thrift.assets.Player player;
-      public passPlayer_call(org.sangraama.thrift.assets.Player player, org.apache.thrift.async.AsyncMethodCallback<passPlayer_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private org.sangraama.thrift.assets.TPlayer player;
+      public passPlayer_call(org.sangraama.thrift.assets.TPlayer player, org.apache.thrift.async.AsyncMethodCallback<passPlayer_call> resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, true);
         this.player = player;
       }
@@ -174,7 +174,7 @@ public class PlayerTransmissionService {
       schemes.put(TupleScheme.class, new passPlayer_argsTupleSchemeFactory());
     }
 
-    public org.sangraama.thrift.assets.Player player; // required
+    public org.sangraama.thrift.assets.TPlayer player; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
@@ -239,7 +239,7 @@ public class PlayerTransmissionService {
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
       tmpMap.put(_Fields.PLAYER, new org.apache.thrift.meta_data.FieldMetaData("player", org.apache.thrift.TFieldRequirementType.DEFAULT, 
-          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, org.sangraama.thrift.assets.Player.class)));
+          new org.apache.thrift.meta_data.StructMetaData(org.apache.thrift.protocol.TType.STRUCT, org.sangraama.thrift.assets.TPlayer.class)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(passPlayer_args.class, metaDataMap);
     }
@@ -248,7 +248,7 @@ public class PlayerTransmissionService {
     }
 
     public passPlayer_args(
-      org.sangraama.thrift.assets.Player player)
+      org.sangraama.thrift.assets.TPlayer player)
     {
       this();
       this.player = player;
@@ -259,7 +259,7 @@ public class PlayerTransmissionService {
      */
     public passPlayer_args(passPlayer_args other) {
       if (other.isSetPlayer()) {
-        this.player = new org.sangraama.thrift.assets.Player(other.player);
+        this.player = new org.sangraama.thrift.assets.TPlayer(other.player);
       }
     }
 
@@ -272,11 +272,11 @@ public class PlayerTransmissionService {
       this.player = null;
     }
 
-    public org.sangraama.thrift.assets.Player getPlayer() {
+    public org.sangraama.thrift.assets.TPlayer getPlayer() {
       return this.player;
     }
 
-    public passPlayer_args setPlayer(org.sangraama.thrift.assets.Player player) {
+    public passPlayer_args setPlayer(org.sangraama.thrift.assets.TPlayer player) {
       this.player = player;
       return this;
     }
@@ -302,7 +302,7 @@ public class PlayerTransmissionService {
         if (value == null) {
           unsetPlayer();
         } else {
-          setPlayer((org.sangraama.thrift.assets.Player)value);
+          setPlayer((org.sangraama.thrift.assets.TPlayer)value);
         }
         break;
 
@@ -454,7 +454,7 @@ public class PlayerTransmissionService {
           switch (schemeField.id) {
             case 1: // PLAYER
               if (schemeField.type == org.apache.thrift.protocol.TType.STRUCT) {
-                struct.player = new org.sangraama.thrift.assets.Player();
+                struct.player = new org.sangraama.thrift.assets.TPlayer();
                 struct.player.read(iprot);
                 struct.setPlayerIsSet(true);
               } else { 
@@ -513,7 +513,7 @@ public class PlayerTransmissionService {
         TTupleProtocol iprot = (TTupleProtocol) prot;
         BitSet incoming = iprot.readBitSet(1);
         if (incoming.get(0)) {
-          struct.player = new org.sangraama.thrift.assets.Player();
+          struct.player = new org.sangraama.thrift.assets.TPlayer();
           struct.player.read(iprot);
           struct.setPlayerIsSet(true);
         }
