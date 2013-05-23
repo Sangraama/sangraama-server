@@ -6,8 +6,7 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
-import org.sangraama.asserts.Player;
-import org.sangraama.coordination.ServerHandler.ServerLocation;
+import org.sangraama.coordination.ServerLocation;
 import org.sangraama.thrift.assets.TPlayer;
 import org.sangraama.thrift.transmissionservice.PlayerTransmissionService;
 

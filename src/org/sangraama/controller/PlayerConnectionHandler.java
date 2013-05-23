@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.sangraama.asserts.Player;
 import org.sangraama.coordination.ServerHandler;
-import org.sangraama.coordination.ServerHandler.ServerLocation;
+import org.sangraama.coordination.ServerLocation;
 import org.sangraama.thrift.assets.TPlayer;
 import org.sangraama.thrift.client.ThriftClient;
 

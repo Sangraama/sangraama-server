@@ -11,6 +11,6 @@ public enum ServerHandler {
     }
     
     public ServerLocation getLocation(float x, float y){
-	return new ServerLocation();
+	return staticServer.getServerLocation(x, y);
     }
 }
