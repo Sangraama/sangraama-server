@@ -1,10 +1,10 @@
 namespace java org.sangraama.thrift.assets
 
-struct Player{
+struct TPlayer{
 1: i64 id;
-2: i32 rA;
-3: i32 cA;
-4: i32 x;
-5: i32 y;
+2: i32 x;
+3: i32 y;
+4: double v_x;
+5: double v_y;
 
 }
