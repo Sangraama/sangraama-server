@@ -11,8 +11,6 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.controller.PlayerConnectionHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
-import org.sangraama.coordination.ServerHandler;
-import org.sangraama.coordination.ServerHandler.ServerLocation;
 import org.sangraama.gameLogic.GameEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,30 +1,16 @@
 package org.sangraama.coordination;
 
+import org.sangraama.coordination.staticPartition.StaticServer;
+
 public enum ServerHandler {
     INSTANCE;
+    private StaticServer staticServer = null;
+    
     private ServerHandler(){
-	
+	this.staticServer = new StaticServer();
     }
     
     public ServerLocation getLocation(float x, float y){
 	return new ServerLocation();
-    }
-    
-    public class ServerLocation{
-	String URL="";
-	int port=0;
-	
-	public ServerLocation(String url,int port){
-	    this.URL = url;
-	    this.port = port;
-	}
-	
-	public String getServerURL() {
-	    return this.URL;
-	}
-	
-	public int getServerPort() {
-	    return this.port;
-	}
     }
 }
