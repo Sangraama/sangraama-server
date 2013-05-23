@@ -3,7 +3,7 @@ package org.sangraama.serverstart;
 import javax.servlet.ServletContextEvent;
 
 import org.sangraama.gameLogic.GameEngine;
-import org.sangraaama.thrift.server.ThriftServer;
+import org.sangraama.thrift.server.ThriftServer;
 
 public class Listner implements javax.servlet.ServletContextListener {
     private ThriftServer thriftServer = null;
