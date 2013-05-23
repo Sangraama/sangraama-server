@@ -9,8 +9,8 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.controller.WebSocketConnection;
-import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.gameLogic.GameEngine;
+import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class Player {
     private FixtureDef fixtureDef = null;
     private Body body = null;
     private GameEngine gameEngine = null;
-    private Map map = null;
+    private SangraamaMap sangraamaMap = null;
     // WebSocket Connection
     private WebSocketConnection con = null;
     private boolean isUpdate = false;
@@ -51,7 +51,7 @@ public class Player {
 	this.con = con;
 	this.gameEngine = GameEngine.INSTANCE;
 	this.gameEngine.addToPlayerQueue(this);
-	this.map = Map.INSTANCE;
+	this.sangraamaMap = SangraamaMap.INSTANCE;
     }
     
     /**
@@ -87,7 +87,7 @@ public class Player {
     }
     
     private boolean isInsideMap(float x,float y){
-	if(0 <= x && x < map.getMapWidth() && 0 <= y && y <= map.getMapHeight()){
+	if(0 <= x && x < sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()){
 	    return true;
 	}else{
 	    return false;

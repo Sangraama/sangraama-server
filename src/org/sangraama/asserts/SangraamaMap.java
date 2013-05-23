@@ -1,17 +1,18 @@
 package org.sangraama.asserts;
 
-public enum Map {
+public enum SangraamaMap {
     INSTANCE;
+    
     private float originX = 0f;
     private float originY = 0f;
     private float mapWidth;
     private float mapHeight;
     
-    private Map(){
+    private SangraamaMap(){
 	
     }
     
-    public synchronized void setMap(float originX,float originY,float width,float height){
+    public void setMap(float originX,float originY,float width,float height){
 	this.originX = originX;
 	this.originY = originY;
 	this.mapWidth = width;
