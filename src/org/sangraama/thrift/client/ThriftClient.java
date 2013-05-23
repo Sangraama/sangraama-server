@@ -7,6 +7,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.sangraama.asserts.Player;
+import org.sangraama.coordination.ServerHandler.ServerLocation;
 import org.sangraama.thrift.assets.TPlayer;
 import org.sangraama.thrift.transmissionservice.PlayerTransmissionService;
 
@@ -20,6 +21,14 @@ public class ThriftClient {
 		this.URL = url;
 		this.port =port;
 	}
+	
+	public  ThriftClient(TPlayer tPlayer,ServerLocation serverLoc) {
+        this.player=tPlayer;
+        this.URL=serverLoc.getServerURL();
+        this.port=serverLoc.getServerPort();
+        //this.URL = url;
+       // this.port =port;
+    }
     public void invoke() {
 	TTransport transport;
 	transport = new TSocket(this.URL, port);

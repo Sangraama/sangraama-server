@@ -6,7 +6,7 @@ public enum ServerHandler {
 	
     }
     
-    public ServerLocation getLocation(){
+    public ServerLocation getLocation(float x, float y){
 	return new ServerLocation();
     }
     

@@ -7,9 +7,10 @@ import org.apache.thrift.transport.TTransportException;
 import org.sangraama.thrift.transmissionservice.PlayerTransmissionService;
 import org.sangraama.thrift.transmissionservice.PlayerTransmissionServiceImpl;
 
-public class ThriftServer implements Runnable{
+public class ThriftServer implements Runnable {
     TServerSocket serverTransport;
     TServer server;
+
     @Override
     public void run() {
         try {
@@ -25,10 +26,9 @@ public class ThriftServer implements Runnable{
         } catch (TTransportException e) {
             e.printStackTrace();
         }
-        
-        
+
     }
-    
+
     public void stopServer() {
         serverTransport.close();
         server.stop();
