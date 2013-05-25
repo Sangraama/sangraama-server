@@ -6,8 +6,8 @@ public class StaticServer {
     private Tile[] tiles;
 
     public StaticServer() {
-	this.tiles[0] = new Tile(0, "localhost", 7911, 0, 0);
-	this.tiles[1] = new Tile(1, "localhost", 7912, 1000, 0);
+	this.tiles[0] = new Tile(0, "localhost", 7911, 0, 0); // sangraama-server
+	this.tiles[1] = new Tile(1, "localhost", 7912, 1000, 0); // clone
     }
 
     public ServerLocation getServerLocation(float x, float y) {

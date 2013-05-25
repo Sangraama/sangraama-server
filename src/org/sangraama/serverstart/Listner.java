@@ -21,7 +21,7 @@ public class Listner implements javax.servlet.ServletContextListener {
 	System.out.println("SANGRAAMA STARTED");
 	this.gameEngine = new Thread(GameEngine.INSTANCE);
 	this.gameEngine.start();
-	thriftServer=new ThriftServer();
+	thriftServer=new ThriftServer(7911);
 	thriftServerThread=new Thread(thriftServer);
 	thriftServerThread.start();
     }

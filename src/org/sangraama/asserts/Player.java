@@ -99,7 +99,7 @@ public class Player {
 
     BodyDef createBodyDef() {
 	BodyDef bd = new BodyDef();
-	bd.position.set(50, 50);
+	bd.position.set(950, 50);
 	bd.type = BodyType.DYNAMIC;
 	return bd;
     }
