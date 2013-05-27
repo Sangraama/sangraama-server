@@ -91,7 +91,7 @@ public class Player {
 	}
 
 	private boolean isInsideMap(float x, float y) {
-		if (0 <= x && x < sangraamaMap.getMapWidth() && 0 <= y
+		if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y
 				&& y <= sangraamaMap.getMapHeight()) {
 			return true;
 		} else {
@@ -105,7 +105,7 @@ public class Player {
 
 	BodyDef createBodyDef() {
 		BodyDef bd = new BodyDef();
-		bd.position.set(995, 50);
+		bd.position.set(998, 50);
 		bd.type = BodyType.DYNAMIC;
 		return bd;
 	}
