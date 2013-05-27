@@ -170,5 +170,4 @@ public class Player {
 	public int getUserID() {
 		return this.userID;
 	}
-
 }

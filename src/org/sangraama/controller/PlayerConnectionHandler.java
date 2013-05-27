@@ -3,7 +3,6 @@ package org.sangraama.controller;
 import java.util.ArrayList;
 
 import org.sangraama.asserts.Player;
-import org.sangraama.coordination.ClientTransferReq;
 import org.sangraama.coordination.ServerHandler;
 import org.sangraama.coordination.ServerLocation;
 import org.sangraama.thrift.assets.TPlayer;

@@ -8,9 +8,7 @@ import java.util.ArrayList;
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.asserts.Player;
-import org.sangraama.common.Constants;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
-import org.sangraama.coordination.ClientTransferReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
