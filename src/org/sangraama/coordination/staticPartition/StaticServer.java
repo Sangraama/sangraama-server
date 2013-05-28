@@ -15,7 +15,6 @@ public class StaticServer {
 		ServerLocation serverLoc = null;
 		for (int i = 0; i < this.tiles.length; i++) {
 			if (this.tiles[i].isInTile(x, y)) {
-				System.out.println(i+" Checking corrdinations X,Y"+x+" "+y);
 				serverLoc = this.tiles[i].getServerLocation(i);
 			}
 		}

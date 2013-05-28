@@ -21,7 +21,7 @@ public class ThriftServer implements Runnable {
     public void run() {
 	try {
 
-	    serverTransport = new TServerSocket(7911);
+	    serverTransport = new TServerSocket(this.port);
 	    @SuppressWarnings("unchecked")
 	    PlayerTransmissionService.Processor processor = new PlayerTransmissionService.Processor(
 		    new PlayerTransmissionServiceImpl());
