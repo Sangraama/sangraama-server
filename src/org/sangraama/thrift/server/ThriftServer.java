@@ -10,28 +10,36 @@ import org.sangraama.thrift.transmissionservice.PlayerTransmissionServiceImpl;
 public class ThriftServer implements Runnable {
     TServerSocket serverTransport;
     TServer server;
+    private int port = 0;
 
+    public ThriftServer(int port) {
+	this.port = port;
+    }
+
+    @SuppressWarnings("rawtypes")
     @Override
     public void run() {
-        try {
+	try {
 
-            serverTransport = new TServerSocket(7911);
-            PlayerTransmissionService.Processor processor = new PlayerTransmissionService.Processor(
-                    new PlayerTransmissionServiceImpl());
-            server = new TThreadPoolServer(new TThreadPoolServer.Args(
-                    serverTransport).processor(processor));
-            System.out.println("Starting server on port 7911 ...");
-            server.serve();
+	    serverTransport = new TServerSocket(this.port);
+	    @SuppressWarnings("unchecked")
+	    PlayerTransmissionService.Processor processor = new PlayerTransmissionService.Processor(
+		    new PlayerTransmissionServiceImpl());
+	    server = new TThreadPoolServer(new TThreadPoolServer.Args(
+		    serverTransport).processor(processor));
+	    System.out.println("Starting Thrift server on port: " + this.port
+		    + " ...");
+	    server.serve();
 
-        } catch (TTransportException e) {
-            e.printStackTrace();
-        }
+	} catch (TTransportException e) {
+	    e.printStackTrace();
+	}
 
     }
 
     public void stopServer() {
-        serverTransport.close();
-        server.stop();
+	serverTransport.close();
+	server.stop();
     }
 
 }

@@ -8,7 +8,7 @@ public class PlayerTransmissionServiceImpl implements PlayerTransmissionService.
 
     @Override
     public void passPlayer(TPlayer player) throws TException {
-        System.out.println("New player!!"+player.getId());
+        System.out.println("New player from other server.. ID = "+player.getId());
         GameEngine gameEngine=GameEngine.INSTANCE;
         //gameEngine.addToPlayerQueue(player);
         

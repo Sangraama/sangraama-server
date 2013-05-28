@@ -24,7 +24,7 @@ public class PlayerServlet extends WebSocketServlet {
 	System.out.println("Trigger createWebSocketInBound");
 	Random r = new Random();
 	WebSocketConnection con = new WebSocketConnection();
-	System.out.println("Player Data created");
+
 	System.out.println("Player creating");
 	Player player = new Player(r.nextInt(100),con);
 	System.out.println("Player created");

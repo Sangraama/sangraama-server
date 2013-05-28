@@ -36,9 +36,9 @@ public class ThriftClient {
 		protocol);
 	try {
 	    transport.open();
-	    TPlayer player = new TPlayer(1000, 30, 40, 100, 100);
+	    // TPlayer player = new TPlayer(1000, 30, 40, 100, 100);
 
-	    client.passPlayer(player);
+	    client.passPlayer(this.player);
 
 	    transport.close();
 	} catch (TTransportException e) {
