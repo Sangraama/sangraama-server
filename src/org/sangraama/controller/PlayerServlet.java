@@ -19,55 +19,39 @@ public class PlayerServlet extends WebSocketServlet {
 
     @Override
     protected StreamInbound createWebSocketInbound(String str,
-	    HttpServletRequest req) {
-	
-	
-	System.out.println("string " + str);
-	switch (str) {
-	case "NewPlayer":
-	    System.out.println("Trigger newplayer");
-	    Random r = new Random();
-	    WebSocketConnection con = new WebSocketConnection();
+            HttpServletRequest req) {
 
-	    System.out.println("New Player creating");
-	    Player player = new Player(r.nextInt(100), con);
-	    System.out.println("Player created");
-	    con.setPlayer(player);
-	    return con;
+        System.out.println("string " + str);
+        switch (str) {
+        case "NewPlayer":
+            System.out.println("Trigger newplayer");
+            Random r = new Random();
+            WebSocketConnection con = new WebSocketConnection();
 
-	case "PassPlayer":
-	    System.out.println("Trigger passplayer");
-	    WebSocketConnection ncon = new WebSocketConnection();
+            System.out.println("New Player creating");
+            Player player = new Player(r.nextInt(100), con);
+            System.out.println("Player created");
+            con.setPlayer(player);
+            return con;
 
-	    System.out.println("Pass Player with test:" + this.test);
-	    Player nplayer = new Player(this.id, ncon);
-	    System.out.println("Player created");
-	    ncon.setPlayer(nplayer);
-	    return ncon;
-	default:
-	    return null;
-	}
+        case "PassPlayer":
+            System.out.println("Trigger passplayer");
+            WebSocketConnection ncon = new WebSocketConnection();
+
+            System.out.println("Pass Player with test:" + this.test);
+            Player nplayer = new Player(this.id, ncon);
+            System.out.println("Player created");
+            ncon.setPlayer(nplayer);
+            return ncon;
+        default:
+            return null;
+        }
 
     }
 
     @Override
     protected String selectSubProtocol(List<String> subProtocols) {
-	Random r = new Random();
-	int tmp = r.nextInt(100);
-	this.test += tmp;
-	System.out.println("to test :" + this.test + " added:" + tmp);
-
-	for (String str : subProtocols) {
-	    System.out.println("Sub pro :" + str);
-	}
-	if (subProtocols.get(2) == "10") {
-	    this.id = Integer.parseInt(subProtocols.get(2));
-
-	    return subProtocols.get(0);
-	} else {
-	    System.out.println("newplayer subp");
-	    return subProtocols.get(0);
-	}
+        return subProtocols.get(0);
     }
 
     // private static class WebSocketConnection extends MessageInbound {
