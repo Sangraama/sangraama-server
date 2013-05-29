@@ -29,7 +29,7 @@ public class PlayerServlet extends WebSocketServlet {
             WebSocketConnection con = new WebSocketConnection();
 
             System.out.println("New Player creating");
-            Player player = new Player(r.nextInt(100), con);
+            Player player = new Player(r.nextInt(1000), con);
             System.out.println("Player created");
             con.setPlayer(player);
             return con;
@@ -38,10 +38,7 @@ public class PlayerServlet extends WebSocketServlet {
             System.out.println("Trigger passplayer");
             WebSocketConnection ncon = new WebSocketConnection();
 
-            System.out.println("Pass Player with test:" + this.test);
-            Player nplayer = new Player(this.id, ncon);
-            System.out.println("Player created");
-            ncon.setPlayer(nplayer);
+            System.out.println("WebSocket created for pass player");
             return ncon;
         default:
             return null;
