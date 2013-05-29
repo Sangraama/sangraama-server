@@ -48,7 +48,7 @@ public class Player {
 
     public Player(long userID, WebSocketConnection con) {
         Random r = new Random();
-        this.createPlayer(userID, (float) r.nextInt(9) + 990f,
+        this.createPlayer(userID, (float) r.nextInt(2) + 997f,
                 (float) r.nextInt(999), con);
     }
 
@@ -69,7 +69,7 @@ public class Player {
         this.gameEngine.addToPlayerQueue(this);
         this.sangraamaMap = SangraamaMap.INSTANCE;
 
-        System.out.println(TAG + "init player x:" + x + " :" + y);
+        System.out.println(TAG + " init player x:" + x + " :" + y);
     }
 
     public PlayerDelta getPlayerDelta() {

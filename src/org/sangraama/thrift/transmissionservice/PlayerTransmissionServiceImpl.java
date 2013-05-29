@@ -20,9 +20,9 @@ public class PlayerTransmissionServiceImpl implements
 
     private Player fillPlayer(TPlayer tp) {
         SangraamaMap map = SangraamaMap.INSTANCE;
-        Player p = new Player(tp.getId(), tp.getX(), tp.getY(), null);
-        p.setV((float) tp.getV_x() - map.getOriginX(), (float) tp.getV_y()
-                - map.getOriginY());
+        Player p = new Player(tp.getId(), tp.getX() - map.getOriginX(),
+                tp.getY() - map.getOriginY(), null);
+        p.setV((float) tp.getV_x(), (float) tp.getV_y());
 
         return p;
     }
