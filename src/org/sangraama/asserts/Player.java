@@ -1,6 +1,7 @@
 package org.sangraama.asserts;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.common.Vec2;
@@ -36,7 +37,7 @@ public class Player {
     private boolean isUpdate = false;
 
     // Player Dynamic Parameters
-    private float x = 0, y = 0;
+    private float x , y;
     public float v_x = 0, v_y = 0;
     private Vec2 v = new Vec2(0f, 0f);
     private PlayerDelta delta = null;
@@ -46,14 +47,29 @@ public class Player {
     }
 
     public Player(long userID, WebSocketConnection con) {
-        System.out.println(TAG + "init player");
+        Random r = new Random();
+        this.createPlayer(userID, (float) r.nextInt(9) + 990f,
+                (float) r.nextInt(999), con);
+    }
+
+    public Player(long userID, float x, float y, WebSocketConnection con) {
+        this.createPlayer(userID, x, y, con);
+    }
+
+    private void createPlayer(long userID, float x, float y,
+            WebSocketConnection con) {
+
+        this.userID = userID;
+        this.x = x;
+        this.y = y;
+        this.con = con;
         this.bodyDef = this.createBodyDef();
         this.fixtureDef = createFixtureDef();
-        this.userID = userID;
-        this.con = con;
         this.gameEngine = GameEngine.INSTANCE;
         this.gameEngine.addToPlayerQueue(this);
         this.sangraamaMap = SangraamaMap.INSTANCE;
+
+        System.out.println(TAG + "init player x:" + x + " :" + y);
     }
 
     public PlayerDelta getPlayerDelta() {
@@ -100,9 +116,10 @@ public class Player {
         con.sendNewConnection(transferReq);
     }
 
-    BodyDef createBodyDef() {
+    public BodyDef createBodyDef() {
         BodyDef bd = new BodyDef();
-        bd.position.set(998, 50);
+        System.out.println(TAG + "create body def player x:" + this.x + " :" + this.y);
+        bd.position.set(this.x, this.y);
         bd.type = BodyType.DYNAMIC;
         return bd;
     }
@@ -135,21 +152,21 @@ public class Player {
         return this.body;
     }
 
-    public void setX(float x) {
-        if (x > 0) {
-            this.x = x;
-        }
-    }
+    // public void setX(float x) {
+    // if (x > 0) {
+    // this.x = x;
+    // }
+    // }
 
     public float getX() {
         return x;
     }
 
-    public void setY(float y) {
-        if (y > 0) {
-            this.y = y;
-        }
-    }
+    // public void setY(float y) {
+    // if (y > 0) {
+    // this.y = y;
+    // }
+    // }
 
     public float getY() {
         return this.y;

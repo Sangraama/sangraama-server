@@ -32,7 +32,7 @@ public enum GameEngine implements Runnable {
 	this.playerList = new ArrayList<Player>();
 	this.newPlayerQueue = new ArrayList<Player>();
 	this.sangraamaMap = SangraamaMap.INSTANCE;
-	this.sangraamaMap.setMap(0f, 0f, 1000f, 1000f);
+	this.sangraamaMap.setMap(1000f, 0f, 1000f, 1000f);
     }
 
     @Override
@@ -40,7 +40,7 @@ public enum GameEngine implements Runnable {
 	System.out.println(TAG + "GameEngine Start running.. fps:"
 		+ Constants.fps + " timesteps:" + Constants.timeStep);
 	init();
-	Timer timer = new Timer(500, new ActionListener() {
+	Timer timer = new Timer(100, new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent arg0) {
 		update();
