@@ -10,6 +10,7 @@ import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.asserts.Player;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.coordination.ClientTransferReq;
+import org.sangraama.gameLogic.PassedPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +21,7 @@ public class WebSocketConnection extends MessageInbound {
     private static boolean LL = true;
     private static boolean LD = true;
     private static final String TAG = "WebSocketConnection";
-    public static final Logger log = LoggerFactory
-            .getLogger(WebSocketConnection.class);
+    public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
 
     private Player player = null;
     private WebSocketConnection con = null;
@@ -29,10 +29,10 @@ public class WebSocketConnection extends MessageInbound {
     public void setPlayer(Player player) {
         this.player = player;
     }
-    
-//    public void setWebSocketConnection(WebSocketConnection con){
-//        this.con = con;
-//    }
+
+    // public void setWebSocketConnection(WebSocketConnection con){
+    // this.con = con;
+    // }
 
     @Override
     protected void onOpen(WsOutbound outbound) {
@@ -61,20 +61,22 @@ public class WebSocketConnection extends MessageInbound {
         System.out.println("REcieved msg :" + user);
 
         Player p = gson.fromJson(user, Player.class);
-        // this.player.setX(p.getX());
-        // this.player.setY(p.getY());
-        this.player.setV(p.v_x, p.v_y);
-        System.out
-                .println("Player coordinate x:" + p.getX() + " y:" + p.getY());
-
+        if (this.player != null) {
+            this.player.setV(p.v_x, p.v_y);
+        } else {
+            if (p.getUserID() != 0) {
+                PassedPlayer.INSTANCE.redirectPassPlayerConnection(p.getUserID(), this);
+            }
+        }
+        // System.out.println("Player coordinate x:" + p.getX() + " y:" +
+        // p.getY());
     }
 
     public void sendUpdate(ArrayList<PlayerDelta> deltaList) {
         Gson gson = new Gson();
         for (PlayerDelta delta : deltaList) {
             try {
-                getWsOutbound().writeTextMessage(
-                        CharBuffer.wrap(gson.toJson(delta)));
+                getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(delta)));
             } catch (IOException e) {
                 System.out.println(TAG + " Unable to send update");
                 log.error(TAG, e);
@@ -85,11 +87,9 @@ public class WebSocketConnection extends MessageInbound {
     public void sendNewConnection(ClientTransferReq transferReq) {
         Gson gson = new Gson();
         try {
-            getWsOutbound().writeTextMessage(
-                    CharBuffer.wrap(gson.toJson(transferReq)));
+            getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
         } catch (IOException e) {
-            System.out.println(TAG
-                    + " Unable to send new connnection information");
+            System.out.println(TAG + " Unable to send new connnection information");
             log.error(TAG, e);
         }
     }
