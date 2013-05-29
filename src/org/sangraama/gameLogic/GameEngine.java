@@ -40,7 +40,7 @@ public enum GameEngine implements Runnable {
 	System.out.println(TAG + "GameEngine Start running.. fps:"
 		+ Constants.fps + " timesteps:" + Constants.timeStep);
 	init();
-	Timer timer = new Timer(50, new ActionListener() {
+	Timer timer = new Timer(500, new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent arg0) {
 		update();
