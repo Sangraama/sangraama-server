@@ -2,15 +2,15 @@ package org.sangraama.controller.clientprotocol;
 
 public class PlayerDelta {
     private float dx = 0, dy = 0;
-    private int userID = 0;
+    private long userID = 0;
 
-    public PlayerDelta(float dx, float dy, int userID) {
+    public PlayerDelta(float dx, float dy, long userID) {
 	this.dx = dx;
 	this.dy = dy;
 	this.userID = userID;
     }
     
-    public int getUserID(){
+    public long getUserID(){
 	return this.userID;
     }
 
