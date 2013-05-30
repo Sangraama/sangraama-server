@@ -14,7 +14,7 @@ public class PlayerTransmissionServiceImpl implements PlayerTransmissionService.
         System.out.println("New player from other server.. ID = " + tPlayer.getId());
 
         GameEngine gameEngine = GameEngine.INSTANCE;
-        gameEngine.addToPlayerQueue(fillPlayer(tPlayer));
+        //gameEngine.addToPlayerQueue(fillPlayer(tPlayer));
         PassedPlayer.INSTANCE.addPassedPlayer(fillPlayer(tPlayer));
     }
 
