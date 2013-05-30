@@ -7,8 +7,8 @@ public class StaticServer {
 
     public StaticServer() {
         tiles = new Tile[2];
-        this.tiles[0] = new Tile(0, "localhost",8080, 7911, 0, 0);
-        this.tiles[1] = new Tile(1, "localhost",8081, 7912, 1000, 0);
+        this.tiles[0] = new Tile(0, "localhost", 8080, 7911, 0, 0);
+        this.tiles[1] = new Tile(1, "localhost", 8081, 7912, 1000, 0);
     }
 
     public ServerLocation getServerLocation(float x, float y) {
@@ -20,7 +20,7 @@ public class StaticServer {
         }
         return serverLoc;
     }
-    
+
     public ServerLocation getThriftServerLocation(float x, float y) {
         ServerLocation serverLoc = null;
         for (int i = 0; i < this.tiles.length; i++) { // check in every tile
@@ -34,17 +34,17 @@ public class StaticServer {
     private class Tile {
         int tileID;
         String URL;
-        int port;
-        int thriftPort;
+        private int serverPort = 0;
+        private int thriftPort = 0;
         float originX;
         float originY;
         float width;
         float height;
 
-        public Tile(int tileID, String URL, int port,int thriftPort, float originX, float originY) {
+        public Tile(int tileID, String URL, int port, int thriftPort, float originX, float originY) {
             this.tileID = tileID;
             this.URL = URL;
-            this.port = port;
+            this.serverPort = port;
             this.thriftPort = thriftPort;
             this.originX = originX;
             this.originY = originY;
@@ -53,9 +53,11 @@ public class StaticServer {
         }
 
         @SuppressWarnings("unused")
-        public Tile(String URL, int port, float originX, float originY, float width, float height) {
+        public Tile(String URL, int port, int thriftPort, float originX, float originY,
+                float width, float height) {
             this.URL = URL;
-            this.port = port;
+            this.serverPort = port;
+            this.thriftPort = thriftPort;
             this.originX = originX;
             this.originY = originY;
             this.width = width;
@@ -73,14 +75,16 @@ public class StaticServer {
 
         public ServerLocation getServerLocation(int tileID) {
             if (this.tileID == tileID) {
-                return new ServerLocation(this.URL, this.port);
+                System.out.println(" Get server loc :" + " port:" + this.serverPort);
+                return new ServerLocation(this.URL, this.serverPort);
             } else {
                 return null;
             }
         }
-        
+
         public ServerLocation getThriftServerLocation(int tileID) {
             if (this.tileID == tileID) {
+                System.out.println(" Get thrift server loc :" + " port:" + this.thriftPort);
                 return new ServerLocation(this.URL, this.thriftPort);
             } else {
                 return null;

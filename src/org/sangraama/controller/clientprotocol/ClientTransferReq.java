@@ -1,4 +1,4 @@
-package org.sangraama.coordination;
+package org.sangraama.controller.clientprotocol;
 
 public class ClientTransferReq {
 

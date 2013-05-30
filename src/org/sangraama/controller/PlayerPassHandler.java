@@ -3,7 +3,7 @@ package org.sangraama.controller;
 import java.util.ArrayList;
 
 import org.sangraama.asserts.Player;
-import org.sangraama.coordination.ClientTransferReq;
+import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.coordination.ServerHandler;
 import org.sangraama.coordination.ServerLocation;
 import org.sangraama.thrift.assets.TPlayer;
@@ -60,11 +60,13 @@ public enum PlayerPassHandler implements Runnable {
     }
 
     private void passNewConnectionInfo(Player player) {
-        ServerLocation serverLoc = this.sHandler.getThriftServerLocation(player.getX(), player.getY());
+        ServerLocation serverLoc = this.sHandler.getServerLocation(player.getX(),
+                player.getY());
         ClientTransferReq transferReq = new ClientTransferReq(player.getUserID(),
                 serverLoc.getServerURL(), serverLoc.getServerPort());
         player.sendNewConnection(transferReq);
-        System.out.println(TAG + " Sending new connection information.");
+        System.out.println(TAG + " Sending new connection information. server URL:"
+                + serverLoc.getServerURL() + " serverPort:" + serverLoc.getServerPort());
     }
 
 }

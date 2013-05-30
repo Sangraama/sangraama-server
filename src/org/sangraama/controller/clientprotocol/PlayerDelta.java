@@ -3,6 +3,7 @@ package org.sangraama.controller.clientprotocol;
 public class PlayerDelta {
     private float dx = 0, dy = 0;
     private long userID = 0;
+    private int type = 1;
 
     public PlayerDelta(float dx, float dy, long userID) {
 	this.dx = dx;
