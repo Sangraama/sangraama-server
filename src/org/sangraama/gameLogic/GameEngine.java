@@ -34,7 +34,7 @@ public enum GameEngine implements Runnable {
         this.playerList = new ArrayList<Player>();
         this.newPlayerQueue = new ArrayList<Player>();
         this.sangraamaMap = SangraamaMap.INSTANCE;
-        this.sangraamaMap.setMap(0f, 0f, 1000f, 1000f);
+        this.sangraamaMap.setMap(1000f, 0f, 1000f, 1000f);
     }
 
     @Override
