@@ -40,6 +40,7 @@ public class ThriftServer implements Runnable {
     public void stopServer() {
 	serverTransport.close();
 	server.stop();
+	System.out.println("Thrift server stopped on port: "+ this.port+ "...");
     }
 
 }
