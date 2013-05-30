@@ -14,10 +14,11 @@ public enum PlayerPassHandler implements Runnable {
     private static final String TAG = "WebSocketConnection";
     private ArrayList<Player> passPlayerList = null;
     private boolean isPass = false;
-    private ServerLocation serverLoc = null;
+    private ServerHandler sHandler = null;
 
     private PlayerPassHandler() {
         passPlayerList = new ArrayList<Player>();
+        this.sHandler = ServerHandler.INSTANCE;
     }
 
     public void run() {
@@ -38,7 +39,7 @@ public enum PlayerPassHandler implements Runnable {
 
     public void callThriftServer(Player player) {
         TPlayer tPlayer = new TPlayer();
-        serverLoc = ServerHandler.INSTANCE.getLocation(player.getX(), player.getY());
+        ServerLocation serverLoc = sHandler.getThriftServerLocation(player.getX(), player.getY());
 
         tPlayer.id = player.getUserID();
         tPlayer.x = (int) player.getX();
@@ -53,14 +54,13 @@ public enum PlayerPassHandler implements Runnable {
     }
 
     public void setPassPlayer(Player player) {
-
         this.passPlayerList.add(player);
         isPass = true;
         run();
-
     }
 
     private void passNewConnectionInfo(Player player) {
+        ServerLocation serverLoc = this.sHandler.getThriftServerLocation(player.getX(), player.getY());
         ClientTransferReq transferReq = new ClientTransferReq(player.getUserID(),
                 serverLoc.getServerURL(), serverLoc.getServerPort());
         player.sendNewConnection(transferReq);

@@ -77,10 +77,6 @@ public enum GameEngine implements Runnable {
             this.newPlayerQueue.clear();
             this.isNewPlayerAvai = false;
         }
-        if(isPassPlayerAvai){
-            System.out.println(TAG + "Adding Pass Player Connection");
-            
-        }
         for (Player player : playerList) {
             // System.out.println(TAG + player.getUserID()
             // +" Adding players Updates");

@@ -88,6 +88,8 @@ public class WebSocketConnection extends MessageInbound {
         Gson gson = new Gson();
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
+            getWsOutbound().flush();
+            getWsOutbound().close(1, null);
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send new connnection information");
             log.error(TAG, e);
