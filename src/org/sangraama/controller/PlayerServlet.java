@@ -50,42 +50,4 @@ public class PlayerServlet extends WebSocketServlet {
     protected String selectSubProtocol(List<String> subProtocols) {
         return subProtocols.get(0);
     }
-
-    // private static class WebSocketConnection extends MessageInbound {
-    //
-    // @Override
-    // protected void onOpen(WsOutbound outbound) {
-    // Constants.log.info("Open connection");
-    // System.out.println("Open Connection");
-    // }
-    //
-    // @Override
-    // protected void onClose(int status) {
-    // Constants.log.info("Connection closed");
-    // System.out.println("Close connection");
-    // }
-    //
-    // @Override
-    // protected void onBinaryMessage(ByteBuffer byteBuffer)
-    // throws IOException {
-    // // log.warn("binary messages are not supported");
-    // System.out.println("Binary");
-    // throw new UnsupportedOperationException(
-    // "not supported binary messages");
-    // }
-    //
-    // @Override
-    // protected void onTextMessage(CharBuffer charBuffer) throws IOException {
-    // Gson gson = new Gson();
-    // String user = charBuffer.toString();
-    // // log.debug("Received message: {}", user);
-    // System.out.println("REcieved msg :" + user);
-    // Player player = gson.fromJson(user, Player.class);
-    // System.out.println("x:" + player.getX() + " y:" + player.getY());
-    // getWsOutbound().writeTextMessage(
-    // CharBuffer.wrap(gson.toJson(player)));
-    // }
-    //
-    // }
-
 }
