@@ -13,7 +13,7 @@ public enum PassedPlayer {
     private Map<Long, Player> passdePlayers = null;
 
     private PassedPlayer() {
-        this.passdePlayers = new HashMap<>();
+        this.passdePlayers = new HashMap<Long,Player>();
         this.engine = GameEngine.INSTANCE;
     }
 
