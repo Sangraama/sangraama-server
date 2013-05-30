@@ -32,7 +32,6 @@ public enum PlayerPassHandler implements Runnable {
                 } else {
                     isPass = false;
                 }
-
             }
         }
     }
@@ -56,7 +55,6 @@ public enum PlayerPassHandler implements Runnable {
     public void setPassPlayer(Player player) {
         this.passPlayerList.add(player);
         isPass = true;
-        run();
     }
 
     private void passNewConnectionInfo(Player player) {

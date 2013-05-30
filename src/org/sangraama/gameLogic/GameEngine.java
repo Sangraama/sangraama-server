@@ -22,10 +22,10 @@ public enum GameEngine implements Runnable {
     private SangraamaMap sangraamaMap = null;
     private boolean execute = true;
     private boolean isNewPlayerAvai = false;
-    private boolean isPassPlayerAvai = false;
+    private boolean isRemovePlayerAvai = false;
     private ArrayList<Player> playerList = null;
     private ArrayList<Player> newPlayerQueue = null;
-    private ArrayList<Player> passPlayerQueue = null;
+    private ArrayList<Player> removePlayerQueue = null;
 
     // this method only access via class
     GameEngine() {
@@ -67,6 +67,14 @@ public enum GameEngine implements Runnable {
     }
 
     public void update() {
+        if(isRemovePlayerAvai){
+            System.out.println(TAG + "Removing new players");
+            for( Player rmPlayer : removePlayerQueue){
+                this.playerList.remove(rmPlayer);
+            }
+            this.removePlayerQueue.clear();
+            this.isRemovePlayerAvai = false;
+        }
         // Add new player to the world
         if (isNewPlayerAvai) {
             System.out.println(TAG + "Adding new players");
@@ -105,6 +113,11 @@ public enum GameEngine implements Runnable {
     public void addToPlayerQueue(Player player) {
         this.newPlayerQueue.add(player);
         this.isNewPlayerAvai = true;
+    }
+    
+    public void addToRemovePlayerQueue(Player player){
+        this.removePlayerQueue.add(player);
+        this.isRemovePlayerAvai = true;
     }
 
 }

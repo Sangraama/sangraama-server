@@ -32,14 +32,14 @@ public class WebSocketConnection extends MessageInbound {
 
     @Override
     protected void onOpen(WsOutbound outbound) {
-        log.info("Open Connection");
-        System.out.println("Open Connection");
+        //log.info("Open Connection");
+        System.out.println(TAG + "Open Connection");
     }
 
     @Override
     protected void onClose(int status) {
-        log.info("Connection closed");
-        System.out.println("Close connection");
+        //log.info("Connection closed");
+        System.out.println(TAG + "Close connection");
     }
 
     @Override

@@ -9,6 +9,8 @@ import org.sangraama.controller.WebSocketConnection;
 public enum PassedPlayer {
     INSTANCE;
 
+    private String TAG = "PassedPlayer :";
+    
     private GameEngine engine = null;
     private Map<Long, Player> passdePlayers = null;
 
@@ -19,6 +21,7 @@ public enum PassedPlayer {
 
     public void addPassedPlayer(Player p) {
         this.passdePlayers.put(p.getUserID(), p);
+        System.out.println(TAG + "Added new passed player");
     }
 
     public void redirectPassPlayerConnection(long userID, WebSocketConnection con) {
@@ -28,6 +31,7 @@ public enum PassedPlayer {
                 p.setConnection(con);
                 this.engine.addToPlayerQueue(p);
                 this.passdePlayers.remove(userID);
+                System.out.println(TAG + "Added passed player to GameEngine queue");
             }
         }
     }

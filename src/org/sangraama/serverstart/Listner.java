@@ -5,7 +5,9 @@ import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
 
+import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.gameLogic.GameEngine;
+import org.sangraama.gameLogic.PassedPlayer;
 import org.sangraama.thrift.server.ThriftServer;
 
 public class Listner implements javax.servlet.ServletContextListener {
@@ -13,6 +15,7 @@ public class Listner implements javax.servlet.ServletContextListener {
     private Thread gameEngine = null;
     private Thread thriftServerThread = null;
     private Properties prop;
+    private Thread playerPassHandler = null;
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
@@ -33,6 +36,9 @@ public class Listner implements javax.servlet.ServletContextListener {
             thriftServer = new ThriftServer(Integer.parseInt(prop.getProperty("thriftserverport")));
             thriftServerThread = new Thread(thriftServer);
             thriftServerThread.start();
+            this.playerPassHandler = new Thread(PlayerPassHandler.INSTANCE);
+            this.playerPassHandler.setPriority(3);
+            this.playerPassHandler.start();
             System.out.println("SANGRAAMA STARTED");
         } catch (IOException e) {
             e.printStackTrace();
