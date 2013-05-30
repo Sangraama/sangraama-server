@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.asserts.Player;
+import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.gameLogic.PassedPlayer;
@@ -24,15 +25,10 @@ public class WebSocketConnection extends MessageInbound {
     public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
 
     private Player player = null;
-    private WebSocketConnection con = null;
 
     public void setPlayer(Player player) {
         this.player = player;
     }
-
-    // public void setWebSocketConnection(WebSocketConnection con){
-    // this.con = con;
-    // }
 
     @Override
     protected void onOpen(WsOutbound outbound) {
@@ -60,16 +56,15 @@ public class WebSocketConnection extends MessageInbound {
         // Constants.log.debug("Received message: {}", user);
         System.out.println("REcieved msg :" + user);
 
-        Player p = gson.fromJson(user, Player.class);
+        ClientEvent p = gson.fromJson(user, ClientEvent.class);
         if (this.player != null) {
-            this.player.setV(p.v_x, p.v_y);
+            this.player.setV(p.getV_x(), p.getV_y());
         } else {
-            if (p.getUserID() != 0) {
-                PassedPlayer.INSTANCE.redirectPassPlayerConnection(p.getUserID(), this);
+            if (p.getType() == "setcon") { // set the connection
+               PassedPlayer.INSTANCE.redirectPassPlayerConnection(p.getUserID(), this);
+               System.out.println(TAG + "Add to set connection");
             }
         }
-        // System.out.println("Player coordinate x:" + p.getX() + " y:" +
-        // p.getY());
     }
 
     public void sendUpdate(ArrayList<PlayerDelta> deltaList) {

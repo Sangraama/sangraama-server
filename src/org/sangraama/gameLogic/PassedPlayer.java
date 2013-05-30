@@ -13,7 +13,7 @@ public enum PassedPlayer {
     private Map<Long, Player> passdePlayers = null;
 
     private PassedPlayer() {
-        this.passdePlayers = new HashMap<Long,Player>();
+        this.passdePlayers = new HashMap<Long, Player>();
         this.engine = GameEngine.INSTANCE;
     }
 
@@ -23,8 +23,12 @@ public enum PassedPlayer {
 
     public void redirectPassPlayerConnection(long userID, WebSocketConnection con) {
         if (!passdePlayers.isEmpty()) {
-            this.engine.addToPlayerQueue(this.passdePlayers.get(userID));
-            this.passdePlayers.remove(userID);
+            Player p = this.passdePlayers.get(userID);
+            if (p != null) {
+                p.setConnection(con);
+                this.engine.addToPlayerQueue(p);
+                this.passdePlayers.remove(userID);
+            }
         }
     }
 
