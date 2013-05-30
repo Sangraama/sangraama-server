@@ -36,9 +36,6 @@ public class Listner implements javax.servlet.ServletContextListener {
             thriftServer = new ThriftServer(Integer.parseInt(prop.getProperty("thriftserverport")));
             thriftServerThread = new Thread(thriftServer);
             thriftServerThread.start();
-            this.playerPassHandler = new Thread(PlayerPassHandler.INSTANCE);
-            this.playerPassHandler.setPriority(3);
-            this.playerPassHandler.start();
             System.out.println("SANGRAAMA STARTED");
         } catch (IOException e) {
             e.printStackTrace();

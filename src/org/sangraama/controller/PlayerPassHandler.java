@@ -6,34 +6,38 @@ import org.sangraama.asserts.Player;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.coordination.ServerHandler;
 import org.sangraama.coordination.ServerLocation;
+import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.thrift.assets.TPlayer;
 import org.sangraama.thrift.client.ThriftClient;
 
-public enum PlayerPassHandler implements Runnable {
+public enum PlayerPassHandler {
     INSTANCE;
-    private static final String TAG = "WebSocketConnection";
+    private static final String TAG = "PlayerPassHandler :";
     private ArrayList<Player> passPlayerList = null;
     private boolean isPass = false;
     private ServerHandler sHandler = null;
+    private GameEngine gameEngine = null;
 
     private PlayerPassHandler() {
         passPlayerList = new ArrayList<Player>();
         this.sHandler = ServerHandler.INSTANCE;
+        this.gameEngine = GameEngine.INSTANCE;
     }
 
     public void run() {
-        while (true) {
-            if (isPass) {
-                if (!passPlayerList.isEmpty()) {
-                    passPlayerList.get(0);
-                    callThriftServer(passPlayerList.get(0));
-                    passNewConnectionInfo(passPlayerList.get(0));
-                    passPlayerList.remove(0);
-                } else {
-                    isPass = false;
-                }
+
+        if (this.isPass) {
+            System.out.println(TAG + " is pass true");
+            for (Player player : passPlayerList) {
+                callThriftServer(player);
+                passNewConnectionInfo(player);
+
+                this.gameEngine.addToRemovePlayerQueue(player);
+                this.passPlayerList.clear();
             }
+            isPass = false;
         }
+
     }
 
     public void callThriftServer(Player player) {
@@ -55,11 +59,12 @@ public enum PlayerPassHandler implements Runnable {
     public void setPassPlayer(Player player) {
         this.passPlayerList.add(player);
         isPass = true;
+        System.out.println(TAG + "Added passed player");
+        this.run();
     }
 
     private void passNewConnectionInfo(Player player) {
-        ServerLocation serverLoc = this.sHandler.getServerLocation(player.getX(),
-                player.getY());
+        ServerLocation serverLoc = this.sHandler.getServerLocation(player.getX(), player.getY());
         ClientTransferReq transferReq = new ClientTransferReq(player.getUserID(),
                 serverLoc.getServerURL(), serverLoc.getServerPort());
         player.sendNewConnection(transferReq);

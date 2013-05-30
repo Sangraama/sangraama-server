@@ -113,10 +113,12 @@ public class Player {
     }
 
     private boolean isInsideMap(float x, float y) {
+        System.out.println(TAG + "is inside "+x+":"+y);
         if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y
                 && y <= sangraamaMap.getMapHeight()) {
             return true;
         } else {
+            System.out.println(TAG + sangraamaMap.getMapWidth() +":"+sangraamaMap.getMapHeight());
             return false;
         }
     }
