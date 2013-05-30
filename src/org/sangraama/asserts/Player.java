@@ -9,7 +9,7 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
-import org.sangraama.controller.PlayerConnectionHandler;
+import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.coordination.ClientTransferReq;
@@ -85,7 +85,7 @@ public class Player {
 
         // Check whether player is inside the tile or not
         if (!this.isInsideMap(this.x, this.y)) {
-            PlayerConnectionHandler.INSTANCE.setPassPlayer(this);
+            PlayerPassHandler.INSTANCE.setPassPlayer(this);
         }
 
         // isUpdate = true;
