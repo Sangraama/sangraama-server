@@ -33,13 +33,13 @@ public class WebSocketConnection extends MessageInbound {
     @Override
     protected void onOpen(WsOutbound outbound) {
         //log.info("Open Connection");
-        System.out.println(TAG + "Open Connection");
+        System.out.println(TAG + " Open Connection");
     }
 
     @Override
     protected void onClose(int status) {
         //log.info("Connection closed");
-        System.out.println(TAG + "Close connection");
+        System.out.println(TAG + " Close connection");
     }
 
     @Override
@@ -54,7 +54,7 @@ public class WebSocketConnection extends MessageInbound {
         Gson gson = new Gson();
         String user = charBuffer.toString();
         // Constants.log.debug("Received message: {}", user);
-        System.out.println("REcieved msg :" + user);
+        System.out.println(TAG+" REcieved msg :" + user);
 
         ClientEvent p = gson.fromJson(user, ClientEvent.class);
         if (this.player != null) {
@@ -62,7 +62,7 @@ public class WebSocketConnection extends MessageInbound {
         } else {
             if (p.getType() == "setcon") { // set the connection
                PassedPlayer.INSTANCE.redirectPassPlayerConnection(p.getUserID(), this);
-               System.out.println(TAG + "Add to set connection");
+               System.out.println(TAG + " Add to set connection");
             }
         }
     }

@@ -31,11 +31,10 @@ public enum PlayerPassHandler {
             for (Player player : passPlayerList) {
                 callThriftServer(player);
                 passNewConnectionInfo(player);
-
                 this.gameEngine.addToRemovePlayerQueue(player);
-                this.passPlayerList.clear();
             }
             isPass = false;
+            this.passPlayerList.clear();
         }
 
     }
