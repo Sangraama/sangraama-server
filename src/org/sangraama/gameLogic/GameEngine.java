@@ -35,7 +35,6 @@ public enum GameEngine implements Runnable {
         this.newPlayerQueue = new ArrayList<Player>();
         this.removePlayerQueue=new ArrayList<Player>();
         this.sangraamaMap = SangraamaMap.INSTANCE;
-        this.sangraamaMap.setMap(0f, 0f, 1000f, 1000f);
     }
 
     @Override
@@ -64,7 +63,7 @@ public enum GameEngine implements Runnable {
     }
 
     public void init() {
-
+        // Load static map asserts into JBox2D
     }
 
     public void update() {

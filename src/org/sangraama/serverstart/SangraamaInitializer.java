@@ -5,17 +5,17 @@ import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
 
+import org.sangraama.asserts.SangraamaMap;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.PassedPlayer;
 import org.sangraama.thrift.server.ThriftServer;
 
-public class Listner implements javax.servlet.ServletContextListener {
+public class SangraamaInitializer implements javax.servlet.ServletContextListener {
     private ThriftServer thriftServer = null;
     private Thread gameEngine = null;
     private Thread thriftServerThread = null;
     private Properties prop;
-    private Thread playerPassHandler = null;
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
@@ -25,12 +25,14 @@ public class Listner implements javax.servlet.ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent arg0) {
-        
+
         try {
             this.prop = new Properties();
-            // this.prop.load(new FileInputStream(new File("sangraamaserver.properties")));
             this.prop.load(getClass().getResourceAsStream("/sangraamaserver.properties"));
-            System.out.println("Open File..");
+            SangraamaMap.INSTANCE.setMap(Float.parseFloat(prop.getProperty("maporiginx")),
+                    Float.parseFloat(prop.getProperty("maporiginy")),
+                    Float.parseFloat(prop.getProperty("mapwidth")),
+                    Float.parseFloat(prop.getProperty("mapheight")));
             this.gameEngine = new Thread(GameEngine.INSTANCE);
             this.gameEngine.start();
             thriftServer = new ThriftServer(Integer.parseInt(prop.getProperty("thriftserverport")));

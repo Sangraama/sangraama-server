@@ -59,6 +59,7 @@ public class WebSocketConnection extends MessageInbound {
         ClientEvent p = gson.fromJson(user, ClientEvent.class);
         if (this.player != null) {
             this.player.setV(p.getV_x(), p.getV_y());
+            System.out.println(TAG + " set user events "+p.getV_x()+" : "+p.getV_y());
         } else {
             if ( "setcon".equalsIgnoreCase(p.getType())) { // set the connection
                PassedPlayer.INSTANCE.redirectPassPlayerConnection(p.getUserID(), this);

@@ -40,6 +40,7 @@ public enum PassedPlayer {
             TPlayer p = this.passdePlayers.get(userID);
             if (p != null) {
                 Player player = fillPlayer(p,con);
+                con.setPlayer(player);
                 this.engine.addToPlayerQueue(player);
                 this.passdePlayers.remove(userID);
                 System.out.println(TAG + "Added passed player to GameEngine queue");
