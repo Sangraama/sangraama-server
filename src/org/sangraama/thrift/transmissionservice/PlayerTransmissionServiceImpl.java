@@ -15,16 +15,7 @@ public class PlayerTransmissionServiceImpl implements PlayerTransmissionService.
 
         GameEngine gameEngine = GameEngine.INSTANCE;
         //gameEngine.addToPlayerQueue(fillPlayer(tPlayer));
-        PassedPlayer.INSTANCE.addPassedPlayer(fillPlayer(tPlayer));
-    }
-
-    private Player fillPlayer(TPlayer tp) {
-        SangraamaMap map = SangraamaMap.INSTANCE;
-        Player p = new Player(tp.getId(), tp.getX() - map.getOriginX(), tp.getY()
-                - map.getOriginY(), null);
-        p.setV((float) tp.getV_x(), (float) tp.getV_y());
-
-        return p;
+        PassedPlayer.INSTANCE.addPassedPlayer(tPlayer);
     }
 
 }

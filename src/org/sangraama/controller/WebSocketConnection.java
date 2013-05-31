@@ -60,7 +60,7 @@ public class WebSocketConnection extends MessageInbound {
         if (this.player != null) {
             this.player.setV(p.getV_x(), p.getV_y());
         } else {
-            if (p.getType() == "setcon") { // set the connection
+            if ( "setcon".equalsIgnoreCase(p.getType())) { // set the connection
                PassedPlayer.INSTANCE.redirectPassPlayerConnection(p.getUserID(), this);
                System.out.println(TAG + " Add to set connection");
             }

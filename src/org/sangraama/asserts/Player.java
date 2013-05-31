@@ -71,15 +71,6 @@ public class Player {
 
         System.out.println(TAG + " init player x:" + x + " :" + y);
     }
-    
-    public boolean setConnection(WebSocketConnection con){
-        if(this.con == null){
-            this.con = con;
-            return true;
-        }else{
-            return false;
-        }
-    }
 
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
