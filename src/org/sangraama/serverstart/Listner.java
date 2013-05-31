@@ -11,7 +11,7 @@ import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.PassedPlayer;
 import org.sangraama.thrift.server.ThriftServer;
 
-public class SangraamaInitializer implements javax.servlet.ServletContextListener {
+public class Listner implements javax.servlet.ServletContextListener {
     private ThriftServer thriftServer = null;
     private Thread gameEngine = null;
     private Thread thriftServerThread = null;
