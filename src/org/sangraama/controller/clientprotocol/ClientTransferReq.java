@@ -3,6 +3,7 @@ package org.sangraama.controller.clientprotocol;
 public class ClientTransferReq {
 
 	private long userID = 0;
+	private int type=2;
 	private String newServerURL = "";
 	private int newServerPort = 0;
 
