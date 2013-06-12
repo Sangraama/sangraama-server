@@ -37,11 +37,11 @@ public class Player {
     private boolean isUpdate = false;
 
     // Player Dynamic Parameters
-    private float x , y;
+    private float x, y;
     public float v_x = 0, v_y = 0;
     private Vec2 v = new Vec2(0f, 0f);
     private PlayerDelta delta = null;
-    
+
     // Area of Interest
     private float halfWidth = 10f;
     private float halfHieght = 1000f;
@@ -52,16 +52,14 @@ public class Player {
 
     public Player(long userID, WebSocketConnection con) {
         Random r = new Random();
-        this.createPlayer(userID, (float) r.nextInt(2) + 997f,
-                (float) r.nextInt(999), con);
+        this.createPlayer(userID, (float) r.nextInt(2) + 997f, (float) r.nextInt(999), con);
     }
 
     public Player(long userID, float x, float y, WebSocketConnection con) {
         this.createPlayer(userID, x, y, con);
     }
 
-    private void createPlayer(long userID, float x, float y,
-            WebSocketConnection con) {
+    private void createPlayer(long userID, float x, float y, WebSocketConnection con) {
 
         this.userID = userID;
         this.x = x;
@@ -78,12 +76,13 @@ public class Player {
 
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
-        System.out.println(TAG + "id: " + this.userID + " x:"
-                + this.body.getPosition().x + " " + "y:"
-                + this.body.getPosition().y);
+        System.out.println(TAG + "id: " + this.userID + " x:" + this.body.getPosition().x + " "
+                + "y:" + this.body.getPosition().y);
 
-        this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
-                this.body.getPosition().y - this.y, this.userID);
+        // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
+        // this.body.getPosition().y - this.y, this.userID);
+        this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
+                this.userID);
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
 
@@ -109,11 +108,11 @@ public class Player {
 
     private boolean isInsideMap(float x, float y) {
         // System.out.println(TAG + "is inside "+x+":"+y);
-        if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y
-                && y <= sangraamaMap.getMapHeight()) {
+        if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()) {
             return true;
         } else {
-            System.out.println(TAG + sangraamaMap.getMapWidth() +":"+sangraamaMap.getMapHeight());
+            System.out
+                    .println(TAG + sangraamaMap.getMapWidth() + ":" + sangraamaMap.getMapHeight());
             return false;
         }
     }
@@ -190,17 +189,17 @@ public class Player {
     public long getUserID() {
         return this.userID;
     }
-    
-    public void setAOI(float width , float height){
-        this.halfWidth = width/2;
-        this.halfHieght = height/2;
+
+    public void setAOI(float width, float height) {
+        this.halfWidth = width / 2;
+        this.halfHieght = height / 2;
     }
-    
-    public float getAOIWidth(){
+
+    public float getAOIWidth() {
         return this.halfWidth;
     }
-    
-    public float getAOIHeight(){
+
+    public float getAOIHeight() {
         return this.halfHieght;
     }
 }

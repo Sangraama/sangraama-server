@@ -70,14 +70,13 @@ public class WebSocketConnection extends MessageInbound {
 
     public void sendUpdate(ArrayList<PlayerDelta> deltaList) {
         Gson gson = new Gson();
-        for (PlayerDelta delta : deltaList) {
+
             try {
-                getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(delta)));
+                getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(deltaList)));
             } catch (IOException e) {
                 System.out.println(TAG + " Unable to send update");
                 log.error(TAG, e);
             }
-        }
     }
 
     public void sendNewConnection(ClientTransferReq transferReq) {
