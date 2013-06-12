@@ -20,6 +20,7 @@ public enum GameEngine implements Runnable {
 
     private World world = null;
     private SangraamaMap sangraamaMap = null;
+    private UpdateEngine updateEngine = null;
     private boolean execute = true;
     private boolean isNewPlayerAvai = false;
     private boolean isRemovePlayerAvai = false;
@@ -33,14 +34,15 @@ public enum GameEngine implements Runnable {
         this.world = new World(new Vec2(0.0f, 0.0f), true);
         this.playerList = new ArrayList<Player>();
         this.newPlayerQueue = new ArrayList<Player>();
-        this.removePlayerQueue=new ArrayList<Player>();
+        this.removePlayerQueue = new ArrayList<Player>();
+        this.updateEngine = UpdateEngine.INSTANCE;
         this.sangraamaMap = SangraamaMap.INSTANCE;
     }
 
     @Override
     public void run() {
-        System.out.println(TAG + "GameEngine Start running.. fps:"
-                + Constants.fps + " timesteps:" + Constants.timeStep);
+        System.out.println(TAG + "GameEngine Start running.. fps:" + Constants.fps + " timesteps:"
+                + Constants.timeStep);
         init();
         Timer timer = new Timer(300, new ActionListener() {
             @Override
@@ -67,9 +69,9 @@ public enum GameEngine implements Runnable {
     }
 
     public void update() {
-        if(isRemovePlayerAvai){
+        if (isRemovePlayerAvai) {
             System.out.println(TAG + "Removing new players");
-            for( Player rmPlayer : removePlayerQueue){
+            for (Player rmPlayer : removePlayerQueue) {
                 this.playerList.remove(rmPlayer);
             }
             this.removePlayerQueue.clear();
@@ -93,17 +95,8 @@ public enum GameEngine implements Runnable {
     }
 
     public void pushUpdate() {
-        ArrayList<PlayerDelta> deltaList = new ArrayList<PlayerDelta>();
-        // System.out.println(TAG + "delta list length :" + deltaList.size());
-        for (Player player : playerList) {
-            // System.out.println(TAG + player.getUserID() +
-            // " Sending player updates");
-            deltaList.add(player.getPlayerDelta());
-        }
-        // System.out.println(TAG + "delta list length :" + deltaList.size());
-        for (Player player : playerList) {
-            player.sendUpdate(deltaList);
-        }
+
+        this.updateEngine.setPlayerList(playerList);
     }
 
     public void stopGameWorld() {
@@ -114,8 +107,8 @@ public enum GameEngine implements Runnable {
         this.newPlayerQueue.add(player);
         this.isNewPlayerAvai = true;
     }
-    
-    public void addToRemovePlayerQueue(Player player){
+
+    public void addToRemovePlayerQueue(Player player) {
         this.removePlayerQueue.add(player);
         this.isRemovePlayerAvai = true;
     }

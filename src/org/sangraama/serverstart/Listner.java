@@ -9,11 +9,13 @@ import org.sangraama.asserts.SangraamaMap;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.PassedPlayer;
+import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.thrift.server.ThriftServer;
 
 public class Listner implements javax.servlet.ServletContextListener {
     private ThriftServer thriftServer = null;
     private Thread gameEngine = null;
+    private Thread updateEngine = null;
     private Thread thriftServerThread = null;
     private Properties prop;
 
@@ -33,6 +35,8 @@ public class Listner implements javax.servlet.ServletContextListener {
                     Float.parseFloat(prop.getProperty("maporiginy")),
                     Float.parseFloat(prop.getProperty("mapwidth")),
                     Float.parseFloat(prop.getProperty("mapheight")));
+            this.updateEngine = new Thread(UpdateEngine.INSTANCE);
+            this.updateEngine.start();
             this.gameEngine = new Thread(GameEngine.INSTANCE);
             this.gameEngine.start();
             thriftServer = new ThriftServer(Integer.parseInt(prop.getProperty("thriftserverport")));
