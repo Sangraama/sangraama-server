@@ -41,6 +41,10 @@ public class Player {
     public float v_x = 0, v_y = 0;
     private Vec2 v = new Vec2(0f, 0f);
     private PlayerDelta delta = null;
+    
+    // Area of Interest
+    private float halfWidth = 10f;
+    private float halfHieght = 1000f;
 
     public boolean isUpdate() {
         return this.isUpdate;
@@ -104,7 +108,7 @@ public class Player {
     }
 
     private boolean isInsideMap(float x, float y) {
-        System.out.println(TAG + "is inside "+x+":"+y);
+        // System.out.println(TAG + "is inside "+x+":"+y);
         if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y
                 && y <= sangraamaMap.getMapHeight()) {
             return true;
@@ -185,5 +189,18 @@ public class Player {
 
     public long getUserID() {
         return this.userID;
+    }
+    
+    public void setAOI(float width , float height){
+        this.halfWidth = width/2;
+        this.halfHieght = height/2;
+    }
+    
+    public float getAOIWidth(){
+        return this.halfWidth;
+    }
+    
+    public float getAOIHeight(){
+        return this.halfHieght;
     }
 }
