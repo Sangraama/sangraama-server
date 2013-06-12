@@ -51,13 +51,13 @@ public enum UpdateEngine implements Runnable {
 
     public void pushUpdate() {
         playerDelta = new HashMap<Long, PlayerDelta>();
-         System.out.println(TAG + "delta list length :" + playerDelta.size());
+        //System.out.println(TAG + "delta list length :" + playerDelta.size());
         for (Player player : playerList) {
-             System.out.println(TAG + player.getUserID() +
-             " Sending player updates");
+             //System.out.println(TAG + player.getUserID() +
+             //" Sending player updates");
             playerDelta.put(player.getUserID(), player.getPlayerDelta());
         }
-         System.out.println(TAG + "delta list length :" + playerDelta.size());
+        //System.out.println(TAG + "delta list length :" + playerDelta.size());
         for (Player player : playerList) {
             player.sendUpdate(getAreaOfInterest(player));
         }
