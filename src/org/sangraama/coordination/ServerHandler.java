@@ -1,5 +1,6 @@
 package org.sangraama.coordination;
 
+import org.sangraama.asserts.SangraamaMap;
 import org.sangraama.coordination.staticPartition.StaticServer;
 
 public enum ServerHandler {
@@ -11,10 +12,10 @@ public enum ServerHandler {
     }
 
     public ServerLocation getServerLocation(float x, float y) {
-        return staticServer.getServerLocation(x, y);
+        return staticServer.getServerLocation(x+SangraamaMap.INSTANCE.getOriginX(), y+SangraamaMap.INSTANCE.getOriginY());
     }
     
     public ServerLocation getThriftServerLocation(float x, float y) {
-        return staticServer.getThriftServerLocation(x, y);
+        return staticServer.getThriftServerLocation(x+SangraamaMap.INSTANCE.getOriginX(), y+SangraamaMap.INSTANCE.getOriginY());
     }
 }

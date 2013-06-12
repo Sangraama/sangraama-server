@@ -2,14 +2,17 @@ package org.sangraama.controller.clientprotocol;
 
 public class ClientTransferReq {
 
-	private long userID = 0;
-	private int type=2;
-	private String newServerURL = "";
-	private int newServerPort = 0;
+    private long userID = 0;
+    private int type = 2;
+    private String newServerURL = "";
 
-	public ClientTransferReq(long userID, String newServerURL, int newServerPort) {
-		this.userID = userID;
-		this.newServerURL = newServerURL;
-		this.newServerPort = newServerPort;
-	}
+    public ClientTransferReq(long userID, String newServerURL, int newServerPort) {
+        this.userID = userID;
+        this.newServerURL = newServerURL;
+        if (newServerPort == 8080) {
+            this.newServerURL = "ws://localhost:8080/sangraama-server/org/sangraama/controller/playerservlet";
+        } else {
+            this.newServerURL = "ws://localhost:8081/sangraama-server-clone/org/sangraama/controller/playerservlet";
+        }
+    }
 }

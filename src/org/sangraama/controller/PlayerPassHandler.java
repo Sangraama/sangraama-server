@@ -3,6 +3,7 @@ package org.sangraama.controller;
 import java.util.ArrayList;
 
 import org.sangraama.asserts.Player;
+import org.sangraama.asserts.SangraamaMap;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.coordination.ServerHandler;
 import org.sangraama.coordination.ServerLocation;
@@ -44,8 +45,8 @@ public enum PlayerPassHandler {
         ServerLocation serverLoc = sHandler.getThriftServerLocation(player.getX(), player.getY());
 
         tPlayer.id = player.getUserID();
-        tPlayer.x = (int) player.getX();
-        tPlayer.y = (int) player.getY();
+        tPlayer.x = (int)(player.getX()+SangraamaMap.INSTANCE.getOriginX());
+        tPlayer.y = (int)(player.getY()+SangraamaMap.INSTANCE.getOriginY());
         tPlayer.v_x = player.getV().x;
         tPlayer.v_y = player.getV().y;
         if (serverLoc != null) {
