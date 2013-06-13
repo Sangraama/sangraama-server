@@ -27,7 +27,7 @@ public enum UpdateEngine implements Runnable {
         this.sangraamaMap = SangraamaMap.INSTANCE;
     }
 
-    public boolean isUpdate() {
+    public boolean isUpdateVal() {
         return this.isUpdate;
     }
 
@@ -43,7 +43,7 @@ public enum UpdateEngine implements Runnable {
     @Override
     public void run() {
         while (this.execute) {
-            if (this.isUpdate()) {
+            if (this.isUpdateVal()) {
                 this.pushUpdate();
             }
         }
