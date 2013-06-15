@@ -42,7 +42,9 @@ public class WebSocketConnection extends MessageInbound {
     protected void onClose(int status) {
         // log.info("Connection closed");
         System.out.println(TAG + " Close connection");
-        this.player.removeWebSocketConnection();
+        if (this.player != null) {
+            this.player.removeWebSocketConnection();
+        }
     }
 
     @Override
@@ -59,7 +61,7 @@ public class WebSocketConnection extends MessageInbound {
         // Constants.log.debug("Received message: {}", user);
         System.out.println(TAG + " REcieved msg :" + user);
         ClientEvent p = gson.fromJson(user, ClientEvent.class);
-        
+
         if (this.player != null) {
             this.player.setV(p.getV_x(), p.getV_y());
             System.out.println(TAG + " set user events " + p.getV_x() + " : " + p.getV_y());
@@ -84,9 +86,11 @@ public class WebSocketConnection extends MessageInbound {
     }
 
     /**
-     * Send new connection details as a list. Because updates are send as a list,
-     * sending new single connection details can't recognize by client side.
-     * @param transferReq ArrayList<ClientTransferReq>
+     * Send new connection details as a list. Because updates are send as a list, sending new single
+     * connection details can't recognize by client side.
+     * 
+     * @param transferReq
+     *            ArrayList<ClientTransferReq>
      */
     public void sendNewConnection(ArrayList<ClientTransferReq> transferReq) {
         this.gson = new Gson();

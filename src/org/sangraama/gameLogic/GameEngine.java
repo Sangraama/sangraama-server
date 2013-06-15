@@ -69,11 +69,13 @@ public enum GameEngine implements Runnable {
     }
 
     public void update() {
-        if (isRemovePlayerAvai) {
+        if (isRemovePlayerAvai && !this.updateEngine.isUpdateVal()) {
             System.out.println(TAG + "Removing players");
             for (Player rmPlayer : removePlayerQueue) {
-                this.playerList.remove(rmPlayer);
-                System.out.println(TAG + "Removed player :" + rmPlayer.getUserID());
+                if (this.playerList.indexOf(rmPlayer) != -1) {
+                    this.playerList.remove(rmPlayer);
+                    System.out.println(TAG + "Removed player :" + rmPlayer.getUserID());
+                }
             }
             this.removePlayerQueue.clear();
             this.isRemovePlayerAvai = false;
