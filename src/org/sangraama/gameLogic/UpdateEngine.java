@@ -36,8 +36,16 @@ public enum UpdateEngine implements Runnable {
     }
 
     public boolean setPlayerList(ArrayList<Player> playerList) {
-        this.playerList = playerList;
-        return this.setIsUpdate(true);
+        /*
+         * if previous updates unable to send to players, ignore current updates until previous
+         * update sent.
+         */
+        if (!this.isUpdateVal()) {
+            this.playerList = playerList;
+            return this.setIsUpdate(true);
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -51,15 +59,20 @@ public enum UpdateEngine implements Runnable {
 
     public void pushUpdate() {
         playerDelta = new HashMap<Long, PlayerDelta>();
-        //System.out.println(TAG + "delta list length :" + playerDelta.size());
+        // System.out.println(TAG + "delta list length :" + playerDelta.size());
         for (Player player : playerList) {
-             //System.out.println(TAG + player.getUserID() +
-             //" Sending player updates");
+            // System.out.println(TAG + player.getUserID() +
+            // " Sending player updates");
             playerDelta.put(player.getUserID(), player.getPlayerDelta());
         }
-        //System.out.println(TAG + "delta list length :" + playerDelta.size());
-        for (Player player : playerList) {
-            player.sendUpdate(getAreaOfInterest(player));
+        // System.out.println(TAG + "delta list length :" + playerDelta.size());
+
+        try {
+            for (Player player : playerList) {
+                player.sendUpdate(getAreaOfInterest(player));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         this.isUpdate = false;
     }
@@ -73,7 +86,7 @@ public enum UpdateEngine implements Runnable {
     private ArrayList<PlayerDelta> getAreaOfInterest(Player p) {
         ArrayList<PlayerDelta> delta = new ArrayList<PlayerDelta>();
         // Add players own details
-        //delta.add(this.playerDelta.get(p.getUserID()));
+        // delta.add(this.playerDelta.get(p.getUserID()));
 
         // going through all players and check their locations
         // inefficient

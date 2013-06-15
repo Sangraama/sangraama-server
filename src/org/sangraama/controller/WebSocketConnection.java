@@ -83,7 +83,12 @@ public class WebSocketConnection extends MessageInbound {
         }
     }
 
-    public void sendNewConnection(ClientTransferReq transferReq) {
+    /**
+     * Send new connection details as a list. Because updates are send as a list,
+     * sending new single connection details can't recognize by client side.
+     * @param transferReq ArrayList<ClientTransferReq>
+     */
+    public void sendNewConnection(ArrayList<ClientTransferReq> transferReq) {
         this.gson = new Gson();
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));

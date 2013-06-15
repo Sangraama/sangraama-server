@@ -7,8 +7,8 @@ public class StaticServer {
 
     public StaticServer() {
         tiles = new Tile[2];
-        this.tiles[0] = new Tile(0, "localhost", 8080, 7911, 0, 0);
-        this.tiles[1] = new Tile(1, "localhost", 8081, 7912, 1000, 0);
+        this.tiles[0] = new Tile(0, "localhost", 8080, "sangraama-server", 7911, 0, 0);
+        this.tiles[1] = new Tile(1, "localhost", 8081, "sangraama-server-clone", 7912, 1000, 0);
     }
 
     public ServerLocation getServerLocation(float x, float y) {
@@ -35,16 +35,19 @@ public class StaticServer {
         int tileID;
         String URL;
         private int serverPort = 0;
+        private String dir;
         private int thriftPort = 0;
         float originX;
         float originY;
         float width;
         float height;
 
-        public Tile(int tileID, String URL, int port, int thriftPort, float originX, float originY) {
+        public Tile(int tileID, String URL, int port, String dir, int thriftPort, float originX,
+                float originY) {
             this.tileID = tileID;
             this.URL = URL;
             this.serverPort = port;
+            this.dir = dir;
             this.thriftPort = thriftPort;
             this.originX = originX;
             this.originY = originY;
@@ -53,10 +56,12 @@ public class StaticServer {
         }
 
         @SuppressWarnings("unused")
-        public Tile(String URL, int port, int thriftPort, float originX, float originY,
-                float width, float height) {
+        public Tile(int tileID, String URL, int port, String dir, int thriftPort, float originX,
+                float originY, float width, float height) {
+            this.tileID = tileID;
             this.URL = URL;
             this.serverPort = port;
+            this.dir = dir;
             this.thriftPort = thriftPort;
             this.originX = originX;
             this.originY = originY;
@@ -76,7 +81,7 @@ public class StaticServer {
         public ServerLocation getServerLocation(int tileID) {
             if (this.tileID == tileID) {
                 System.out.println(" Get server loc :" + " port:" + this.serverPort);
-                return new ServerLocation(this.URL, this.serverPort);
+                return new ServerLocation(this.URL, this.serverPort, this.dir);
             } else {
                 return null;
             }

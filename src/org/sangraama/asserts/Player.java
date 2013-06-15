@@ -74,11 +74,11 @@ public class Player {
 
         System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
     }
-    
+
     /**
      * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
      */
-    public void removeWebSocketConnection(){
+    public void removeWebSocketConnection() {
         this.con = null;
     }
 
@@ -129,7 +129,9 @@ public class Player {
     }
 
     public void sendNewConnection(ClientTransferReq transferReq) {
-        con.sendNewConnection(transferReq);
+        ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+        transferReqList.add(transferReq);
+        con.sendNewConnection( transferReqList );
     }
 
     public BodyDef createBodyDef() {
