@@ -10,9 +10,9 @@ public class ClientTransferReq {
         this.userID = userID;
         this.newServerURL = newServerURL;
         if (newServerPort == 8080) {
-            this.newServerURL = "ws://localhost:8080/sangraama-server/org/sangraama/controller/playerservlet";
+            this.newServerURL = "ws://localhost:8080/sangraama-server/sangraama/player";
         } else {
-            this.newServerURL = "ws://localhost:8081/sangraama-server-clone/org/sangraama/controller/playerservlet";
+            this.newServerURL = "ws://localhost:8081/sangraama-server-clone/sangraama/player";
         }
     }
 }

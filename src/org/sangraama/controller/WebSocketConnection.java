@@ -21,7 +21,7 @@ public class WebSocketConnection extends MessageInbound {
     // Local Debug or logs
     private static boolean LL = true;
     private static boolean LD = true;
-    private static final String TAG = "WebSocketConnection";
+    private static final String TAG = "WebSocketConnection : ";
     public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
 
     private Player player = null;
