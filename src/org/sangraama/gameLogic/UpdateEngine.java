@@ -73,6 +73,7 @@ public enum UpdateEngine implements Runnable {
     private ArrayList<PlayerDelta> getAreaOfInterest(Player p) {
         ArrayList<PlayerDelta> delta = new ArrayList<PlayerDelta>();
         // Add players own details
+        //delta.add(this.playerDelta.get(p.getUserID()));
 
         // going through all players and check their locations
         // inefficient

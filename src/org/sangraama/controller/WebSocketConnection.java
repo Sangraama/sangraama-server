@@ -25,21 +25,24 @@ public class WebSocketConnection extends MessageInbound {
     public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
 
     private Player player = null;
+    private Gson gson = null;
 
     public void setPlayer(Player player) {
         this.player = player;
+        this.gson = new Gson();
     }
 
     @Override
     protected void onOpen(WsOutbound outbound) {
-        //log.info("Open Connection");
+        // log.info("Open Connection");
         System.out.println(TAG + " Open Connection");
     }
 
     @Override
     protected void onClose(int status) {
-        //log.info("Connection closed");
+        // log.info("Connection closed");
         System.out.println(TAG + " Close connection");
+        this.player.removeWebSocketConnection();
     }
 
     @Override
@@ -51,36 +54,37 @@ public class WebSocketConnection extends MessageInbound {
 
     @Override
     protected void onTextMessage(CharBuffer charBuffer) throws IOException {
-        Gson gson = new Gson();
+        this.gson = new Gson();
         String user = charBuffer.toString();
         // Constants.log.debug("Received message: {}", user);
-        System.out.println(TAG+" REcieved msg :" + user);
-
+        System.out.println(TAG + " REcieved msg :" + user);
         ClientEvent p = gson.fromJson(user, ClientEvent.class);
+        
         if (this.player != null) {
             this.player.setV(p.getV_x(), p.getV_y());
-            System.out.println(TAG + " set user events "+p.getV_x()+" : "+p.getV_y());
+            System.out.println(TAG + " set user events " + p.getV_x() + " : " + p.getV_y());
         } else {
-            if ( "setcon".equalsIgnoreCase(p.getType())) { // set the connection
-               PassedPlayer.INSTANCE.redirectPassPlayerConnection(p.getUserID(), this);
-               System.out.println(TAG + " Add to set connection");
+            if ("1".equalsIgnoreCase(p.getType())) { // create new player & set the connection
+                this.player = new Player(p.getUserID(), p.getX(), p.getY(), this);
+                // PassedPlayer.INSTANCE.redirectPassPlayerConnection(p.getUserID(), this);
+                System.out.println(TAG + " Add new Player " + p.getUserID());
             }
         }
     }
 
     public void sendUpdate(ArrayList<PlayerDelta> deltaList) {
-        Gson gson = new Gson();
+        this.gson = new Gson();
 
-            try {
-                getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(deltaList)));
-            } catch (IOException e) {
-                System.out.println(TAG + " Unable to send update");
-                log.error(TAG, e);
-            }
+        try {
+            getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(deltaList)));
+        } catch (IOException e) {
+            System.out.println(TAG + " Unable to send update");
+            log.error(TAG, e);
+        }
     }
 
     public void sendNewConnection(ClientTransferReq transferReq) {
-        Gson gson = new Gson();
+        this.gson = new Gson();
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
             getWsOutbound().flush();

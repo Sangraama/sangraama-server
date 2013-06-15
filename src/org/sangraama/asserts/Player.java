@@ -23,7 +23,7 @@ public class Player {
     private static boolean LL = true;
     private static boolean LD = true;
     public static final Logger log = LoggerFactory.getLogger(Player.class);
-    private static final String TAG = "player :";
+    private static final String TAG = "player : ";
 
     private long userID = 0;
 
@@ -67,17 +67,26 @@ public class Player {
         this.con = con;
         this.bodyDef = this.createBodyDef();
         this.fixtureDef = createFixtureDef();
-        this.gameEngine = GameEngine.INSTANCE;
-        this.gameEngine.addToPlayerQueue(this);
         this.sangraamaMap = SangraamaMap.INSTANCE;
+        this.gameEngine = GameEngine.INSTANCE;
+        // Add to game engine
+        this.gameEngine.addToPlayerQueue(this);
 
-        System.out.println(TAG + " init player x:" + x + " :" + y);
+        System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
+    }
+    
+    /**
+     * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
+     */
+    public void removeWebSocketConnection(){
+        this.con = null;
     }
 
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
-        System.out.println(TAG + "id: " + this.userID + " x:" + this.body.getPosition().x + " "
-                + "y:" + this.body.getPosition().y);
+        if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
+            System.out.println(TAG + "id : " + this.userID + " x:" + x + " " + "y:" + y);
+        }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
@@ -99,6 +108,8 @@ public class Player {
     public void sendUpdate(ArrayList<PlayerDelta> deltaList) {
         if (this.con != null) {
             con.sendUpdate(deltaList);
+        } else {
+            this.gameEngine.addToRemovePlayerQueue(this);
         }
     }
 

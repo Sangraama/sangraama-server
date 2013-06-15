@@ -70,9 +70,10 @@ public enum GameEngine implements Runnable {
 
     public void update() {
         if (isRemovePlayerAvai) {
-            System.out.println(TAG + "Removing new players");
+            System.out.println(TAG + "Removing players");
             for (Player rmPlayer : removePlayerQueue) {
                 this.playerList.remove(rmPlayer);
+                System.out.println(TAG + "Removed player :" + rmPlayer.getUserID());
             }
             this.removePlayerQueue.clear();
             this.isRemovePlayerAvai = false;
@@ -83,6 +84,7 @@ public enum GameEngine implements Runnable {
             for (Player newPlayer : newPlayerQueue) {
                 newPlayer.setBody(world.createBody(newPlayer.getBodyDef()));
                 this.playerList.add(newPlayer);
+                System.out.println(TAG + "Added new player :" + newPlayer.getUserID());
             }
             this.newPlayerQueue.clear();
             this.isNewPlayerAvai = false;
@@ -95,7 +97,6 @@ public enum GameEngine implements Runnable {
     }
 
     public void pushUpdate() {
-
         this.updateEngine.setPlayerList(playerList);
     }
 
