@@ -39,7 +39,7 @@ public enum PlayerPassHandler {
                 // callThriftServer(player);
 
                 passNewConnectionInfo(player);
-                //this.gameEngine.addToRemovePlayerQueue(player);
+                // this.gameEngine.addToRemovePlayerQueue(player);
             }
             isPass = false;
             this.passPlayerList.clear();
@@ -72,11 +72,15 @@ public enum PlayerPassHandler {
 
     private void passNewConnectionInfo(Player player) {
         ServerLocation serverLoc = this.sHandler.getServerLocation(player.getX(), player.getY());
-        ClientTransferReq transferReq = new ClientTransferReq(player.getUserID(),
-                serverLoc.getServerURL(), serverLoc.getServerPort(), serverLoc.getDirectory());
-        player.sendNewConnection(transferReq);
-        System.out.println(TAG + " Sending new connection information. server URL:"
-                + serverLoc.getServerURL() + " serverPort:" + serverLoc.getServerPort());
+
+        if (serverLoc != null) {
+            ClientTransferReq transferReq = new ClientTransferReq(player.getUserID(),
+                    serverLoc.getServerURL(), serverLoc.getServerPort(), serverLoc.getDirectory());
+
+            player.sendNewConnection(transferReq);
+            System.out.println(TAG + " Sending new connection information. server URL:"
+                    + serverLoc.getServerURL() + " serverPort:" + serverLoc.getServerPort());
+        }
     }
 
 }

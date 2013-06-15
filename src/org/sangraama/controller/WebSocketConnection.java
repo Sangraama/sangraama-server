@@ -59,12 +59,24 @@ public class WebSocketConnection extends MessageInbound {
         this.gson = new Gson();
         String user = charBuffer.toString();
         // Constants.log.debug("Received message: {}", user);
-        System.out.println(TAG + " REcieved msg :" + user);
+        // System.out.println(TAG + " REcieved msg :" + user);
         ClientEvent p = gson.fromJson(user, ClientEvent.class);
 
         if (this.player != null) {
-            this.player.setV(p.getV_x(), p.getV_y());
-            System.out.println(TAG + " set user events " + p.getV_x() + " : " + p.getV_y());
+            switch (Integer.parseInt(p.getType())) {
+            case 1: // setting user event request
+                this.player.setV(p.getV_x(), p.getV_y());
+                System.out.println(TAG + " set user events " + p.getV_x() + " : " + p.getV_y());
+                break;
+            case 2: // requesting for interesting area
+                this.player.setInterestingIn(p.getX(), p.getY());
+                System.out.println(TAG + "player interesting in x:" + p.getX() + " y:" + p.getY());
+                break;
+            
+            default:
+                break;
+            }
+
         } else {
             if ("1".equalsIgnoreCase(p.getType())) { // create new player & set the connection
                 this.player = new Player(p.getUserID(), p.getX(), p.getY(), this);
@@ -80,7 +92,8 @@ public class WebSocketConnection extends MessageInbound {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(deltaList)));
         } catch (IOException e) {
-            System.out.println(TAG + " Unable to send update");
+            System.out.println(TAG + " Unable to send update ");
+            e.printStackTrace();
             log.error(TAG, e);
         }
     }
@@ -96,10 +109,18 @@ public class WebSocketConnection extends MessageInbound {
         this.gson = new Gson();
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
+        } catch (IOException e) {
+            System.out.println(TAG + " Unable to send new connnection information");
+            log.error(TAG, e);
+        }
+    }
+
+    public void closeConnection() {
+        try {
             getWsOutbound().flush();
             getWsOutbound().close(1, null);
         } catch (IOException e) {
-            System.out.println(TAG + " Unable to send new connnection information");
+            System.out.println(TAG + " Unable to close connnection ");
             log.error(TAG, e);
         }
     }

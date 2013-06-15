@@ -96,9 +96,10 @@ public class Player {
         this.y = this.body.getPosition().y;
 
         // Check whether player is inside the tile or not
-        if (!this.isInsideMap(this.x, this.y)) {
+        /* Gave this responsibility to client
+         * if (!this.isInsideMap(this.x, this.y)) {
             PlayerPassHandler.INSTANCE.setPassPlayer(this);
-        }
+        }*/
 
         // isUpdate = true;
         // }
@@ -110,6 +111,7 @@ public class Player {
             con.sendUpdate(deltaList);
         } else {
             this.gameEngine.addToRemovePlayerQueue(this);
+            System.out.println(TAG + "Unable to send updates,coz con :" + this.con);
         }
     }
 
@@ -122,16 +124,27 @@ public class Player {
         if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()) {
             return true;
         } else {
-            System.out
-                    .println(TAG + sangraamaMap.getMapWidth() + ":" + sangraamaMap.getMapHeight());
+            System.out.println(TAG + "Outside of map : " + sangraamaMap.getMapWidth() + ":"
+                    + sangraamaMap.getMapHeight());
             return false;
+        }
+    }
+    
+    public void setInterestingIn(float x, float y){
+        if(!isInsideMap(x, y)){
+            PlayerPassHandler.INSTANCE.setPassPlayer(this);
         }
     }
 
     public void sendNewConnection(ClientTransferReq transferReq) {
-        ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
-        transferReqList.add(transferReq);
-        con.sendNewConnection( transferReqList );
+        if (this.con != null) {
+            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+            transferReqList.add(transferReq);
+            con.sendNewConnection(transferReqList);
+        } else {
+            this.gameEngine.addToRemovePlayerQueue(this);
+            System.out.println(TAG + "Unable to send new connection,coz con :" + this.con);
+        }
     }
 
     public BodyDef createBodyDef() {
@@ -196,7 +209,7 @@ public class Player {
 
     public void setV(float x, float y) {
         this.v.set(x, y);
-        // System.out.println(TAG + " set V :");
+        System.out.println(TAG + " set V :"+this.v.x + ":"+this.v.y);
     }
 
     public long getUserID() {
