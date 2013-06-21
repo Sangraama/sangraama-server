@@ -5,7 +5,7 @@ import org.sangraama.coordination.staticPartition.StaticServer;
 
 public enum ServerHandler {
     INSTANCE;
-    private StaticServer staticServer = null;
+    private StaticServer staticServer;
 
     private ServerHandler() {
         this.staticServer = new StaticServer();

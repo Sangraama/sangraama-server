@@ -1,108 +1,97 @@
 package org.sangraama.gameLogic;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import javax.swing.Timer;
 
 import org.sangraama.asserts.Player;
 import org.sangraama.asserts.SangraamaMap;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 
 public enum UpdateEngine implements Runnable {
-    INSTANCE;
-    // Debug
-    private String TAG = "Update Engine :";
+	INSTANCE;
+	// Debug
+	private String TAG = "Update Engine :";
 
-    private SangraamaMap sangraamaMap = null;
-    private ArrayList<Player> playerList = null; // don't modify;read only
-    private Map<Long, PlayerDelta> playerDelta = null;
-    private float[][] locations = null;// store x,y and ID
-    private boolean execute = true;
-    private boolean isUpdate = false;
+	private List<Player> playerList; // don't modify;read only
+	private List<Player> waitingPlayerList;
+	private Map<Long, PlayerDelta> playerDelta;
 
-    UpdateEngine() {
-        System.out.println(TAG + "Init GameEngine...");
-        this.playerList = new ArrayList<Player>();
-        // this.locations = new float[100][3];
-        this.sangraamaMap = SangraamaMap.INSTANCE;
-    }
+	UpdateEngine() {
+		System.out.println(TAG + "Init GameEngine...");
+		this.playerList = new ArrayList<Player>();
+		this.waitingPlayerList = new ArrayList<>();
+		// this.locations = new float[100][3];
+	}
 
-    public boolean isUpdateVal() {
-        return this.isUpdate;
-    }
+	public void setWaitingPlayerList(ArrayList<Player> playerList) {
+		/*
+		 * if previous updates unable to send to players, ignore current updates
+		 * until previous update sent.
+		 */
 
-    private boolean setIsUpdate(boolean isUpdate) {
-        return this.isUpdate = isUpdate;
-    }
+		this.waitingPlayerList = playerList;
 
-    public boolean setPlayerList(ArrayList<Player> playerList) {
-        /*
-         * if previous updates unable to send to players, ignore current updates until previous
-         * update sent.
-         */
-        if (!this.isUpdateVal()) {
-            this.playerList = playerList;
-            return this.setIsUpdate(true);
-        } else {
-            return false;
-        }
-    }
+	}
 
-    @Override
-    public void run() {
-        while (this.execute) {
-            if (this.isUpdateVal()) {
-                this.pushUpdate();
-            }
-        }
-    }
+	@Override
+	public void run() {
+		Timer timer = new Timer(100, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				pushUpdate();
+			}
+		});
 
-    public void pushUpdate() {
-        playerDelta = new HashMap<Long, PlayerDelta>();
-        // System.out.println(TAG + "delta list length :" + playerDelta.size());
-        for (Player player : playerList) {
-            // System.out.println(TAG + player.getUserID() +
-            // " Sending player updates");
-            playerDelta.put(player.getUserID(), player.getPlayerDelta());
-        }
-        // System.out.println(TAG + "delta list length :" + playerDelta.size());
+		timer.start();
+	}
 
-        try {
-            for (Player player : playerList) {
-                player.sendUpdate(getAreaOfInterest(player));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        this.isUpdate = false;
-    }
+	public void pushUpdate() {
+		playerDelta = new HashMap<Long, PlayerDelta>();
+		this.playerList = this.waitingPlayerList;
+		for (Player player : playerList) {
 
-    /**
-     * This method can replace with region query in 4.14 box2D manual
-     * 
-     * @param player
-     * @return ArrayList<PlayerDelta>
-     */
-    private ArrayList<PlayerDelta> getAreaOfInterest(Player p) {
-        ArrayList<PlayerDelta> delta = new ArrayList<PlayerDelta>();
-        // Add players own details
-        // delta.add(this.playerDelta.get(p.getUserID()));
+			playerDelta.put(player.getUserID(), player.getPlayerDelta());
+		}
 
-        // going through all players and check their locations
-        // inefficient
-        for (Player player : playerList) {
-            if (p.getX() - p.getAOIWidth() <= player.getX()
-                    && player.getX() <= p.getX() + p.getAOIWidth()
-                    && p.getY() - p.getAOIHeight() <= player.getY()
-                    && player.getY() <= p.getY() + p.getAOIHeight()) {
-                delta.add(this.playerDelta.get(player.getUserID()));
-            }
-        }
+		try {
+			for (Player player : playerList) {
+				player.sendUpdate(getAreaOfInterest(player));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-        return delta;
-    }
+	}
 
-    public boolean stopUpdateEngine() {
-        return this.execute = false;
-    }
+	/**
+	 * This method can replace with region query in 4.14 box2D manual
+	 * 
+	 * @param player
+	 * @return ArrayList<PlayerDelta>
+	 */
+	private ArrayList<PlayerDelta> getAreaOfInterest(Player p) {
+		ArrayList<PlayerDelta> delta = new ArrayList<PlayerDelta>();
+		// Add players own details
+		// delta.add(this.playerDelta.get(p.getUserID()));
+
+		// going through all players and check their locations
+		// inefficient
+		for (Player player : playerList) {
+			if (p.getX() - p.getAOIWidth() <= player.getX()
+					&& player.getX() <= p.getX() + p.getAOIWidth()
+					&& p.getY() - p.getAOIHeight() <= player.getY()
+					&& player.getY() <= p.getY() + p.getAOIHeight()) {
+				delta.add(this.playerDelta.get(player.getUserID()));
+			}
+		}
+
+		return delta;
+	}
+
 }

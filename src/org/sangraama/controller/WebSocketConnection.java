@@ -24,8 +24,8 @@ public class WebSocketConnection extends MessageInbound {
     private static final String TAG = "WebSocketConnection : ";
     public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
 
-    private Player player = null;
-    private Gson gson = null;
+    private Player player;
+    private Gson gson;
 
     public void setPlayer(Player player) {
         this.player = player;
@@ -78,7 +78,7 @@ public class WebSocketConnection extends MessageInbound {
             }
 
         } else {
-            if ("1".equalsIgnoreCase(p.getType())) { // create new player & set the connection
+            if (p.getType().equals("1")) { // create new player & set the connection
                 this.player = new Player(p.getUserID(), p.getX(), p.getY(), this);
                 // PassedPlayer.INSTANCE.redirectPassPlayerConnection(p.getUserID(), this);
                 System.out.println(TAG + " Add new Player " + p.getUserID());

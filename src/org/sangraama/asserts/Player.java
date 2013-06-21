@@ -25,22 +25,22 @@ public class Player {
     public static final Logger log = LoggerFactory.getLogger(Player.class);
     private static final String TAG = "player : ";
 
-    private long userID = 0;
+    private long userID;
 
-    private BodyDef bodyDef = null;
-    private FixtureDef fixtureDef = null;
-    private Body body = null;
-    private GameEngine gameEngine = null;
-    private SangraamaMap sangraamaMap = null;
+    private BodyDef bodyDef;
+    private FixtureDef fixtureDef;
+    private Body body;
+    private GameEngine gameEngine;
+    private SangraamaMap sangraamaMap;
     // WebSocket Connection
-    private WebSocketConnection con = null;
-    private boolean isUpdate = false;
+    private WebSocketConnection con;
+    private boolean isUpdate;
 
     // Player Dynamic Parameters
     private float x, y;
-    public float v_x = 0, v_y = 0;
+    public float v_x, v_y;
     private Vec2 v = new Vec2(0f, 0f);
-    private PlayerDelta delta = null;
+    private PlayerDelta delta;
 
     // Area of Interest
     private float halfWidth = 10f;
