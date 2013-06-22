@@ -1,7 +1,7 @@
 package org.sangraama.controller.clientprotocol;
 
 public class PlayerDelta {
-    private int type;
+    private int type=1;
     private float dx, dy;
     private long userID;
 

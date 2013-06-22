@@ -62,9 +62,10 @@ public enum GameEngine implements Runnable {
 			this.playerList.remove(rmPlayer);
 			System.out.println(TAG + "Removed player :" + rmPlayer.getUserID());
 
-			this.removePlayerQueue.clear();
-
+			
 		}
+		this.removePlayerQueue.clear();
+
 		// Add new player to the world
 
 		for (Player newPlayer : newPlayerQueue) {
