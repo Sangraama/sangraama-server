@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
+import org.sangraama.asserts.Bullet;
 import org.sangraama.asserts.SangraamaMap;
 import org.sangraama.asserts.Player;
 import org.sangraama.common.Constants;
@@ -24,9 +26,12 @@ public enum GameEngine implements Runnable {
     private boolean execute = true;
     private boolean isNewPlayerAvai = false;
     private boolean isRemovePlayerAvai = false;
+    private boolean newBulletAvai = false;
     private ArrayList<Player> playerList = null;
     private ArrayList<Player> newPlayerQueue = null;
     private ArrayList<Player> removePlayerQueue = null;
+    private ArrayList<Bullet> newBulletList = null;
+    private ArrayList<Bullet> bulletList = null;
 
     // this method only access via class
     GameEngine() {
@@ -35,6 +40,7 @@ public enum GameEngine implements Runnable {
         this.playerList = new ArrayList<Player>();
         this.newPlayerQueue = new ArrayList<Player>();
         this.removePlayerQueue = new ArrayList<Player>();
+        this.bulletList = new ArrayList<Bullet>();
         this.updateEngine = UpdateEngine.INSTANCE;
         this.sangraamaMap = SangraamaMap.INSTANCE;
     }
@@ -84,7 +90,10 @@ public enum GameEngine implements Runnable {
         if (isNewPlayerAvai) {
             System.out.println(TAG + "Adding new players");
             for (Player newPlayer : newPlayerQueue) {
-                newPlayer.setBody(world.createBody(newPlayer.getBodyDef()));
+                Body newPlayerBody = world.createBody(newPlayer.getBodyDef());
+                newPlayerBody.createFixture(newPlayer.getFixtureDef());
+                newPlayer.setBody(newPlayerBody);
+                // this.world.createBody(newPlayer.getBodyDef()).createFixture(newPlayer.getFixtureDef());
                 this.playerList.add(newPlayer);
                 System.out.println(TAG + "Added new player :" + newPlayer.getUserID());
             }
@@ -95,6 +104,17 @@ public enum GameEngine implements Runnable {
             // System.out.println(TAG + player.getUserID()
             // +" Adding players Updates");
             player.applyUpdate();
+        }
+        if (newBulletAvai) {
+            System.out.println(TAG + "Adding new bullets");
+            for (Bullet bullet : newBulletList) {
+                Body newBulletBody = world.createBody(bullet.createBodyDef());
+                newBulletBody.createFixture(bullet.createFixDef());
+                this.bulletList.add(bullet);
+                bullet.setBulletBody(newBulletBody);
+            }
+            this.newBulletList.clear();
+            this.newBulletAvai = false;
         }
     }
 
@@ -114,6 +134,16 @@ public enum GameEngine implements Runnable {
     public void addToRemovePlayerQueue(Player player) {
         this.removePlayerQueue.add(player);
         this.isRemovePlayerAvai = true;
+    }
+
+    public void addBulletToNewBulletList(Bullet bullet) {
+        if (newBulletList == null) {
+            newBulletList = new ArrayList<Bullet>();
+            newBulletList.add(bullet);
+        } else {
+            newBulletList.add(bullet);
+        }
+        this.newBulletAvai = true;
     }
 
 }
