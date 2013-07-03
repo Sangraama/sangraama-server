@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.jbox2d.collision.shapes.CircleShape;
+import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -52,7 +53,7 @@ public class Player {
 
     public Player(long userID, WebSocketConnection con) {
         Random r = new Random();
-        this.createPlayer(userID, (float) r.nextInt(2) + 997f, (float) r.nextInt(999), con);
+        this.createPlayer(userID, (float) r.nextInt(1000), (float) r.nextInt(999), con);
     }
 
     public Player(long userID, float x, float y, WebSocketConnection con) {
@@ -147,6 +148,11 @@ public class Player {
         }
     }
 
+    public void shoot(){
+        Bullet bullet=new Bullet(this.userID,this.body.getPosition().x,this.body.getPosition().y);
+        this.gameEngine.addBulletToNewBulletList(bullet);
+    }
+    
     public BodyDef createBodyDef() {
         BodyDef bd = new BodyDef();
         System.out.println(TAG + "create body def player x:" + this.x + " :" + this.y);
@@ -160,12 +166,15 @@ public class Player {
     }
 
     private FixtureDef createFixtureDef() {
-        CircleShape circle = new CircleShape();
-        circle.m_radius = 1f;
+//        CircleShape circle = new CircleShape();
+//        circle.m_radius = 1f;
+        PolygonShape ps = new PolygonShape();
+        ps.setAsBox(5f,5f);
 
         FixtureDef fd = new FixtureDef();
         fd.density = 0.5f;
-        fd.shape = circle;
+//        fd.shape = circle;
+        fd.shape = ps;
         fd.friction = 0.2f;
         fd.restitution = 0.5f;
         return fd;

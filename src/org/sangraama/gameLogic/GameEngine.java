@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 import org.sangraama.asserts.Player;
 import org.sangraama.common.Constants;
 
 public enum GameEngine implements Runnable {
+
 	INSTANCE;
 	// Debug
 	private String TAG = "Game Engine :";
@@ -70,7 +72,9 @@ public enum GameEngine implements Runnable {
 
 		for (Player newPlayer : newPlayerQueue) {
 			System.out.println(TAG + "Adding new players");
-			newPlayer.setBody(world.createBody(newPlayer.getBodyDef()));
+			 Body newPlayerBody = world.createBody(newPlayer.getBodyDef());
+             newPlayerBody.createFixture(newPlayer.getFixtureDef());
+             newPlayer.setBody(newPlayerBody);
 			this.playerList.add(newPlayer);
 			System.out.println(TAG + "Added new player :"
 					+ newPlayer.getUserID());
@@ -101,5 +105,6 @@ public enum GameEngine implements Runnable {
 		this.removePlayerQueue.add(player);
 
 	}
+   
 
 }
