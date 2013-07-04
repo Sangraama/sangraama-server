@@ -2,7 +2,7 @@ package org.sangraama.coordination;
 
 public class ServerLocation {
     String URL = "";
-    int port = 0;
+    int port;
     String dir = "";
 
     public ServerLocation(String url, int port, String dir) {

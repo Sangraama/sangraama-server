@@ -14,10 +14,10 @@ import org.sangraama.thrift.client.ThriftClient;
 public enum PlayerPassHandler {
     INSTANCE;
     private static final String TAG = "PlayerPassHandler :";
-    private ArrayList<Player> passPlayerList = null;
-    private boolean isPass = false;
-    private ServerHandler sHandler = null;
-    private GameEngine gameEngine = null;
+    private ArrayList<Player> passPlayerList;
+    private boolean isPass;
+    private ServerHandler sHandler;
+    private GameEngine gameEngine;
 
     private PlayerPassHandler() {
         passPlayerList = new ArrayList<Player>();
