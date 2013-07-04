@@ -15,6 +15,7 @@ import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
+import org.sangraama.coordination.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +79,7 @@ public class Player {
 
 		System.out.println(TAG + " init player : " + userID + " x-" + x
 				+ " : y-" + y);
+		TileCoordinator.INSTANCE.printPort();
 	}
 
 	/**
