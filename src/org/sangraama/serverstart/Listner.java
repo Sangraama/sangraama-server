@@ -1,14 +1,8 @@
 package org.sangraama.serverstart;
 
-import java.io.IOException;
 import java.util.Properties;
-
 import javax.servlet.ServletContextEvent;
-
-import org.sangraama.asserts.SangraamaMap;
-import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.gameLogic.GameEngine;
-import org.sangraama.gameLogic.PassedPlayer;
 import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.thrift.server.ThriftServer;
 
@@ -21,8 +15,7 @@ public class Listner implements javax.servlet.ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
-        thriftServer.stopServer();
-        GameEngine.INSTANCE.stopGameWorld();
+       GameEngine.INSTANCE.stopGameWorld();
     }
 
     @Override
