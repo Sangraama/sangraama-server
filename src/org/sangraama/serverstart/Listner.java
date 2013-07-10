@@ -15,7 +15,7 @@ public class Listner implements javax.servlet.ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
-       GameEngine.INSTANCE.stopGameWorld();
+      // GameEngine.INSTANCE.stopGameWorld();
     }
 
     @Override

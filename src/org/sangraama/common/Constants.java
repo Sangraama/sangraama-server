@@ -21,5 +21,7 @@ public final class Constants {
     //Game Client Canvas width & height
     public static final int canvasWidth=600;
     public static final int canvasHeight=600;
+    public static float TO_RADIANS = (float) (Math.PI / 180);
+    public static float FROM_RADIANS = (float) (180 / Math.PI);
     
 }
