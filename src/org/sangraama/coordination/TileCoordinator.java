@@ -21,9 +21,9 @@ public enum TileCoordinator {
 
     TileCoordinator() {
         subtileMap = Hazelcast.getMap("subtile");
-        subTileHeight = 500f;
-        subTileWidth = 500f;
         sangraamaMap = SangraamaMap.INSTANCE;
+        subTileHeight = sangraamaMap.getSubTileWidth();
+        subTileWidth = sangraamaMap.getSubTileHeight();
         Properties prop = new Properties();
         try {
             prop.load(getClass().getResourceAsStream("/sangraamaserver.properties"));

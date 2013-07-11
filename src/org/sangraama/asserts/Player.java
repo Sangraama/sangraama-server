@@ -20,6 +20,8 @@ import org.sangraama.gameLogic.GameEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hazelcast.core.Hazelcast;
+
 public class Player {
 
     // Debug
@@ -51,6 +53,9 @@ public class Player {
     // bullets
     private List<Bullet> newBulletList;
     private List<Bullet> bulletList;
+    // Current Tile
+    float currentSubTileOriginX;
+    float currentSubTileOriginY;
 
     public boolean isUpdate() {
         return this.isUpdate;
@@ -105,7 +110,7 @@ public class Player {
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
         this.angle = this.body.getAngle();
-
+        isInsideServerSubTile(x, y);
         // Check whether player is inside the tile or not
         /*
          * Gave this responsibility to client if (!this.isInsideMap(this.x, this.y)) {
@@ -139,6 +144,20 @@ public class Player {
                     + sangraamaMap.getMapHeight());
             return false;
         }
+    }
+
+    private boolean isInsideServerSubTile(float x, float y) {
+        boolean insideServer = true;
+        currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+        currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+        if (!sangraamaMap.getHost().equals(
+                (String) Hazelcast.getMap("subtile").get(
+                        Float.toString(currentSubTileOriginX) + ":"
+                                + Float.toString(currentSubTileOriginY)))) {
+            insideServer = false;
+            System.out.println(TAG + "player is not inside a subtile of " + sangraamaMap.getHost());
+        }
+        return insideServer;
     }
 
     public void setInterestingIn(float x, float y) {
