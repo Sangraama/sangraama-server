@@ -26,7 +26,7 @@ public class Listner implements javax.servlet.ServletContextListener {
 
         this.prop = new Properties();
         try {
-            this.prop.load(getClass().getResourceAsStream("/sangraamaserver.properties"));
+            this.prop.load(getClass().getResourceAsStream("/conf/sangraamaserver.properties"));
         } catch (Exception e) {
             e.printStackTrace();
         }

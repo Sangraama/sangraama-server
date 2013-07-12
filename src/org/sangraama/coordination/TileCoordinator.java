@@ -15,6 +15,7 @@ public enum TileCoordinator {
     INSTANCE;
     private String TAG = "TileCoordinator : ";
     Map<String, String> subtileMap;
+    private HazelcastInstance hz;
     private float subTileHeight;
     private float subTileWidth;
     private SangraamaMap sangraamaMap;
@@ -22,8 +23,8 @@ public enum TileCoordinator {
 
     TileCoordinator() {
         Config cfg = new Config();
-        HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
-        subtileMap = instance.getMap("subtile");
+        hz = Hazelcast.newHazelcastInstance(cfg);
+        subtileMap = hz.getMap("subtile");
         subTileHeight = 500f;
         subTileWidth = 500f;
         sangraamaMap = SangraamaMap.INSTANCE;
@@ -31,7 +32,7 @@ public enum TileCoordinator {
         subTileWidth = sangraamaMap.getSubTileHeight();
         Properties prop = new Properties();
         try {
-            prop.load(getClass().getResourceAsStream("/sangraamaserver.properties"));
+            prop.load(getClass().getResourceAsStream("/conf/sangraamaserver.properties"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,8 +57,7 @@ public enum TileCoordinator {
         String host = "";
         float currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         float currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        host = (String) Hazelcast.getMap("subtile")
-                .get(Float.toString(currentSubTileOriginX) + ":"
+        host = (String) hz.getMap("subtile").get(Float.toString(currentSubTileOriginX) + ":"
                         + Float.toString(currentSubTileOriginY));
         return host;
     }
