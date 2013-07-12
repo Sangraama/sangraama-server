@@ -18,7 +18,7 @@ public class Listner implements javax.servlet.ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
-      // GameEngine.INSTANCE.stopGameWorld();
+        // GameEngine.INSTANCE.stopGameWorld();
     }
 
     @Override
@@ -33,7 +33,10 @@ public class Listner implements javax.servlet.ServletContextListener {
         SangraamaMap.INSTANCE.setMap(Float.parseFloat(prop.getProperty("maporiginx")),
                 Float.parseFloat(prop.getProperty("maporiginy")),
                 Float.parseFloat(prop.getProperty("mapwidth")),
-                Float.parseFloat(prop.getProperty("mapheight")));
+                Float.parseFloat(prop.getProperty("mapheight")), prop.getProperty("server"));
+        SangraamaMap.INSTANCE.setSubTileProperties(
+                Float.parseFloat(prop.getProperty("subtilewidth")),
+                Float.parseFloat(prop.getProperty("subtileheight")));
         this.updateEngine = new Thread(UpdateEngine.INSTANCE);
         this.updateEngine.start();
         this.gameEngine = new Thread(GameEngine.INSTANCE);

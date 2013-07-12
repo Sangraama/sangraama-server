@@ -7,6 +7,7 @@ import org.sangraama.asserts.SangraamaMap;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.coordination.ServerHandler;
 import org.sangraama.coordination.ServerLocation;
+import org.sangraama.coordination.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.thrift.assets.TPlayer;
 import org.sangraama.thrift.client.ThriftClient;
@@ -71,16 +72,23 @@ public enum PlayerPassHandler {
     }
 
     private void passNewConnectionInfo(Player player) {
-        ServerLocation serverLoc = this.sHandler.getServerLocation(player.getX(), player.getY());
+        /*
+         * ServerLocation serverLoc = this.sHandler.getServerLocation(player.getX(), player.getY());
+         * 
+         * if (serverLoc != null) { ClientTransferReq transferReq = new
+         * ClientTransferReq(player.getUserID(), serverLoc.getServerURL(),
+         * serverLoc.getServerPort(), serverLoc.getDirectory());
+         * 
+         * player.sendNewConnection(transferReq); System.out.println(TAG +
+         * " Sending new connection information. server URL:" + serverLoc.getServerURL() +
+         * " serverPort:" + serverLoc.getServerPort()); }
+         */
 
-        if (serverLoc != null) {
-            ClientTransferReq transferReq = new ClientTransferReq(player.getUserID(),
-                    serverLoc.getServerURL(), serverLoc.getServerPort(), serverLoc.getDirectory());
-
-            player.sendNewConnection(transferReq);
-            System.out.println(TAG + " Sending new connection information. server URL:"
-                    + serverLoc.getServerURL() + " serverPort:" + serverLoc.getServerPort());
-        }
+        String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(player.getX(),
+                player.getY());
+        ClientTransferReq transferReq = new ClientTransferReq(player.getUserID(),player.getX(), player.getY(),
+                newHost);
+        player.sendNewConnection(transferReq);
     }
 
 }
