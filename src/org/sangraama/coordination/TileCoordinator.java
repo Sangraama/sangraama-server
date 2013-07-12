@@ -47,6 +47,16 @@ public enum TileCoordinator {
         }
     }
 
+    public String getSubTileHost(float x, float y) {
+        String host = "";
+        float currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+        float currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+        host = (String) Hazelcast.getMap("subtile")
+                .get(Float.toString(currentSubTileOriginX) + ":"
+                        + Float.toString(currentSubTileOriginY));
+        return host;
+    }
+
     public void printEntriesInSubtileMap() {
         Collection<String> values = subtileMap.values();
         for (String value : values) {

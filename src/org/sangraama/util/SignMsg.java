@@ -1,6 +1,7 @@
 package org.sangraama.util;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.Signature;
@@ -15,7 +16,8 @@ public enum SignMsg {
     public byte[] signMessage(String messsage) {
 
         try {
-            FileInputStream keyfis = new FileInputStream("src/PrivateKey.txt");
+            InputStream keyfis = this.getClass().getResourceAsStream("/PrivateKey.txt");
+//            FileInputStream keyfis = new FileInputStream("/sangraama-server/WebContent/WEB-INF/sign/PrivateKey.txt");
             byte[] encKey = new byte[keyfis.available()];
             keyfis.read(encKey);
             keyfis.close();

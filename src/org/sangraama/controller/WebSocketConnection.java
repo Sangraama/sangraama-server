@@ -13,6 +13,7 @@ import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.gameLogic.PassedPlayer;
+import org.sangraama.util.SignMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,6 +118,7 @@ public class WebSocketConnection extends MessageInbound {
         this.gson = new Gson();
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
+            System.out.println(TAG + gson.toJson(transferReq));
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send new connnection information");
             log.error(TAG, e);
