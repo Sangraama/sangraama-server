@@ -1,35 +1,37 @@
 package org.sangraama.asserts;
 
 import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
+import org.sangraama.controller.clientprotocol.BulletDelta;
 
 public class Bullet {
 
-    private String TAG="Bullet : ";
-    private long shooterID;
-    private BodyDef bulletBodyDef = null;
-    private FixtureDef bulletFixDef = null;
-    private float shootingPos_x, shootingPos_y;
-    private Vec2 bulletVelocity;
-    private Body bulletBody = null;
+    private String TAG = "Bullet : ";
+    private long playerId;
+    private BodyDef bodyDef;
+    private FixtureDef fixtureDef;
+    private float x, y;
+    private Vec2 velocity;
+    private Body body;
+    private BulletDelta bulletDelta;
 
-    public Bullet(long shooterID, float x, float y) {
-        this.shooterID = shooterID;
-        this.shootingPos_x = x;
-        this.shootingPos_y = y;
-        this.bulletBodyDef = this.createBodyDef();
-        this.bulletFixDef = this.createFixDef();
+    public Bullet(long playerId, float x, float y) {
+        this.playerId = playerId;
+        this.x = x;
+        this.y = y;
+        this.bodyDef = this.createBodyDef();
+        this.fixtureDef = this.createFixDef();
+        this.velocity = new Vec2(10f, 10f);
     }
 
     public BodyDef createBodyDef() {
         BodyDef bd = new BodyDef();
-        bd.position.set(this.shootingPos_x, this.shootingPos_y);
-        bd.type = BodyType.DYNAMIC;
+        bd.position.set(this.x, this.y);
+        bd.type = BodyType.KINEMATIC;
         return bd;
     }
 
@@ -43,15 +45,31 @@ public class Bullet {
         return fd;
     }
 
-    public void setBulletBody(Body bulletBody) {
-        if(bulletBody==null){
-            this.bulletBody = bulletBody;
-        }
-        this.bulletBody.setLinearVelocity(new Vec2(2f,0f));
+    public void setBody(Body bulletBody) {
+        this.body = bulletBody;
+       
     }
-    
-    public Body getBulletBody(){
-            return this.bulletBody;
+
+    public Body getBody() {
+        return this.body;
+    }
+
+    public BodyDef getBodyDef() {
+        return bodyDef;
+    }
+
+    public FixtureDef getFixtureDef() {
+        return fixtureDef;
+    }
+
+    public Vec2 getVelocity() {
+        return velocity;
+    }
+
+    public BulletDelta getBulletDelta() {
+        bulletDelta = new BulletDelta(this.body.getPosition().x, this.body.getPosition().y,
+                this.body.getAngle(), this.playerId);
+        return bulletDelta;
     }
 
 }
