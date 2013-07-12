@@ -1,14 +1,15 @@
 package org.sangraama.coordination;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import org.sangraama.asserts.SangraamaMap;
 
+import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 
 public enum TileCoordinator {
     INSTANCE;
@@ -20,7 +21,9 @@ public enum TileCoordinator {
     private String serverURL;
 
     TileCoordinator() {
-        subtileMap = Hazelcast.getMap("subtile");
+        Config cfg = new Config();
+        HazelcastInstance instance = Hazelcast.newHazelcastInstance(cfg);
+        subtileMap = instance.getMap("subtile");
         subTileHeight = 500f;
         subTileWidth = 500f;
         sangraamaMap = SangraamaMap.INSTANCE;
