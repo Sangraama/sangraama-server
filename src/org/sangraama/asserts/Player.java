@@ -15,7 +15,7 @@ import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
-import org.sangraama.coordination.TileCoordinator;
+import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

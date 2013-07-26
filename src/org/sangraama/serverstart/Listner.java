@@ -4,7 +4,7 @@ import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 
 import org.sangraama.asserts.SangraamaMap;
-import org.sangraama.coordination.TileCoordinator;
+import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.thrift.server.ThriftServer;
