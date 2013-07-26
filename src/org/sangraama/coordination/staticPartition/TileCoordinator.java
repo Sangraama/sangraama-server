@@ -17,7 +17,7 @@ import org.apache.coyote.ProtocolHandler;
 import org.apache.coyote.http11.Http11AprProtocol;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.coyote.http11.Http11Protocol;
-import org.sangraama.asserts.SangraamaMap;
+import org.sangraama.assets.SangraamaMap;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
@@ -26,7 +26,7 @@ import com.hazelcast.core.HazelcastInstance;
 public enum TileCoordinator {
     INSTANCE;
     private String TAG = "TileCoordinator : ";
-    
+
     private HazelcastInstance hz;
     Map<String, String> subtileMap;
     private float subTileHeight;
@@ -47,8 +47,9 @@ public enum TileCoordinator {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        serverURL = prop.getProperty("server");
-        
+        serverURL = prop.getProperty("host") +":"+ prop.getProperty("port") +"/"+ prop.getProperty("dir")+"/sangraama/player";
+        System.out.println(TAG + serverURL);
+
         // Get the hosting port using java
         MBeanServer mBeanServer = MBeanServerFactory.findMBeanServer(null).get(0);
         ObjectName name;
@@ -64,8 +65,8 @@ public enum TileCoordinator {
             for (Connector connector : service.findConnectors()) {
                 ProtocolHandler protocolHandler = connector.getProtocolHandler();
                 if (protocolHandler instanceof Http11Protocol
-                    || protocolHandler instanceof Http11AprProtocol
-                    || protocolHandler instanceof Http11NioProtocol) {
+                        || protocolHandler instanceof Http11AprProtocol
+                        || protocolHandler instanceof Http11NioProtocol) {
                     System.out.println("HTTP Port: " + connector.getPort());
                 }
             }
@@ -90,7 +91,8 @@ public enum TileCoordinator {
         String host = "";
         float currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         float currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        host = (String) hz.getMap("subtile").get(Float.toString(currentSubTileOriginX) + ":"
+        host = (String) hz.getMap("subtile")
+                .get(Float.toString(currentSubTileOriginX) + ":"
                         + Float.toString(currentSubTileOriginY));
         return host;
     }

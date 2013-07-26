@@ -9,8 +9,8 @@ import java.util.Map;
 
 import javax.swing.Timer;
 
-import org.sangraama.asserts.Player;
-import org.sangraama.asserts.SangraamaMap;
+import org.sangraama.assets.Player;
+import org.sangraama.assets.SangraamaMap;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 
 public enum UpdateEngine implements Runnable {

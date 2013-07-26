@@ -3,7 +3,7 @@ package org.sangraama.serverstart;
 import java.util.Properties;
 import javax.servlet.ServletContextEvent;
 
-import org.sangraama.asserts.SangraamaMap;
+import org.sangraama.assets.SangraamaMap;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.UpdateEngine;

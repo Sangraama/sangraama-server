@@ -1,6 +1,6 @@
 package org.sangraama.coordination;
 
-import org.sangraama.asserts.SangraamaMap;
+import org.sangraama.assets.SangraamaMap;
 import org.sangraama.coordination.staticPartition.StaticServer;
 
 public enum ServerHandler {

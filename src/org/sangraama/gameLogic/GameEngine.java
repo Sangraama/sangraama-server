@@ -10,8 +10,8 @@ import javax.swing.Timer;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
-import org.sangraama.asserts.Bullet;
-import org.sangraama.asserts.Player;
+import org.sangraama.assets.Bullet;
+import org.sangraama.assets.Player;
 import org.sangraama.common.Constants;
 
 public enum GameEngine implements Runnable {

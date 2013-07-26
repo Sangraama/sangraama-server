@@ -2,8 +2,8 @@ package org.sangraama.controller;
 
 import java.util.ArrayList;
 
-import org.sangraama.asserts.Player;
-import org.sangraama.asserts.SangraamaMap;
+import org.sangraama.assets.Player;
+import org.sangraama.assets.SangraamaMap;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.coordination.ServerHandler;
 import org.sangraama.coordination.ServerLocation;
