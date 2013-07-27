@@ -76,12 +76,12 @@ public class Player {
         this.userID = userID;
         this.x = x;
         this.y = y;
+        this.sangraamaMap = SangraamaMap.INSTANCE;
         currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
         this.con = con;
         this.bodyDef = this.createBodyDef();
         this.fixtureDef = createFixtureDef();
-        this.sangraamaMap = SangraamaMap.INSTANCE;
         this.gameEngine = GameEngine.INSTANCE;
         this.gameEngine.addToPlayerQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
