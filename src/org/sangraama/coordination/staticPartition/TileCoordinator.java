@@ -87,13 +87,11 @@ public enum TileCoordinator {
         }
     }
 
-    public String getSubTileHost(float x, float y) {
+    public String getSubTileHost(float oriX, float oriY) {
         String host = "";
-        float currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
-        float currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
         host = (String) hz.getMap("subtile")
-                .get(Float.toString(currentSubTileOriginX) + ":"
-                        + Float.toString(currentSubTileOriginY));
+                .get(Float.toString(oriX) + ":"
+                        + Float.toString(oriY));
         return host;
     }
 
