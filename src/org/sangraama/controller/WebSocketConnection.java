@@ -72,9 +72,9 @@ public class WebSocketConnection extends MessageInbound {
                             + clientEvent.getV_y());
                     break;
                 case 2: // requesting for interesting area
-                    this.player.setInterestingIn(clientEvent.getX(), clientEvent.getY());
+                    this.player.reqInterestIn(clientEvent.getX(), clientEvent.getY());
                     System.out.println(TAG + "player interesting in x:" + clientEvent.getX()
-                            + " y:" + clientEvent.getY());
+                            + " & y:" + clientEvent.getY());
                     break;
 
                 default:
@@ -125,6 +125,10 @@ public class WebSocketConnection extends MessageInbound {
         }
     }
 
+    /**
+     * Close the WebSocket connection of the player
+     * @return null
+     */
     public void closeConnection() {
         try {
             getWsOutbound().flush();

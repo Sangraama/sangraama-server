@@ -86,7 +86,7 @@ public enum PlayerPassHandler {
 
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(player.getX(),
                 player.getY());
-        ClientTransferReq transferReq = new ClientTransferReq(player.getUserID(),player.getX(), player.getY(),
+        ClientTransferReq transferReq = new ClientTransferReq(2,player.getUserID(),player.getX(), player.getY(),
                 newHost);
         player.sendNewConnection(transferReq);
     }

@@ -140,6 +140,12 @@ public class Player {
         this.body.setLinearVelocity(this.getV());
     }
 
+    /**
+     * Check whether player is inside current tile
+     * @param x Player's current x coordination
+     * @param y Player's current y coordination
+     * @return if inside tile return true, else false
+     */
     private boolean isInsideMap(float x, float y) {
         // System.out.println(TAG + "is inside "+x+":"+y);
         if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()) {
@@ -151,6 +157,12 @@ public class Player {
         }
     }
 
+    /**
+     * Check whether player is inside current sub-tile
+     * @param x Player's current x coordination
+     * @param y Player's current y coordination
+     * @return if inside sub-tile return true, else false
+     */
     private boolean isInsideServerSubTile(float x, float y) {
         boolean insideServerSubTile = true;
         float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
@@ -168,12 +180,21 @@ public class Player {
         return insideServerSubTile;
     }
 
-    public void setInterestingIn(float x, float y) {
+    /**
+     * Request for client's Area of Interest around player
+     * @param x x coordination of interest location
+     * @param y y coordination of interest location
+     */
+    public void reqInterestIn(float x, float y) {
         if (!isInsideMap(x, y)) {
             PlayerPassHandler.INSTANCE.setPassPlayer(this);
         }
     }
 
+    /**
+     * Send New connection Address and other details to Client
+     * @param transferReq Object of Client transferring protocol
+     */
     public void sendNewConnection(ClientTransferReq transferReq) {
         if (this.con != null) {
             ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
@@ -288,7 +309,8 @@ public class Player {
     }
 
     public void setV(float x, float y) {
-        this.v.set(x * 20, y * 20);
+        // Issue: if client send x value greater than 1
+        this.v.set(x * 2, y * 2);
         System.out.println(TAG + " set V :" + this.v.x + ":" + this.v.y);
     }
 
