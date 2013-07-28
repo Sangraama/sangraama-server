@@ -59,6 +59,7 @@ public enum GameEngine implements Runnable {
     }
 
     public void updateGameWorld() {
+        // Remove existing players from the game world
         for (Player rmPlayer : removePlayerQueue) {
             System.out.println(TAG + "Removing players");
             this.playerList.remove(rmPlayer);
@@ -75,6 +76,8 @@ public enum GameEngine implements Runnable {
             newPlayer.setBody(newPlayerBody);
             this.playerList.add(newPlayer);
             System.out.println(TAG + "Added new player :" + newPlayer.getUserID());
+            // Send size of the tile
+            newPlayer.sendTileSizeInfo();
         }
         this.newPlayerQueue.clear();
 
@@ -89,7 +92,7 @@ public enum GameEngine implements Runnable {
      * update game world with new bullets
      * 
      * @param player
-     *            : player who belongs the bullets
+     *            player who belongs the bullets
      * 
      */
     private void peformBulletUpdates(Player player) {
@@ -106,7 +109,6 @@ public enum GameEngine implements Runnable {
 
         }
         player.getNewBulletList().clear();
-
     }
 
     public void pushUpdate() {

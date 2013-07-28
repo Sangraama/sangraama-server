@@ -10,17 +10,17 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
+import org.sangraama.common.Constants;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
-import org.sangraama.common.Constants;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
+import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.hazelcast.core.Hazelcast;
 
 public class Player {
 
@@ -142,8 +142,11 @@ public class Player {
 
     /**
      * Check whether player is inside current tile
-     * @param x Player's current x coordination
-     * @param y Player's current y coordination
+     * 
+     * @param x
+     *            Player's current x coordination
+     * @param y
+     *            Player's current y coordination
      * @return if inside tile return true, else false
      */
     private boolean isInsideMap(float x, float y) {
@@ -159,8 +162,11 @@ public class Player {
 
     /**
      * Check whether player is inside current sub-tile
-     * @param x Player's current x coordination
-     * @param y Player's current y coordination
+     * 
+     * @param x
+     *            Player's current x coordination
+     * @param y
+     *            Player's current y coordination
      * @return if inside sub-tile return true, else false
      */
     private boolean isInsideServerSubTile(float x, float y) {
@@ -182,8 +188,11 @@ public class Player {
 
     /**
      * Request for client's Area of Interest around player
-     * @param x x coordination of interest location
-     * @param y y coordination of interest location
+     * 
+     * @param x
+     *            x coordination of interest location
+     * @param y
+     *            y coordination of interest location
      */
     public void reqInterestIn(float x, float y) {
         if (!isInsideMap(x, y)) {
@@ -193,7 +202,9 @@ public class Player {
 
     /**
      * Send New connection Address and other details to Client
-     * @param transferReq Object of Client transferring protocol
+     * 
+     * @param transferReq
+     *            Object of Client transferring protocol
      */
     public void sendNewConnection(ClientTransferReq transferReq) {
         if (this.con != null) {
@@ -204,6 +215,25 @@ public class Player {
             this.gameEngine.addToRemovePlayerQueue(this);
             System.out.println(TAG + "Unable to send new connection,coz con :" + this.con);
         }
+    }
+
+    /**
+     * Send details about the size of the tile on current server
+     * 
+     * @param tiles
+     *            ArrayList of sub-tile details
+     */
+    public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
+        this.con.sendTileSizeInfo(new TileInfo(this.userID, tiles));
+    }
+
+    /**
+     * Send details about the size of the tile on current server. Sub-tiles sizes may access during
+     * TileInfo Object creation
+     * 
+     */
+    public void sendTileSizeInfo() {
+        this.con.sendTileSizeInfo(new TileInfo(this.userID));
     }
 
     public void shoot(float s) {

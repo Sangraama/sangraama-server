@@ -16,7 +16,7 @@ public enum PlayerPassHandler {
     INSTANCE;
     private static final String TAG = "PlayerPassHandler :";
     private ArrayList<Player> passPlayerList;
-    private boolean isPass;
+    private volatile boolean isPass;
     private ServerHandler sHandler;
     private GameEngine gameEngine;
 
@@ -64,7 +64,7 @@ public enum PlayerPassHandler {
         }
     }
 
-    public void setPassPlayer(Player player) {
+    public synchronized void setPassPlayer(Player player) {
         this.passPlayerList.add(player);
         isPass = true;
         System.out.println(TAG + "Added passed player");
