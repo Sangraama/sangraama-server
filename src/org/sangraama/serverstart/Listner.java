@@ -33,7 +33,12 @@ public class Listner implements javax.servlet.ServletContextListener {
         SangraamaMap.INSTANCE.setMap(Float.parseFloat(prop.getProperty("maporiginx")),
                 Float.parseFloat(prop.getProperty("maporiginy")),
                 Float.parseFloat(prop.getProperty("mapwidth")),
-                Float.parseFloat(prop.getProperty("mapheight")), prop.getProperty("server"));
+                Float.parseFloat(prop.getProperty("mapheight")), prop.getProperty("host") + ":"
+                        + prop.getProperty("port") + "/" + prop.getProperty("dir")
+                        + "/sangraama/player");
+        System.out.println(prop.getProperty("host") + ":"
+                + prop.getProperty("port") + "/" + prop.getProperty("dir")
+                + "/sangraama/player");
         SangraamaMap.INSTANCE.setSubTileProperties(
                 Float.parseFloat(prop.getProperty("subtilewidth")),
                 Float.parseFloat(prop.getProperty("subtileheight")));

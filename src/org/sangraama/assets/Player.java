@@ -77,8 +77,8 @@ public class Player {
         this.x = x;
         this.y = y;
         this.sangraamaMap = SangraamaMap.INSTANCE;
-        currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
-        currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+        this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+        this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
         this.con = con;
         this.bodyDef = this.createBodyDef();
         this.fixtureDef = createFixtureDef();
@@ -173,9 +173,9 @@ public class Player {
         boolean insideServerSubTile = true;
         float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-        if (currentSubTileOriginX != subTileOriX && currentSubTileOriginY != subTileOriY) {
-            currentSubTileOriginX = subTileOriX;
-            currentSubTileOriginY = subTileOriY;
+        if (this.currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
+            this.currentSubTileOriginX = subTileOriX;
+            this.currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 insideServerSubTile = false;
                 System.out.println(TAG + "player is not inside a subtile of "
