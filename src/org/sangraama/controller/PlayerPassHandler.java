@@ -40,7 +40,7 @@ public enum PlayerPassHandler {
                 // callThriftServer(player);
 
                 passNewConnectionInfo(player);
-                // this.gameEngine.addToRemovePlayerQueue(player);
+                this.gameEngine.addToRemovePlayerQueue(player);
             }
             isPass = false;
             this.passPlayerList.clear();

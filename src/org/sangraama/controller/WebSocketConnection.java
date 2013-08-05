@@ -13,6 +13,7 @@ import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.TileInfo;
+import org.sangraama.controller.clientprotocol.TransferInfo;
 import org.sangraama.gameLogic.PassedPlayer;
 import org.sangraama.util.SignMsg;
 import org.sangraama.util.VerifyMsg;
@@ -100,9 +101,16 @@ public class WebSocketConnection extends MessageInbound {
                 // this);
                 System.out.println(TAG + " Add new Player " + clientEvent.getUserID());
             }else if (clientEvent.getType().equals("2")) {
+                TransferInfo playerInfo;
                 String info = clientEvent.getInfo();
                 byte[] signedInfo = clientEvent.getSignedInfo();
                 boolean msgVerification = VerifyMsg.INSTANCE.verifyMessage(info, signedInfo);
+                if(msgVerification){
+                    playerInfo = gson.fromJson(info, TransferInfo.class);
+                    this.player = new Player(clientEvent.getUserID(), playerInfo.getPositionX(),
+                            playerInfo.getPositionY(), this);
+                    System.out.println(TAG + "Adding player from another server to GameEngine.");
+                }
             }
         }
     }
