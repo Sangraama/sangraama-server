@@ -12,7 +12,7 @@ public class ClientTransferReq {
     private int type;
     private long userID;
     private String info;
-    private String signedInfo;
+    private byte[] signedInfo;
 
     public ClientTransferReq(int type, long userID, float x, float y, String newHost) {
         this.type = type;
@@ -20,7 +20,7 @@ public class ClientTransferReq {
         ClientTransferInfo clientInfo = new ClientTransferInfo(x, y, newHost);
         Gson gson = new Gson();
         info = gson.toJson(clientInfo);
-        signedInfo = SignMsg.INSTANCE.signMessage(info).toString();
+        signedInfo = SignMsg.INSTANCE.signMessage(info);
     }
 
     private class ClientTransferInfo {
