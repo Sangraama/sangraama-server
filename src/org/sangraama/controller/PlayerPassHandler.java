@@ -16,12 +16,14 @@ public enum PlayerPassHandler {
     INSTANCE;
     private static final String TAG = "PlayerPassHandler :";
     private ArrayList<Player> passPlayerList;
+    private ArrayList<Player> connectionList;
     private volatile boolean isPass;
     private ServerHandler sHandler;
     private GameEngine gameEngine;
 
     private PlayerPassHandler() {
-        passPlayerList = new ArrayList<Player>();
+        this.passPlayerList = new ArrayList<Player>();
+        this.connectionList = new ArrayList<Player>();
         this.sHandler = ServerHandler.INSTANCE;
         this.gameEngine = GameEngine.INSTANCE;
     }
@@ -36,11 +38,17 @@ public enum PlayerPassHandler {
                  * by introducing a new concept of client is responsible for handling and connecting
                  * to other servers. Security issue of attacking by other players is avoid by
                  * assigning messages which are passed between players and decentralized servers.
+                 * 
+                 * @author : Gihan Karunarathne
                  */
                 // callThriftServer(player);
 
-                passNewConnectionInfo(player);
+                passNewServerInfo(player);
                 // this.gameEngine.addToRemovePlayerQueue(player);
+            }
+            // Loop to send new deatils about update servers
+            for (Player player : this.connectionList) {
+                this.passNewConnectionInfo(player);
             }
             isPass = false;
             this.passPlayerList.clear();
@@ -71,7 +79,20 @@ public enum PlayerPassHandler {
         this.run();
     }
 
-    private void passNewConnectionInfo(Player player) {
+    /**
+     * Send parameters of new connection to get server updates
+     * 
+     * @param player
+     *            Player who need details about the server
+     */
+    public synchronized void setPassConnection(Player player) {
+        this.connectionList.add(player);
+        this.isPass = true;
+        System.out.println(TAG + " added to Pass Connection details");
+        this.run();
+    }
+
+    private void passNewServerInfo(Player player) {
         /*
          * ServerLocation serverLoc = this.sHandler.getServerLocation(player.getX(), player.getY());
          * 
@@ -86,8 +107,20 @@ public enum PlayerPassHandler {
 
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(player.getX(),
                 player.getY());
-        ClientTransferReq transferReq = new ClientTransferReq(2,player.getUserID(),player.getX(), player.getY(),
-                newHost);
+        ClientTransferReq transferReq = new ClientTransferReq(2, player.getUserID(), player.getX(),
+                player.getY(), newHost);
+        player.sendNewConnection(transferReq);
+    }
+
+    /**
+     * Send the connection details about new server that player needs to get updates
+     * @param player Player that needs updates
+     */
+    private void passNewConnectionInfo(Player player) {
+        String updateHost = (String) TileCoordinator.INSTANCE.getSubTileHost(player.getX(),
+                player.getY());
+        ClientTransferReq transferReq = new ClientTransferReq(3, player.getUserID(), player.getX(),
+                player.getY(), updateHost);
         player.sendNewConnection(transferReq);
     }
 

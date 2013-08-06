@@ -41,17 +41,29 @@ public enum GameEngine implements Runnable {
         System.out.println(TAG + "GameEngine Start running.. fps:" + Constants.fps + " timesteps:"
                 + Constants.timeStep);
         init();
-        Timer timer = new Timer(100, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
+        // Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
+        // @Override
+        // public void actionPerformed(ActionEvent arg0) {
+        // updateGameWorld();
+        // world.step(Constants.timeStep, Constants.velocityIterations,
+        // Constants.positionIterations);
+        // pushUpdate();
+        // }
+        // });
+        // timer.start();
+
+        while (true) {
+            try {
+                Thread.sleep(Constants.simulatingDelay);
                 updateGameWorld();
                 world.step(Constants.timeStep, Constants.velocityIterations,
                         Constants.positionIterations);
                 pushUpdate();
-            }
-        });
 
-        timer.start();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void init() {

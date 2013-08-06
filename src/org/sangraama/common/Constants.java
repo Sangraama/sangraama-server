@@ -17,6 +17,7 @@ public final class Constants {
     public static final float timeStep = 1.0f / fps;
     public static final int velocityIterations = 6; // Default 6
     public static final int positionIterations = 2; // Defaults 2
+    public static final int simulatingDelay = 1000; // delay of simulating
     
     //Game Client Canvas width & height
     public static final int canvasWidth=600;

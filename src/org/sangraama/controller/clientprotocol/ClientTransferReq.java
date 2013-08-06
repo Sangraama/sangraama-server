@@ -6,7 +6,7 @@ import com.google.gson.Gson;
 
 public class ClientTransferReq {
     /**
-     * type details: 2 =Client pass to another server and sent events (change primary server) 3=
+     * type details: 2 = Client pass to another server and sent events (change primary server) 3 =
      * Client connect to another server only for getting updates of AOI
      */
     private int type;

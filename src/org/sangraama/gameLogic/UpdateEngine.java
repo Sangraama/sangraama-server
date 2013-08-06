@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.swing.Timer;
 
 import org.sangraama.assets.Player;
-import org.sangraama.assets.SangraamaMap;
+import org.sangraama.common.Constants;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
 
@@ -41,7 +41,7 @@ public enum UpdateEngine implements Runnable {
 
     @Override
     public void run() {
-        Timer timer = new Timer(100, new ActionListener() {
+        Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 pushUpdate();
