@@ -2,12 +2,12 @@ package org.sangraama.controller;
 
 import java.util.ArrayList;
 
-import org.sangraama.asserts.Player;
-import org.sangraama.asserts.SangraamaMap;
+import org.sangraama.assets.Player;
+import org.sangraama.assets.SangraamaMap;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.coordination.ServerHandler;
 import org.sangraama.coordination.ServerLocation;
-import org.sangraama.coordination.TileCoordinator;
+import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.thrift.assets.TPlayer;
 import org.sangraama.thrift.client.ThriftClient;
@@ -16,7 +16,7 @@ public enum PlayerPassHandler {
     INSTANCE;
     private static final String TAG = "PlayerPassHandler :";
     private ArrayList<Player> passPlayerList;
-    private boolean isPass;
+    private volatile boolean isPass;
     private ServerHandler sHandler;
     private GameEngine gameEngine;
 
@@ -40,7 +40,7 @@ public enum PlayerPassHandler {
                 // callThriftServer(player);
 
                 passNewConnectionInfo(player);
-                // this.gameEngine.addToRemovePlayerQueue(player);
+                this.gameEngine.addToRemovePlayerQueue(player);
             }
             isPass = false;
             this.passPlayerList.clear();
@@ -64,7 +64,7 @@ public enum PlayerPassHandler {
         }
     }
 
-    public void setPassPlayer(Player player) {
+    public synchronized void setPassPlayer(Player player) {
         this.passPlayerList.add(player);
         isPass = true;
         System.out.println(TAG + "Added passed player");
@@ -86,7 +86,7 @@ public enum PlayerPassHandler {
 
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(player.getX(),
                 player.getY());
-        ClientTransferReq transferReq = new ClientTransferReq(player.getUserID(),player.getX(), player.getY(),
+        ClientTransferReq transferReq = new ClientTransferReq(2,player.getUserID(),player.getX(), player.getY(),
                 newHost);
         player.sendNewConnection(transferReq);
     }

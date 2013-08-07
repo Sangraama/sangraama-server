@@ -8,12 +8,15 @@ import java.util.List;
 
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
-import org.sangraama.asserts.Player;
+import org.sangraama.assets.Player;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
+import org.sangraama.controller.clientprotocol.TileInfo;
+import org.sangraama.controller.clientprotocol.TransferInfo;
 import org.sangraama.gameLogic.PassedPlayer;
 import org.sangraama.util.SignMsg;
+import org.sangraama.util.VerifyMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +32,18 @@ public class WebSocketConnection extends MessageInbound {
     private Player player;
     private Gson gson;
 
+    public WebSocketConnection() {
+        this.gson = new Gson();
+    }
+
+    /**
+     * Set the player who is own this web socket connection
+     * 
+     * @param player
+     *            the instance of player which is connect to client
+     */
     public void setPlayer(Player player) {
         this.player = player;
-        this.gson = new Gson();
     }
 
     @Override
@@ -58,7 +70,6 @@ public class WebSocketConnection extends MessageInbound {
 
     @Override
     protected void onTextMessage(CharBuffer charBuffer) throws IOException {
-        this.gson = new Gson();
         String user = charBuffer.toString();
         ClientEvent clientEvent = gson.fromJson(user, ClientEvent.class);
 
@@ -72,9 +83,9 @@ public class WebSocketConnection extends MessageInbound {
                             + clientEvent.getV_y());
                     break;
                 case 2: // requesting for interesting area
-                    this.player.setInterestingIn(clientEvent.getX(), clientEvent.getY());
+                    this.player.reqInterestIn(clientEvent.getX(), clientEvent.getY());
                     System.out.println(TAG + "player interesting in x:" + clientEvent.getX()
-                            + " y:" + clientEvent.getY());
+                            + " & y:" + clientEvent.getY());
                     break;
 
                 default:
@@ -89,15 +100,30 @@ public class WebSocketConnection extends MessageInbound {
                 // PassedPlayer.INSTANCE.redirectPassPlayerConnection(p.getUserID(),
                 // this);
                 System.out.println(TAG + " Add new Player " + clientEvent.getUserID());
+            }else if (clientEvent.getType().equals("2")) {
+                TransferInfo playerInfo;
+                String info = clientEvent.getInfo();
+                byte[] signedInfo = clientEvent.getSignedInfo();
+                boolean msgVerification = VerifyMsg.INSTANCE.verifyMessage(info, signedInfo);
+                if(msgVerification){
+                    playerInfo = gson.fromJson(info, TransferInfo.class);
+                    this.player = new Player(clientEvent.getUserID(), playerInfo.getPositionX(),
+                            playerInfo.getPositionY(), this);
+                    System.out.println(TAG + "Adding player from another server to GameEngine.");
+                }
             }
         }
     }
 
-    public void sendUpdate(List<PlayerDelta> deltaList) {
-        this.gson = new Gson();
-
+    /**
+     * Send new updates of players states to the particular client
+     * 
+     * @param playerDeltaList
+     *            delta updates of players who are located inside AOI
+     */
+    public void sendUpdate(List<PlayerDelta> playerDeltaList) {
         try {
-            String convertedString = gson.toJson(deltaList);
+            String convertedString = gson.toJson(playerDeltaList);
             getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));
 
         } catch (IOException e) {
@@ -112,19 +138,51 @@ public class WebSocketConnection extends MessageInbound {
      * connection details can't recognize by client side.
      * 
      * @param transferReq
-     *            ArrayList<ClientTransferReq>
+     *            details about new connection server ArrayList<ClientTransferReq>
      */
     public void sendNewConnection(ArrayList<ClientTransferReq> transferReq) {
-        this.gson = new Gson();
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
-            System.out.println(TAG + gson.toJson(transferReq));
+            System.out.println(TAG + " new con details " + gson.toJson(transferReq));
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send new connnection information");
             log.error(TAG, e);
         }
     }
 
+    /**
+     * Send coordination details about tile size on this server
+     * 
+     * @param tilesInfo
+     *            ArrayList of details about tile of current server
+     */
+    public void sendTileSizeInfo(ArrayList<TileInfo> tilesInfo) {
+        try {
+            getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tilesInfo)));
+            System.out.println(TAG + " send size of tile " + gson.toJson(tilesInfo));
+        } catch (IOException e) {
+            System.out.println(TAG + " Unable to send tile size information");
+            log.error(TAG, e);
+        }
+    }
+
+    /**
+     * Send coordination detail about tile
+     * 
+     * @param tileInfo
+     *            details about tile
+     */
+    public void sendTileSizeInfo(TileInfo tileInfo) {
+        ArrayList<TileInfo> tilesInfo = new ArrayList<>();
+        tilesInfo.add(tileInfo);
+        this.sendTileSizeInfo(tilesInfo);
+    }
+
+    /**
+     * Close the WebSocket connection of the player
+     * 
+     * @return null
+     */
     public void closeConnection() {
         try {
             getWsOutbound().flush();

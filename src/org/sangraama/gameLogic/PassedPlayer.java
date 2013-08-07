@@ -3,11 +3,16 @@ package org.sangraama.gameLogic;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sangraama.asserts.Player;
-import org.sangraama.asserts.SangraamaMap;
+import org.sangraama.assets.Player;
+import org.sangraama.assets.SangraamaMap;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.thrift.assets.TPlayer;
 
+/**
+ * @deprecated due to there is no direct communication between servers
+ * @author gihan
+ *
+ */
 public enum PassedPlayer {
 	INSTANCE;
 

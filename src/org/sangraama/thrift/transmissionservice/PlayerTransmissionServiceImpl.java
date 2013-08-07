@@ -1,8 +1,8 @@
 package org.sangraama.thrift.transmissionservice;
 
 import org.apache.thrift.TException;
-import org.sangraama.asserts.Player;
-import org.sangraama.asserts.SangraamaMap;
+import org.sangraama.assets.Player;
+import org.sangraama.assets.SangraamaMap;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.PassedPlayer;
 import org.sangraama.thrift.assets.TPlayer;

@@ -1,4 +1,4 @@
-package org.sangraama.asserts;
+package org.sangraama.assets;
 
 public enum SangraamaMap {
     INSTANCE;

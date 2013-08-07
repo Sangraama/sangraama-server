@@ -1,4 +1,4 @@
-package org.sangraama.asserts;
+package org.sangraama.assets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,17 +10,17 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
+import org.sangraama.common.Constants;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
-import org.sangraama.common.Constants;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
-import org.sangraama.coordination.TileCoordinator;
+import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.sangraama.controller.clientprotocol.TileInfo;
+import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.hazelcast.core.Hazelcast;
 
 public class Player {
 
@@ -54,6 +54,10 @@ public class Player {
     private List<Bullet> newBulletList;
     private List<Bullet> bulletList;
 
+    // player current subtile information
+    float currentSubTileOriginX;
+    float currentSubTileOriginY;
+
     public boolean isUpdate() {
         return this.isUpdate;
     }
@@ -72,10 +76,12 @@ public class Player {
         this.userID = userID;
         this.x = x;
         this.y = y;
+        this.sangraamaMap = SangraamaMap.INSTANCE;
+        this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+        this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
         this.con = con;
         this.bodyDef = this.createBodyDef();
         this.fixtureDef = createFixtureDef();
-        this.sangraamaMap = SangraamaMap.INSTANCE;
         this.gameEngine = GameEngine.INSTANCE;
         this.gameEngine.addToPlayerQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
@@ -115,7 +121,7 @@ public class Player {
 
         // isUpdate = true;
         // }
-        if(!isInsideServerSubTile(x, y)){
+        if (!isInsideServerSubTile(x, y)) {
             PlayerPassHandler.INSTANCE.setPassPlayer(this);
         }
         return this.delta;
@@ -134,6 +140,15 @@ public class Player {
         this.body.setLinearVelocity(this.getV());
     }
 
+    /**
+     * Check whether player is inside current tile
+     * 
+     * @param x
+     *            Player's current x coordination
+     * @param y
+     *            Player's current y coordination
+     * @return if inside tile return true, else false
+     */
     private boolean isInsideMap(float x, float y) {
         // System.out.println(TAG + "is inside "+x+":"+y);
         if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()) {
@@ -145,21 +160,52 @@ public class Player {
         }
     }
 
+    /**
+     * Check whether player is inside current sub-tile
+     * 
+     * @param x
+     *            Player's current x coordination
+     * @param y
+     *            Player's current y coordination
+     * @return if inside sub-tile return true, else false
+     */
     private boolean isInsideServerSubTile(float x, float y) {
         boolean insideServerSubTile = true;
-        if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-            insideServerSubTile = false;
-            System.out.println(TAG + "player is not inside a subtile of " + sangraamaMap.getHost());
+        float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
+        float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
+        if (this.currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
+            this.currentSubTileOriginX = subTileOriX;
+            this.currentSubTileOriginY = subTileOriY;
+            if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
+                insideServerSubTile = false;
+                System.out.println(TAG + "player is not inside a subtile of "
+                        + sangraamaMap.getHost());
+            }
         }
+
         return insideServerSubTile;
     }
 
-    public void setInterestingIn(float x, float y) {
+    /**
+     * Request for client's Area of Interest around player
+     * 
+     * @param x
+     *            x coordination of interest location
+     * @param y
+     *            y coordination of interest location
+     */
+    public void reqInterestIn(float x, float y) {
         if (!isInsideMap(x, y)) {
             PlayerPassHandler.INSTANCE.setPassPlayer(this);
         }
     }
 
+    /**
+     * Send New connection Address and other details to Client
+     * 
+     * @param transferReq
+     *            Object of Client transferring protocol
+     */
     public void sendNewConnection(ClientTransferReq transferReq) {
         if (this.con != null) {
             ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
@@ -169,6 +215,25 @@ public class Player {
             this.gameEngine.addToRemovePlayerQueue(this);
             System.out.println(TAG + "Unable to send new connection,coz con :" + this.con);
         }
+    }
+
+    /**
+     * Send details about the size of the tile on current server
+     * 
+     * @param tiles
+     *            ArrayList of sub-tile details
+     */
+    public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
+        this.con.sendTileSizeInfo(new TileInfo(this.userID, tiles));
+    }
+
+    /**
+     * Send details about the size of the tile on current server. Sub-tiles sizes may access during
+     * TileInfo Object creation
+     * 
+     */
+    public void sendTileSizeInfo() {
+        this.con.sendTileSizeInfo(new TileInfo(this.userID));
     }
 
     public void shoot(float s) {
@@ -274,7 +339,8 @@ public class Player {
     }
 
     public void setV(float x, float y) {
-        this.v.set(x * 20, y * 20);
+        // Issue: if client send x value greater than 1
+        this.v.set(x * 2, y * 2);
         System.out.println(TAG + " set V :" + this.v.x + ":" + this.v.y);
     }
 

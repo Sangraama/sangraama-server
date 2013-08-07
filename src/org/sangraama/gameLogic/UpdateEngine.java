@@ -9,9 +9,10 @@ import java.util.Map;
 
 import javax.swing.Timer;
 
-import org.sangraama.asserts.Player;
-import org.sangraama.asserts.SangraamaMap;
+import org.sangraama.assets.Player;
+import org.sangraama.assets.SangraamaMap;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
+import org.sangraama.controller.clientprotocol.SangraamaTile;
 
 public enum UpdateEngine implements Runnable {
     INSTANCE;
@@ -19,11 +20,12 @@ public enum UpdateEngine implements Runnable {
     private String TAG = "Update Engine :";
 
     private List<Player> playerList; // don't modify;read only
-    private List<Player> waitingPlayerList;
+    /* Should be atomic operation. */
+    private volatile List<Player> waitingPlayerList;
     private Map<Long, PlayerDelta> playerDelta;
 
     UpdateEngine() {
-        System.out.println(TAG + "Init GameEngine...");
+        System.out.println(TAG + "Init Update Engine ...");
         this.playerList = new ArrayList<Player>();
         this.waitingPlayerList = new ArrayList<>();
         // this.locations = new float[100][3];
@@ -34,9 +36,7 @@ public enum UpdateEngine implements Runnable {
          * if previous updates unable to send to players, ignore current updates until previous
          * update sent.
          */
-
         this.waitingPlayerList = playerList;
-
     }
 
     @Override
@@ -53,6 +53,7 @@ public enum UpdateEngine implements Runnable {
 
     public void pushUpdate() {
         playerDelta = new HashMap<Long, PlayerDelta>();
+        // Make a clone of Updates which need to send
         this.playerList = this.waitingPlayerList;
         for (Player player : playerList) {
 
@@ -66,7 +67,20 @@ public enum UpdateEngine implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    /**
+     * When sub-tiles moving around the servers, size of map get change. Send notifications to
+     * clients
+     * 
+     * @param tiles
+     *            Details of sub-tiles
+     */
+    public void pushTileSizeInfo(ArrayList<SangraamaTile> tiles) {
+        List<Player> playerLists = this.waitingPlayerList;
+        for (Player player : playerLists) {
+            player.sendTileSizeInfo(tiles);
+        }
     }
 
     /**

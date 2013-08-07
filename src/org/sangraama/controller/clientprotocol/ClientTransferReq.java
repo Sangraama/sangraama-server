@@ -5,27 +5,22 @@ import org.sangraama.util.SignMsg;
 import com.google.gson.Gson;
 
 public class ClientTransferReq {
-    private int type = 2;
+    /**
+     * type details: 2 =Client pass to another server and sent events (change primary server) 3=
+     * Client connect to another server only for getting updates of AOI
+     */
+    private int type;
     private long userID;
-    private String url = "";
-    private int port;
-    private String dir = "";
     private String info;
-    private String signedInfo;
+    private byte[] signedInfo;
 
-    public ClientTransferReq(long userID, String newServerURL, int newServerPort, String dir) {
-        this.userID = userID;
-        this.url = newServerURL;
-        this.port = newServerPort;
-        this.dir = dir;
-    }
-
-    public ClientTransferReq(long userID, float x, float y, String newHost) {
+    public ClientTransferReq(int type, long userID, float x, float y, String newHost) {
+        this.type = type;
         this.userID = userID;
         ClientTransferInfo clientInfo = new ClientTransferInfo(x, y, newHost);
         Gson gson = new Gson();
         info = gson.toJson(clientInfo);
-        signedInfo = SignMsg.INSTANCE.signMessage(info).toString();
+        signedInfo = SignMsg.INSTANCE.signMessage(info);
     }
 
     private class ClientTransferInfo {
