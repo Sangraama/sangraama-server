@@ -9,6 +9,8 @@ public class ClientEvent {
     private float v_y;
     private float v_a;
     private float s;
+    private String info;
+    private byte[] signedInfo;
 
     public String getType() {
         return type;
@@ -40,6 +42,14 @@ public class ClientEvent {
 
     public float getS() {
         return s;
+    }
+    
+    public String getInfo() {
+        return info;
+    }
+    
+    public byte[] getSignedInfo() {
+        return signedInfo;
     }
 
 }

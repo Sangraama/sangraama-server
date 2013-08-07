@@ -81,8 +81,8 @@ public class Player {
          * Note: this should replace by sangraama map method. Player shouldn't responsible for
          * Deciding it's sub-tile
          */
-        currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
-        currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+        this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+        this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
         this.con = con;
         this.bodyDef = this.createBodyDef();
         this.fixtureDef = createFixtureDef();
