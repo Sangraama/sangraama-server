@@ -54,7 +54,7 @@ public class Player {
     private List<Bullet> newBulletList;
     private List<Bullet> bulletList;
 
-    // player current subtile information
+    // player current sub-tile information
     float currentSubTileOriginX;
     float currentSubTileOriginY;
 
@@ -178,11 +178,12 @@ public class Player {
         boolean insideServerSubTile = true;
         float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-        System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
-                + subTileOriX + ":" + subTileOriY);
-        if (currentSubTileOriginX != subTileOriX && currentSubTileOriginY != subTileOriY) {
+//        System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
+//                + subTileOriX + ":" + subTileOriY);
+        if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
             currentSubTileOriginX = subTileOriX;
             currentSubTileOriginY = subTileOriY;
+            //System.out.println(TAG + "sub tile coord are not matching...");
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 insideServerSubTile = false;
                 System.out.println(TAG + "player is not inside a subtile of "
