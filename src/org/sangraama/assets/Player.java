@@ -43,20 +43,15 @@ public abstract class Player extends AbsPlayer {
         this.gameEngine.addToPlayerQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
-
-        System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
     }
 
     public Player(long userID, float x, float y, WebSocketConnection con) {
         super(userID, x, y, con);
-        System.out.println(TAG + " player constructor");
-        System.out.println(TAG + " player added to queue");
         this.gameEngine.addToPlayerQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
-
-        System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
     }
+
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
@@ -99,6 +94,7 @@ public abstract class Player extends AbsPlayer {
 
     public void applyUpdate() {
         this.body.setLinearVelocity(this.getV());
+        this.body.setTransform(body.getPosition(), angle);
     }
 
     /**
@@ -264,10 +260,8 @@ public abstract class Player extends AbsPlayer {
     }
 
     public void setAngle(float a) {
-        this.angle = a;
-        this.angle %= 360;
-        this.body.setTransform(body.getPosition(), angle);
-
+        this.angle = a % 360;
+        // this.angle %= 360;
     }
 
     public List<Bullet> getNewBulletList() {

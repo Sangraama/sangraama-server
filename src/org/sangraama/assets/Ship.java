@@ -24,7 +24,6 @@ public class Ship extends Player {
 
     public Ship(long userID, float x, float y, WebSocketConnection con) {
         super(userID, x, y, con);
-        System.out.println(TAG + " shi constructor");
     }
 
     public PlayerDelta getPlayerDelta() {
@@ -57,7 +56,7 @@ public class Ship extends Player {
         }
         return this.delta;
     }
-    
+
     public void shoot(float s) {
         float r = 50;
         if (s == 1) {

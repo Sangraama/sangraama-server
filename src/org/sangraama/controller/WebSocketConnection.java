@@ -97,6 +97,12 @@ public class WebSocketConnection extends MessageInbound {
                 this.player = new Ship(clientEvent.getUserID(), clientEvent.getX(),
                         clientEvent.getY(), this);
                 System.out.println(TAG + " Add new Player " + clientEvent.getUserID());
+                this.player.setV(clientEvent.getV_x(), clientEvent.getV_y());
+                this.player.setAngle(clientEvent.getV_a());
+                //this.player.shoot(clientEvent.getS());
+                System.out.println(TAG + " set user events " + clientEvent.getV_x() + " : "
+                        + clientEvent.getV_y() + " when creating player");
+                
             }else if (clientEvent.getType().equals("2")) {
                 TransferInfo playerInfo;
                 String info = clientEvent.getInfo();

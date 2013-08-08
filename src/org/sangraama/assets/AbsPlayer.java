@@ -54,7 +54,7 @@ public abstract class AbsPlayer {
 
     public AbsPlayer(long userID, WebSocketConnection con) {
         Random r = new Random();
-        
+
         this.userID = userID;
         this.x = (float) r.nextInt(1000);
         this.y = (float) r.nextInt(1000);
@@ -72,7 +72,6 @@ public abstract class AbsPlayer {
     }
 
     public AbsPlayer(long userID, float x, float y, WebSocketConnection con) {
-        System.out.println(TAG + " abs constructor");
         this.userID = userID;
         this.x = x;
         this.y = y;
@@ -131,8 +130,8 @@ public abstract class AbsPlayer {
         boolean insideServerSubTile = true;
         float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-//        System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
-//                + subTileOriX + ":" + subTileOriY);
+        // System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
+        // + subTileOriX + ":" + subTileOriY);
         if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
             currentSubTileOriginX = subTileOriX;
             currentSubTileOriginY = subTileOriY;
@@ -162,7 +161,7 @@ public abstract class AbsPlayer {
             PlayerPassHandler.INSTANCE.setPassConnection(this);
         }
     }
-    
+
     public abstract void sendNewConnection(ClientTransferReq transferReq);
 
     /**
@@ -195,7 +194,7 @@ public abstract class AbsPlayer {
     public long getUserID() {
         return this.userID;
     }
-    
+
     public void setAOI(float width, float height) {
         this.halfWidth = width / 2;
         this.halfHieght = height / 2;
