@@ -3,29 +3,53 @@ package org.sangraama.gameLogic;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sangraama.asserts.Player;
+import org.sangraama.assets.Player;
+import org.sangraama.assets.SangraamaMap;
 import org.sangraama.controller.WebSocketConnection;
+import org.sangraama.thrift.assets.TPlayer;
 
+/**
+ * @deprecated due to there is no direct communication between servers
+ * @author gihan
+ *
+ */
 public enum PassedPlayer {
-    INSTANCE;
+	INSTANCE;
 
-    private GameEngine engine = null;
-    private Map<Long, Player> passdePlayers = null;
+	private String TAG = "PassedPlayer :";
 
-    private PassedPlayer() {
-        this.passdePlayers = new HashMap<Long,Player>();
-        this.engine = GameEngine.INSTANCE;
-    }
+	private Map<Long, TPlayer> passdePlayers;
 
-    public void addPassedPlayer(Player p) {
-        this.passdePlayers.put(p.getUserID(), p);
-    }
+	private PassedPlayer() {
+		this.passdePlayers = new HashMap<Long, TPlayer>();
+	}
 
-    public void redirectPassPlayerConnection(long userID, WebSocketConnection con) {
-        if (!passdePlayers.isEmpty()) {
-            this.engine.addToPlayerQueue(this.passdePlayers.get(userID));
-            this.passdePlayers.remove(userID);
-        }
-    }
+	public void addPassedPlayer(TPlayer p) {
+		this.passdePlayers.put(p.getId(), p);
+		System.out.println(TAG + "Added new passed player");
+	}
+
+	private Player fillPlayer(TPlayer tp, WebSocketConnection con) {
+		SangraamaMap map = SangraamaMap.INSTANCE;
+		Player p = new Player(tp.getId(), tp.getX() - map.getOriginX(),
+				tp.getY() - map.getOriginY(), con);
+		p.setV((float) tp.getV_x(), (float) tp.getV_y());
+
+		return p;
+	}
+
+	public void redirectPassPlayerConnection(long userID,
+			WebSocketConnection con) {
+		if (!passdePlayers.isEmpty()) {
+			TPlayer p = this.passdePlayers.get(userID);
+			if (p != null) {
+				Player player = fillPlayer(p, con);
+				con.setPlayer(player);
+				this.passdePlayers.remove(userID);
+				System.out.println(TAG
+						+ "Added passed player to GameEngine queue");
+			}
+		}
+	}
 
 }

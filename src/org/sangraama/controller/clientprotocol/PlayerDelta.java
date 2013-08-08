@@ -1,33 +1,42 @@
 package org.sangraama.controller.clientprotocol;
 
-public class PlayerDelta {
-    private float dx = 0, dy = 0;
-    private long userID = 0;
-    private int type = 1;
+import java.util.ArrayList;
+import java.util.List;
 
-    public PlayerDelta(float dx, float dy, long userID) {
-	this.dx = dx;
-	this.dy = dy;
-	this.userID = userID;
+public class PlayerDelta {
+    private int type = 1;
+    private float dx, dy, da;
+    private long userID;
+    private List<BulletDelta> bulletDeltaList;
+
+    public PlayerDelta(float dx, float dy, float da, long userID) {
+        this.dx = dx;
+        this.dy = dy;
+        this.da = da;
+        this.userID = userID;
+        this.bulletDeltaList = new ArrayList<BulletDelta>();
     }
-    
-    public long getUserID(){
-	return this.userID;
+
+    public long getUserID() {
+        return this.userID;
+    }
+
+    public float getDa() {
+        return da;
     }
 
     public float getDx() {
-	return dx;
-    }
-
-    public void setDx(int dx) {
-	this.dx = dx;
+        return dx;
     }
 
     public float getDy() {
-	return dy;
+        return dy;
     }
 
-    public void setDy(int dy) {
-	this.dy = dy;
+    public List<BulletDelta> getBulletDeltaList() {
+        return bulletDeltaList;
     }
+
+    
+    
 }
