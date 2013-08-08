@@ -32,8 +32,6 @@ public enum GameEngine implements Runnable {
         this.world = new World(new Vec2(0.0f, 0.0f), true);
         this.playerList = new ArrayList<Player>();
         this.newPlayerQueue = new ArrayList<Player>();
-        this.sangraamaMap = SangraamaMap.INSTANCE;
-        this.sangraamaMap.setMap(1000f, 0f, 1000f, 1000f);
         this.removePlayerQueue = new ArrayList<Player>();
         this.updateEngine = UpdateEngine.INSTANCE;
     }

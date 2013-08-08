@@ -178,9 +178,9 @@ public class Player {
         boolean insideServerSubTile = true;
         float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-        System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
-                + subTileOriX + ":" + subTileOriY);
-        if (currentSubTileOriginX != subTileOriX && currentSubTileOriginY != subTileOriY) {
+//        System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
+//                + subTileOriX + ":" + subTileOriY);
+        if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
             currentSubTileOriginX = subTileOriX;
             currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
