@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.swing.Timer;
 
 import org.sangraama.assets.Player;
+import org.sangraama.assets.Ship;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
@@ -27,7 +28,7 @@ public enum UpdateEngine implements Runnable {
     UpdateEngine() {
         System.out.println(TAG + "Init Update Engine ...");
         this.playerList = new ArrayList<Player>();
-        this.waitingPlayerList = new ArrayList<>();
+        this.waitingPlayerList = new ArrayList<Player>();
         // this.locations = new float[100][3];
     }
 

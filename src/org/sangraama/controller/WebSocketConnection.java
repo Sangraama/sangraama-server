@@ -9,13 +9,12 @@ import java.util.List;
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.assets.Player;
+import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.controller.clientprotocol.TransferInfo;
-import org.sangraama.gameLogic.PassedPlayer;
-import org.sangraama.util.SignMsg;
 import org.sangraama.util.VerifyMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +38,10 @@ public class WebSocketConnection extends MessageInbound {
     /**
      * Set the player who is own this web socket connection
      * 
-     * @param player
+     * @param ship
      *            the instance of player which is connect to client
      */
-    public void setPlayer(Player player) {
+    public void setPlayer(Ship player) {
         this.player = player;
     }
 
@@ -95,10 +94,8 @@ public class WebSocketConnection extends MessageInbound {
         } else {
             if (clientEvent.getType().equals("1")) { // create new player & set the
                 // connection
-                this.player = new Player(clientEvent.getUserID(), clientEvent.getX(),
+                this.player = new Ship(clientEvent.getUserID(), clientEvent.getX(),
                         clientEvent.getY(), this);
-                // PassedPlayer.INSTANCE.redirectPassPlayerConnection(p.getUserID(),
-                // this);
                 System.out.println(TAG + " Add new Player " + clientEvent.getUserID());
             }else if (clientEvent.getType().equals("2")) {
                 TransferInfo playerInfo;
@@ -107,7 +104,7 @@ public class WebSocketConnection extends MessageInbound {
                 boolean msgVerification = VerifyMsg.INSTANCE.verifyMessage(info, signedInfo);
                 if(msgVerification){
                     playerInfo = gson.fromJson(info, TransferInfo.class);
-                    this.player = new Player(clientEvent.getUserID(), playerInfo.getPositionX(),
+                    this.player = new Ship(clientEvent.getUserID(), playerInfo.getPositionX(),
                             playerInfo.getPositionY(), this);
                     System.out.println(TAG + "Adding player from another server to GameEngine.");
                 }

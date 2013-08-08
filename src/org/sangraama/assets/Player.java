@@ -2,13 +2,10 @@ package org.sangraama.assets;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.PlayerPassHandler;
@@ -18,75 +15,31 @@ import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
-import org.sangraama.gameLogic.GameEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Player {
+public abstract class Player extends AbsPlayer {
 
     // Debug
     // Local Debug or logs
-    public static final Logger log = LoggerFactory.getLogger(Player.class);
+    public static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "player : ";
 
-    private long userID;
-
-    private BodyDef bodyDef;
-    private FixtureDef fixtureDef;
-    private Body body;
-    private GameEngine gameEngine;
-    private SangraamaMap sangraamaMap;
-    // WebSocket Connection
-    private WebSocketConnection con;
-    private boolean isUpdate;
+    Body body;
 
     // Player Dynamic Parameters
-    private float x, y, angle;
-    public float v_x, v_y;
-    private Vec2 v = new Vec2(0f, 0f);
-    private PlayerDelta delta;
-
-    // Area of Interest
-    private float halfWidth = 10f;
-    private float halfHieght = 1000f;
+    float angle;
+    float v_x, v_y;
+    Vec2 v = new Vec2(0f, 0f);
+    PlayerDelta delta;
 
     // bullets
-    private List<Bullet> newBulletList;
-    private List<Bullet> bulletList;
-
-    // player current subtile information
-    float currentSubTileOriginX;
-    float currentSubTileOriginY;
-
-    public boolean isUpdate() {
-        return this.isUpdate;
-    }
+    List<Bullet> newBulletList;
+    List<Bullet> bulletList;
 
     public Player(long userID, WebSocketConnection con) {
-        Random r = new Random();
-        this.createPlayer(userID, (float) r.nextInt(1000), (float) r.nextInt(999), con);
-    }
-
-    public Player(long userID, float x, float y, WebSocketConnection con) {
-        this.createPlayer(userID, x, y, con);
-    }
-
-    private void createPlayer(long userID, float x, float y, WebSocketConnection con) {
-
-        this.userID = userID;
-        this.x = x;
-        this.y = y;
-        this.sangraamaMap = SangraamaMap.INSTANCE;
-        /*
-         * Note: this should replace by sangraama map method. Player shouldn't responsible for
-         * Deciding it's sub-tile
-         */
-        this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
-        this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        this.con = con;
-        this.bodyDef = this.createBodyDef();
-        this.fixtureDef = createFixtureDef();
-        this.gameEngine = GameEngine.INSTANCE;
+        super(userID, con);
+        System.out.println(TAG + " player added to queue");
         this.gameEngine.addToPlayerQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
@@ -94,13 +47,16 @@ public class Player {
         System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
     }
 
-    /**
-     * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
-     */
-    public void removeWebSocketConnection() {
-        this.con = null;
-    }
+    public Player(long userID, float x, float y, WebSocketConnection con) {
+        super(userID, x, y, con);
+        System.out.println(TAG + " player constructor");
+        System.out.println(TAG + " player added to queue");
+        this.gameEngine.addToPlayerQueue(this);
+        this.newBulletList = new ArrayList<Bullet>();
+        this.bulletList = new ArrayList<Bullet>();
 
+        System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
+    }
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
@@ -174,12 +130,12 @@ public class Player {
      *            Player's current y coordination
      * @return if inside sub-tile return true, else false
      */
-    private boolean isInsideServerSubTile(float x, float y) {
+    protected boolean isInsideServerSubTile(float x, float y) {
         boolean insideServerSubTile = true;
         float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-//        System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
-//                + subTileOriX + ":" + subTileOriY);
+        // System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
+        // + subTileOriX + ":" + subTileOriY);
         if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
             currentSubTileOriginX = subTileOriX;
             currentSubTileOriginY = subTileOriY;
@@ -285,63 +241,16 @@ public class Player {
         }
     }
 
-    public BodyDef createBodyDef() {
-        BodyDef bd = new BodyDef();
-        System.out.println(TAG + "create body def player x:" + this.x + " :" + this.y);
-        bd.position.set(this.x, this.y);
-        bd.type = BodyType.DYNAMIC;
-        return bd;
-    }
+    public abstract BodyDef getBodyDef();
 
-    public BodyDef getBodyDef() {
-        return this.bodyDef;
-    }
-
-    private FixtureDef createFixtureDef() {
-        // CircleShape circle = new CircleShape();
-        // circle.m_radius = 1f;
-        PolygonShape ps = new PolygonShape();
-        ps.setAsBox(5f, 5f);
-
-        FixtureDef fd = new FixtureDef();
-        fd.density = 0.5f;
-        // fd.shape = circle;
-        fd.shape = ps;
-        fd.friction = 0.2f;
-        fd.restitution = 0.5f;
-        return fd;
-    }
-
-    public FixtureDef getFixtureDef() {
-        return this.fixtureDef;
-    }
+    public abstract FixtureDef getFixtureDef();
 
     public void setBody(Body body) {
         this.body = body;
     }
 
     public Body getBody() {
-        return this.body;
-    }
-
-    // public void setX(float x) {
-    // if (x > 0) {
-    // this.x = x;
-    // }
-    // }
-
-    public float getX() {
-        return x;
-    }
-
-    // public void setY(float y) {
-    // if (y > 0) {
-    // this.y = y;
-    // }
-    // }
-
-    public float getY() {
-        return this.y;
+        return body;
     }
 
     public Vec2 getV() {
@@ -359,23 +268,6 @@ public class Player {
         this.angle %= 360;
         this.body.setTransform(body.getPosition(), angle);
 
-    }
-
-    public long getUserID() {
-        return this.userID;
-    }
-
-    public void setAOI(float width, float height) {
-        this.halfWidth = width / 2;
-        this.halfHieght = height / 2;
-    }
-
-    public float getAOIWidth() {
-        return this.halfWidth;
-    }
-
-    public float getAOIHeight() {
-        return this.halfHieght;
     }
 
     public List<Bullet> getNewBulletList() {
