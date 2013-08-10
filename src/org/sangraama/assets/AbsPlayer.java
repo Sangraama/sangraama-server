@@ -11,6 +11,7 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.common.Constants;
+import org.sangraama.controller.DummyWebScocketConnection;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
@@ -35,6 +36,8 @@ public abstract class AbsPlayer {
     SangraamaMap sangraamaMap;
     // WebSocket Connection
     WebSocketConnection con;
+    // temporary
+    DummyWebScocketConnection dcon;
     volatile boolean isUpdate;
 
     // Player Dynamic Parameters
@@ -83,6 +86,23 @@ public abstract class AbsPlayer {
         this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
         this.con = con;
+        this.gameEngine = GameEngine.INSTANCE;
+
+        System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
+    }
+    
+    public AbsPlayer(long userID, float x, float y, DummyWebScocketConnection con) {
+        this.userID = userID;
+        this.x = x;
+        this.y = y;
+        this.sangraamaMap = SangraamaMap.INSTANCE;
+        /*
+         * Note: this should replace by sangraama map method. Player shouldn't responsible for
+         * Deciding it's sub-tile
+         */
+        this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+        this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+        this.dcon = con;
         this.gameEngine = GameEngine.INSTANCE;
 
         System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);

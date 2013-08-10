@@ -3,6 +3,7 @@ package org.sangraama.assets;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.sangraama.controller.DummyWebScocketConnection;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
@@ -44,6 +45,13 @@ public class DummyPlayer extends AbsPlayer {
     }
 
     public DummyPlayer(long userID, float x, float y, WebSocketConnection con) {
+        super(userID, x, y, con);
+        this.gameEngine.addToDummyQueue(this);
+        this.newBulletList = new ArrayList<Bullet>();
+        this.bulletList = new ArrayList<Bullet>();
+    }
+    
+    public DummyPlayer(long userID, float x, float y, DummyWebScocketConnection con) {
         super(userID, x, y, con);
         this.gameEngine.addToDummyQueue(this);
         this.newBulletList = new ArrayList<Bullet>();

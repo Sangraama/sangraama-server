@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
+import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.ClientEvent;
@@ -21,28 +22,28 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
-public class WebSocketConnection extends MessageInbound {
+public class DummyWebScocketConnection extends MessageInbound {
     // Local Debug or logs
     private static boolean LL = true;
     private static boolean LD = true;
-    private static final String TAG = "WebSocketConnection : ";
+    private static final String TAG = "DummyWebSocketConnection : ";
     public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
 
-    private Player player;
+    private DummyPlayer dummyPlayer;
     private Gson gson;
 
-    public WebSocketConnection() {
+    public DummyWebScocketConnection(){
         this.gson = new Gson();
     }
 
     /**
      * Set the player who is own this web socket connection
      * 
-     * @param ship
+     * @param player
      *            the instance of player which is connect to client
      */
-    public void setPlayer(Ship player) {
-        this.player = player;
+    public void setDummyPlayer(DummyPlayer player) {
+        this.dummyPlayer = player;
     }
 
     @Override
@@ -55,8 +56,8 @@ public class WebSocketConnection extends MessageInbound {
     protected void onClose(int status) {
         // log.info("Connection closed");
         System.out.println(TAG + " Close connection");
-        if (this.player != null) {
-            this.player.removeWebSocketConnection();
+        if (this.dummyPlayer != null) {
+            this.dummyPlayer.removeWebSocketConnection();
         }
     }
 
@@ -72,24 +73,19 @@ public class WebSocketConnection extends MessageInbound {
         String user = charBuffer.toString();
         ClientEvent clientEvent = gson.fromJson(user, ClientEvent.class);
 
-        if (this.player != null) {
+        if (this.dummyPlayer != null) {
             switch (Integer.parseInt(clientEvent.getType())) {
                 case 1: // setting user event request
-                    this.player.setV(clientEvent.getV_x(), clientEvent.getV_y());
-                    this.player.setAngle(clientEvent.getV_a());
-                    this.player.shoot(clientEvent.getS());
-                    System.out.println(TAG + " set user events " + clientEvent.getV_x() + " : "
-                            + clientEvent.getV_y());
+                    /* not applicable for dummy */
                     break;
                 case 2: // requesting for interesting area
-                    this.player.reqInterestIn(clientEvent.getX(), clientEvent.getY());
+                    this.dummyPlayer.reqInterestIn(clientEvent.getX(), clientEvent.getY());
                     System.out.println(TAG + "player interesting in x:" + clientEvent.getX()
                             + " & y:" + clientEvent.getY());
                     break;
-                // not a good solutions
-                case 3:
-                    
-                    this.player.removeWebSocketConnection();
+                case 3: // Request to move the dummy player
+                    this.dummyPlayer.setX(clientEvent.getX());
+                    this.dummyPlayer.setY(clientEvent.getY());
                     break;
 
                 default:
@@ -99,15 +95,9 @@ public class WebSocketConnection extends MessageInbound {
         } else {
             if (clientEvent.getType().equals("1")) { // create new player & set the
                 // connection
-                this.player = new Ship(clientEvent.getUserID(), clientEvent.getX(),
+                this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), clientEvent.getX(),
                         clientEvent.getY(), this);
-                System.out.println(TAG + " Add new Player " + clientEvent.getUserID());
-                this.player.setV(clientEvent.getV_x(), clientEvent.getV_y());
-                this.player.setAngle(clientEvent.getV_a());
-                //this.player.shoot(clientEvent.getS());
-                System.out.println(TAG + " set user events " + clientEvent.getV_x() + " : "
-                        + clientEvent.getV_y() + " when creating player");
-                
+                System.out.println(TAG + " Add new dummy Player " + clientEvent.getUserID());
             }else if (clientEvent.getType().equals("2")) {
                 TransferInfo playerInfo;
                 String info = clientEvent.getInfo();
@@ -115,7 +105,7 @@ public class WebSocketConnection extends MessageInbound {
                 boolean msgVerification = VerifyMsg.INSTANCE.verifyMessage(info, signedInfo);
                 if(msgVerification){
                     playerInfo = gson.fromJson(info, TransferInfo.class);
-                    this.player = new Ship(clientEvent.getUserID(), playerInfo.getPositionX(),
+                    this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), playerInfo.getPositionX(),
                             playerInfo.getPositionY(), this);
                     System.out.println(TAG + "Adding player from another server to GameEngine.");
                 }
