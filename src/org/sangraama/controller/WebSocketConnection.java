@@ -176,7 +176,7 @@ public class WebSocketConnection extends MessageInbound {
      *            details about tile
      */
     public void sendTileSizeInfo(TileInfo tileInfo) {
-        ArrayList<TileInfo> tilesInfo = new ArrayList<>();
+        ArrayList<TileInfo> tilesInfo = new ArrayList<TileInfo>();
         tilesInfo.add(tileInfo);
         this.sendTileSizeInfo(tilesInfo);
     }

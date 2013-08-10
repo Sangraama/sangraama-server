@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.catalina.Server;
@@ -30,6 +29,7 @@ public enum TileCoordinator {
     private String TAG = "TileCoordinator : ";
     private boolean D = true;
 
+    HazelcastInstance instance;
     Map<String, String> subtileMap;
     private float subTileHeight;
     private float subTileWidth;
@@ -38,7 +38,8 @@ public enum TileCoordinator {
     private ArrayList<SangraamaTile> tileInfo;
 
     TileCoordinator() {
-        subtileMap = Hazelcast.getMap("subtile");
+        HazelcastInstance instance = Hazelcast.newHazelcastInstance(new Config());
+        this.subtileMap = instance.getMap("subtile");
         this.sangraamaMap = SangraamaMap.INSTANCE;
         this.subTileHeight = sangraamaMap.getSubTileWidth();
         this.subTileWidth = sangraamaMap.getSubTileHeight();
@@ -111,7 +112,7 @@ public enum TileCoordinator {
         String host = "";
         float subTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        host = (String) Hazelcast.getMap("subtile").get(
+        host = (String) instance.getMap("subtile").get(
                 Float.toString(subTileOriginX) + ":" + Float.toString(subTileOriginY));
         return host;
     }
@@ -123,7 +124,7 @@ public enum TileCoordinator {
      * @return ArrayList<SangraamaTile> about coordinations of sub-tiles
      */
     private ArrayList<SangraamaTile> calSubTilesCoordinations() {
-        ArrayList<SangraamaTile> tiles = new ArrayList<>();
+        ArrayList<SangraamaTile> tiles = new ArrayList<SangraamaTile>();
         Set<String> keySet = subtileMap.keySet();
         
         // Iterate though all keys
