@@ -48,7 +48,7 @@ public enum TileCoordinator {
         try {
             prop.load(getClass().getResourceAsStream("/conf/sangraamaserver.properties"));
             this.serverURL = prop.getProperty("host") + ":" + prop.getProperty("port") + "/"
-                    + prop.getProperty("dir") + "/sangraama/player";
+                    + prop.getProperty("dir") + "/sangraama/dummyplayer";
             System.out.println(TAG + serverURL);
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,7 +112,7 @@ public enum TileCoordinator {
         String host = "";
         float subTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        host = (String) instance.getMap("subtile").get(
+        host = (String) subtileMap.get(
                 Float.toString(subTileOriginX) + ":" + Float.toString(subTileOriginY));
         return host;
     }

@@ -102,6 +102,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player = new Ship(clientEvent.getUserID(), clientEvent.getX(),
                         clientEvent.getY(), this);
                 System.out.println(TAG + " Add new Player " + clientEvent.getUserID());
+                this.player.setAOI(clientEvent.getAoi_w(), clientEvent.getAoi_h());
                 this.player.setV(clientEvent.getV_x(), clientEvent.getV_y());
                 this.player.setAngle(clientEvent.getV_a());
                 //this.player.shoot(clientEvent.getS());
