@@ -123,7 +123,7 @@ public enum TileCoordinator {
      * @return ArrayList<SangraamaTile> about coordinations of sub-tiles
      */
     private ArrayList<SangraamaTile> calSubTilesCoordinations() {
-        ArrayList<SangraamaTile> tiles = new ArrayList<>();
+        ArrayList<SangraamaTile> tiles = new ArrayList<SangraamaTile>();
         Set<String> keySet = subtileMap.keySet();
         
         // Iterate though all keys
