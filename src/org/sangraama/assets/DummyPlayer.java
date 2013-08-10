@@ -142,25 +142,6 @@ public class DummyPlayer extends AbsPlayer {
         }
     }
 
-    /**
-     * Send details about the size of the tile on current server
-     * 
-     * @param tiles
-     *            ArrayList of sub-tile details
-     */
-    public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
-        this.con.sendTileSizeInfo(new TileInfo(this.userID, tiles));
-    }
-
-    /**
-     * Send details about the size of the tile on current server. Sub-tiles sizes may access during
-     * TileInfo Object creation
-     * 
-     */
-    public void sendTileSizeInfo() {
-        this.con.sendTileSizeInfo(new TileInfo(this.userID));
-    }
-
     public void setX(float x) {
         if (x > 0) {
             this.x = x;
