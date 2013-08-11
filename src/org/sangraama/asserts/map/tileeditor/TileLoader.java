@@ -1,9 +1,12 @@
 package org.sangraama.asserts.map.tileeditor;
 
 import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -16,6 +19,8 @@ public class TileLoader {
 	private int mapHeight;
 
 	private int mapWidth;
+	
+	
 	 private List<Layer> layers= new ArrayList<Layer>();
 	 private List<Tile> backgroundLayerTiles=new ArrayList<Tile>();
 	 private List<Tile> foregroundLayerTiles=new ArrayList<Tile>();
@@ -81,14 +86,18 @@ public class TileLoader {
 		try {
 			jc = JAXBContext.newInstance(Map.class);
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
+		
+			InputStream inputstream=this.getClass().getResourceAsStream("/asset/gamemap.tmx");
 			
-			Map obj = (Map)unmarshaller.unmarshal(new File("src/asset/map.tmx"));
-			mapHeight=obj.getMapheight();
-			mapWidth=obj.getMapwidth();
+			
+			Map obj = (Map)unmarshaller.unmarshal(inputstream);
+		
+			mapHeight=obj.getMapheight()*obj.getTileheight();
+			mapWidth=obj.getMapwidth()*obj.getTilewidth();
 			 layers=obj.getLayerList();
 			// loadTiles(layers);
 			 objects=obj.getObjectGroup().getObjectList();
-			 arrangeShapes(objects);
+			// arrangeShapes(objects);
 			 
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
