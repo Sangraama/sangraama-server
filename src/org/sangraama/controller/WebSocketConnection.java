@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
+import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.ClientEvent;
@@ -28,8 +29,9 @@ public class WebSocketConnection extends MessageInbound {
     private static final String TAG = "WebSocketConnection : ";
     public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
 
-    private Player player;
+    private Player player = null;
     private Gson gson;
+    private DummyPlayer dPlayer = null;
 
     public WebSocketConnection() {
         this.gson = new Gson();
@@ -42,7 +44,15 @@ public class WebSocketConnection extends MessageInbound {
      *            the instance of player which is connect to client
      */
     public void setPlayer(Ship player) {
+        if(this.dPlayer != null) this.dPlayer = null;
         this.player = player;
+        System.out.println(TAG + " created a player conection...");
+    }
+
+    public void setDummyPlayer(DummyPlayer dPlayer) {
+        if(this.player != null ) this.player = null;
+        this.dPlayer = dPlayer;
+        System.out.println(TAG + " created a dummy player conection...");
     }
 
     @Override
@@ -70,57 +80,119 @@ public class WebSocketConnection extends MessageInbound {
     @Override
     protected void onTextMessage(CharBuffer charBuffer) throws IOException {
         String user = charBuffer.toString();
-        ClientEvent clientEvent = gson.fromJson(user, ClientEvent.class);
+        ClientEvent event = gson.fromJson(user, ClientEvent.class);
 
         if (this.player != null) {
-            switch (Integer.parseInt(clientEvent.getType())) {
-                case 1: // setting user event request
-                    this.player.setV(clientEvent.getV_x(), clientEvent.getV_y());
-                    this.player.setAngle(clientEvent.getV_a());
-                    this.player.shoot(clientEvent.getS());
-                    System.out.println(TAG + " set user events " + clientEvent.getV_x() + " : "
-                            + clientEvent.getV_y());
-                    break;
-                case 2: // requesting for interesting area
-                    this.player.reqInterestIn(clientEvent.getX(), clientEvent.getY());
-                    System.out.println(TAG + "player interesting in x:" + clientEvent.getX()
-                            + " & y:" + clientEvent.getY());
-                    break;
-                // not a good solutions
-                case 3:
-                    
-                    this.player.removeWebSocketConnection();
-                    break;
-
-                default:
-                    break;
-            }
-
+            this.playerEvents(event);
+        } else if (this.dPlayer != null) {
+            this.dummyPlayerEvents(event);
         } else {
-            if (clientEvent.getType().equals("1")) { // create new player & set the
-                // connection
-                this.player = new Ship(clientEvent.getUserID(), clientEvent.getX(),
-                        clientEvent.getY(), this);
-                System.out.println(TAG + " Add new Player " + clientEvent.getUserID());
-                this.player.setAOI(clientEvent.getAoi_w(), clientEvent.getAoi_h());
-                this.player.setV(clientEvent.getV_x(), clientEvent.getV_y());
-                this.player.setAngle(clientEvent.getV_a());
-                //this.player.shoot(clientEvent.getS());
-                System.out.println(TAG + " set user events " + clientEvent.getV_x() + " : "
-                        + clientEvent.getV_y() + " when creating player");
-                
-            }else if (clientEvent.getType().equals("2")) {
+            this.playerNotCreated(event);
+        }
+    }
+
+    private void playerNotCreated(ClientEvent event) {
+        String T = " notcreated ";
+        switch (Integer.parseInt(event.getType())) {
+            case 1:// create new player & set the connection
+                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(), this));
+                System.out.println(TAG + T + " Add new Player " + event.getUserID());
+                this.player.setV(event.getV_x(), event.getV_y());
+                this.player.setAngle(event.getV_a());
+                // this.player.shoot(clientEvent.getS());
+                System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
+                        + event.getV_y() + " when creating player");
+                break;
+            case 2:
                 TransferInfo playerInfo;
-                String info = clientEvent.getInfo();
-                byte[] signedInfo = clientEvent.getSignedInfo();
+                String info = event.getInfo();
+                byte[] signedInfo = event.getSignedInfo();
                 boolean msgVerification = VerifyMsg.INSTANCE.verifyMessage(info, signedInfo);
-                if(msgVerification){
+                if (msgVerification) {
                     playerInfo = gson.fromJson(info, TransferInfo.class);
-                    this.player = new Ship(clientEvent.getUserID(), playerInfo.getPositionX(),
+                    this.player = new Ship(event.getUserID(), playerInfo.getPositionX(),
                             playerInfo.getPositionY(), this);
-                    System.out.println(TAG + "Adding player from another server to GameEngine.");
+                    System.out
+                            .println(TAG + T + "Adding player from another server to GameEngine.");
                 }
-            }
+                break;
+            // Create a dummy player and set AOI of the player
+            case 3:
+                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
+                        this));
+                this.dPlayer.setAOI(event.getAoi_w(), event.getAoi_h());
+                System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void playerEvents(ClientEvent event) {
+        String T = " playerevent ";
+        switch (Integer.parseInt(event.getType())) {
+            case 1: // setting user event request
+                this.player.setV(event.getV_x(), event.getV_y());
+                this.player.setAngle(event.getV_a());
+                this.player.shoot(event.getS());
+                System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
+                        + event.getV_y());
+                break;
+            case 2: // requesting for interesting area
+                this.player.reqInterestIn(event.getX(), event.getY());
+                System.out.println(TAG + T + "player interesting in x:" + event.getX() + " & y:"
+                        + event.getY());
+                break;
+            // set AOI of the player
+            case 3:
+                this.player.setAOI(event.getAoi_w(), event.getAoi_h());
+                System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
+                break;
+            case 4: // Reset settings and make dummy player
+                this.player.setV(event.getV_x(), event.getV_y());
+                this.player.setAngle(event.getV_a());
+                this.player.shoot(event.getS());
+                System.out.println(TAG + T + " RESET user events " + event.getV_x() + " : "
+                        + event.getV_y());
+                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
+                        this));
+                this.dPlayer.setAOI(event.getAoi_w(), event.getAoi_h());
+                this.player = null;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void dummyPlayerEvents(ClientEvent event) {
+        String T = " dummyPlayerEvent ";
+        switch (Integer.parseInt(event.getType())) {
+            case 1: // create new player and pass the connection
+                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(), this));
+                System.out.println(TAG + T + " changed to Player " + event.getUserID());
+                this.player.setV(event.getV_x(), event.getV_y());
+                this.player.setAngle(event.getV_a());
+                // this.player.shoot(clientEvent.getS());
+                System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
+                        + event.getV_y() + " when creating player");
+                // Unset dummy player
+                this.dPlayer = null;
+                break;
+            case 2: // requesting for interesting area
+                this.dPlayer.reqInterestIn(event.getX(), event.getY());
+                System.out.println(TAG + T + "player interesting in x:" + event.getX() + " & y:"
+                        + event.getY());
+                break;
+            // set AOI of the player
+            case 3:
+                this.dPlayer.setAOI(event.getAoi_w(), event.getAoi_h());
+                System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
+                break;
+
+            default:
+                break;
         }
     }
 

@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.websocket.StreamInbound;
 import org.apache.catalina.websocket.WebSocketServlet;
 
-@WebServlet("/sangraama/dummyplayer")
 public class DummyPlayerConnection extends WebSocketServlet {
     private String TAG = "DummyPlayerServlet :";
 

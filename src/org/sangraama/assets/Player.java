@@ -244,6 +244,10 @@ public abstract class Player extends AbsPlayer {
     public void setBody(Body body) {
         this.body = body;
     }
+    
+    public Body getBody(Body body){
+        return this.body;
+    }
 
     public Body getBody() {
         return body;
