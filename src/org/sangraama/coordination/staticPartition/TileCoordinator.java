@@ -48,7 +48,7 @@ public enum TileCoordinator {
         try {
             prop.load(getClass().getResourceAsStream("/conf/sangraamaserver.properties"));
             this.serverURL = prop.getProperty("host") + ":" + prop.getProperty("port") + "/"
-                    + prop.getProperty("dir") + "/sangraama/dummyplayer";
+                    + prop.getProperty("dir") + "/sangraama/player";
             System.out.println(TAG + serverURL);
         } catch (Exception e) {
             e.printStackTrace();
