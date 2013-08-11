@@ -101,6 +101,7 @@ public class Ship extends Player {
         System.out.println(TAG + "create body def player x:" + this.x + " :" + this.y);
         bd.position.set(this.x, this.y);
         bd.type = BodyType.DYNAMIC;
+        //bd.fixedRotation = true;
         return bd;
     }
 
@@ -108,7 +109,7 @@ public class Ship extends Player {
         // CircleShape circle = new CircleShape();
         // circle.m_radius = 1f;
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(5f, 5f);
+        ps.setAsBox(10f, 10f);
 
         FixtureDef fd = new FixtureDef();
         fd.density = 0.5f;
@@ -116,6 +117,7 @@ public class Ship extends Player {
         fd.shape = ps;
         fd.friction = 0.2f;
         fd.restitution = 0.5f;
+        fd.filter.groupIndex = 2;
         return fd;
     }
 }
