@@ -10,6 +10,13 @@ public class StaticObject {
 	private int height;
 	private List<Points> coordinates= new ArrayList<Points>();
 	private String name;
+	private String type;
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public String getName() {
 		return name;
 	}
@@ -46,4 +53,12 @@ public class StaticObject {
 	public void setCoordinates(List<Points> coordinates) {
 		this.coordinates = coordinates;
 	}
+	
+	/*public void setPhysics(){
+		PhysicsAPI physicsAPI=new PhysicsAPI();
+		if(this.type.equals("plygon")){
+			physicsAPI.getPolygonPhysics();
+		}
+		
+	}*/
 }

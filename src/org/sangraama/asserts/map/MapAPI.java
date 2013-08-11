@@ -24,11 +24,14 @@ public class MapAPI {
 		mapWidth=tileLoader.getMapWidth();
 		for(int i=0;i<tileLoader.getObjects().size();i++){
 			StaticObject staticObject=new StaticObject();
-			staticObject.setX(tileLoader.getObjects().get(i).getX());
-			staticObject.setY(tileLoader.getObjects().get(i).getY());
-			staticObject.setHeight(tileLoader.getObjects().get(i).getHeight());
-			staticObject.setWidth(tileLoader.getObjects().get(i).getWidth());
-			String points=tileLoader.getObjects().get(i).getPolygon().getPoints();
+			staticObject.setName(tileLoader.getObjects().get(i).getName());
+			staticObject.setType(tileLoader.getObjects().get(i).getType());
+			int x=tileLoader.getObjects().get(i).getX();
+			int y=tileLoader.getObjects().get(i).getY();
+			staticObject.setX(x);
+			staticObject.setY(y);
+			
+			String points=tileLoader.getObjects().get(i).getPolyline().getPoints();
 			String regex="\\s";
 			Pattern p= Pattern.compile(regex);
 			String[] items = p.split(points);
@@ -39,8 +42,8 @@ public class MapAPI {
 				Integer digit1=Integer.parseInt(digits[0]);
 				Integer digit2=Integer.parseInt(digits[1]);
 				Points point=new Points();
-				point.setX(digit1);
-				point.setY(digit2);
+				point.setX(digit1+x);
+				point.setY(digit2+y);
 				coordinates.add(point);
 	            //System.out.println(s);
 	        }

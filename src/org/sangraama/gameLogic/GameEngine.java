@@ -6,11 +6,11 @@ import java.util.List;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
-import org.sangraama.assets.AbsPlayer;
+import org.sangraama.asserts.map.GameMap;
+import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
-import org.sangraama.assets.Ship;
 import org.sangraama.common.Constants;
 
 public enum GameEngine implements Runnable {
@@ -76,6 +76,27 @@ public enum GameEngine implements Runnable {
 
     public void init() {
         // Load static map asserts into JBox2D
+        GameMap g = GameMap.getMap();
+        g.generate(); // generate the static objects into game map, using any tile editor module.
+        PhysicsAPI physicsAPI = new PhysicsAPI();
+        for (int i = 0; i < g.getStaticObjects().size(); i++) {
+            /*
+             * for(int k=0;k<g.getStaticObjects().get(i).getCoordinates().size();k++){
+             * if(g.getStaticObjects
+             * ().get(i).getCoordinates().get(k).getX()<SangraamaMap.INSTANCE.getSubTileWidth()){
+             * System.out.println("Test");
+             * System.out.println(g.getStaticObjects().get(i).getCoordinates().get(k).getX());
+             * System.out.println(g.getStaticObjects().get(i).getCoordinates().get(k).getY()); } }
+             */
+            physicsAPI.applyPhysics(g.getStaticObjects().get(i));
+            if (physicsAPI.getBodyDef() != null) {
+                Body newStaticObjectBody = world.createBody(physicsAPI.getBodyDef());
+                newStaticObjectBody.createFixture(physicsAPI.getFixtureDef());
+                // System.out.println("polygon");
+            }
+
+        }
+        System.out.println("finish");
     }
 
     public void updateGameWorld() {
@@ -138,16 +159,16 @@ public enum GameEngine implements Runnable {
     public synchronized void addToPlayerQueue(Player ship) {
         this.newPlayerQueue.add(ship);
     }
-    
-    public synchronized void addToDummyQueue(DummyPlayer player){
+
+    public synchronized void addToDummyQueue(DummyPlayer player) {
         this.newDummyQueue.add(player);
     }
 
     public synchronized void addToRemovePlayerQueue(Player ship) {
         this.removePlayerQueue.add(ship);
     }
-    
-    public synchronized void addToRemoveDummyQueue(DummyPlayer player){
+
+    public synchronized void addToRemoveDummyQueue(DummyPlayer player) {
         this.removeDummyQueue.add(player);
     }
 

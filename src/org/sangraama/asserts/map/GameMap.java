@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.sangraama.assets.SangraamaMap;
+
 
 
 public class GameMap {
@@ -50,8 +52,12 @@ public class GameMap {
 	}
 	
 	
-	public void generate() throws JAXBException{
-		
+	public void generate(){
+		MapAPI m=new MapAPI();
+		m.getMapDetails();
+		this.mapHeight=m.getMapHeight();
+		this.mapWidth=m.getMapWidth();
+		this.staticObjects=m.getStaticObjects();
 		
 	}
 	

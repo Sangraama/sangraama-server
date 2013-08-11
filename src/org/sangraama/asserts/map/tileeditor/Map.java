@@ -16,6 +16,26 @@ public class Map {
 	private int mapheight;
 	@XmlAttribute(name="width")
 	private int mapwidth;
+	@XmlAttribute(name="tileheight")
+	private int tileheight;
+	@XmlAttribute(name="tilewidth")
+	private int tilewidth;
+	public int getTileheight() {
+		return tileheight;
+	}
+
+	public void setTileheight(int tileheight) {
+		this.tileheight = tileheight;
+	}
+
+	public int getTilewidth() {
+		return tilewidth;
+	}
+
+	public void setTilewidth(int tilewidth) {
+		this.tilewidth = tilewidth;
+	}
+
 	@XmlElement(name = "tileset")
 	private List<TileSet> tilesetList = new ArrayList<TileSet>();
 	@XmlElement(name = "layer")
