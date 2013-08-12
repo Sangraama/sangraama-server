@@ -44,15 +44,21 @@ public class WebSocketConnection extends MessageInbound {
      *            the instance of player which is connect to client
      */
     public void setPlayer(Ship player) {
-        if(this.dPlayer != null) this.dPlayer = null;
+        if (this.dPlayer != null) {
+            this.dPlayer.removeWebSocketConnection();
+            this.dPlayer = null;
+        }
         this.player = player;
-        System.out.println(TAG + " created a player conection...");
+        System.out.println(TAG + " created a PLAYER conection...");
     }
 
     public void setDummyPlayer(DummyPlayer dPlayer) {
-        if(this.player != null ) this.player = null;
+        if (this.player != null) {
+            this.player.removeWebSocketConnection();
+            this.player = null;
+        }
         this.dPlayer = dPlayer;
-        System.out.println(TAG + " created a dummy player conection...");
+        System.out.println(TAG + " created a DUMMY PLAYER conection...");
     }
 
     @Override
@@ -67,6 +73,9 @@ public class WebSocketConnection extends MessageInbound {
         System.out.println(TAG + " Close connection");
         if (this.player != null) {
             this.player.removeWebSocketConnection();
+        }
+        if (this.dPlayer != null) {
+            this.dPlayer.removeWebSocketConnection();
         }
     }
 

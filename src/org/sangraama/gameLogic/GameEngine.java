@@ -34,7 +34,7 @@ public enum GameEngine implements Runnable {
     // this method only access via class
     GameEngine() {
         System.out.println(TAG + "Init GameEngine...");
-        this.world = new World(new Vec2(0.0f, 0.0f), true);
+        this.world = new World(new Vec2(0.0f, 0.0f));
         this.playerList = new ArrayList<Player>();
         this.dummyList = new ArrayList<DummyPlayer>();
         this.newPlayerQueue = new ArrayList<Player>();
@@ -48,7 +48,7 @@ public enum GameEngine implements Runnable {
     public void run() {
         System.out.println(TAG + "GameEngine Start running.. fps:" + Constants.fps + " timesteps:"
                 + Constants.timeStep);
-        //init();
+        init();
         // Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
         // @Override
         // public void actionPerformed(ActionEvent arg0) {
@@ -127,7 +127,6 @@ public enum GameEngine implements Runnable {
             ship.applyUpdate();
             peformBulletUpdates(ship);
         }
-
     }
 
     /**
