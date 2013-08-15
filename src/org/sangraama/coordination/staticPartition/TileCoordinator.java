@@ -29,7 +29,8 @@ public enum TileCoordinator {
     private String TAG = "TileCoordinator : ";
     private boolean D = true;
 
-    HazelcastInstance instance;
+    private HazelcastInstance hazelcastInstance;
+
     Map<String, String> subtileMap;
     private float subTileHeight;
     private float subTileWidth;
@@ -38,8 +39,8 @@ public enum TileCoordinator {
     private ArrayList<SangraamaTile> tileInfo;
 
     TileCoordinator() {
-        HazelcastInstance instance = Hazelcast.newHazelcastInstance(new Config());
-        this.subtileMap = instance.getMap("subtile");
+        hazelcastInstance = Hazelcast.newHazelcastInstance(new Config());
+        this.subtileMap = hazelcastInstance.getMap("subtile");
         this.sangraamaMap = SangraamaMap.INSTANCE;
         this.subTileHeight = sangraamaMap.getSubTileWidth();
         this.subTileWidth = sangraamaMap.getSubTileHeight();
@@ -51,6 +52,7 @@ public enum TileCoordinator {
                     + prop.getProperty("dir") + "/sangraama/player";
             System.out.println(TAG + serverURL);
         } catch (Exception e) {
+            System.out.println("sangraamaserver.properties file not found.");
             e.printStackTrace();
         }
 
@@ -159,5 +161,9 @@ public enum TileCoordinator {
         for (String key : keyset) {
             System.out.println(TAG + key);
         }
+    }
+    
+    public HazelcastInstance getHazelcastInstance() {
+        return hazelcastInstance;
     }
 }

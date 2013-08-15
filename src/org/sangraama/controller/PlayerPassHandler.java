@@ -41,7 +41,7 @@ public enum PlayerPassHandler {
                  * to other servers. Security issue of attacking by other players is avoid by
                  * assigning messages which are passed between players and decentralized servers.
                  * 
-                 * @author : Gihan Karunarathne
+                 *
                  */
                 // callThriftServer(player);
 
