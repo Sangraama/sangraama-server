@@ -4,12 +4,19 @@ public class BulletDelta {
     private int type = 1;
     private float dx, dy, a;
     private long playerID;
+    private long id;
 
-    public BulletDelta(float dx, float dy, float a, long playerID) {
+    public BulletDelta(float dx, float dy, float a, long playerID, long id) {
         this.dx = dx;
         this.dy = dy;
         this.a = a;
         this.playerID = playerID;
+        this.id = id;
+
+    }
+
+    public long getId() {
+        return id;
     }
 
     public int getType() {
