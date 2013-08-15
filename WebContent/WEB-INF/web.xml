@@ -23,6 +23,6 @@
 	</filter>
 
 	<listener>
-		<listener-class>org.sangraama.serverstart.Listner</listener-class>
+		<listener-class>org.sangraama.serverstart.ServerStarter</listener-class>
 	</listener>
 </web-app>

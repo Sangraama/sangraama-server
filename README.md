@@ -8,6 +8,10 @@ and send updates to who subscribes for the updates.
 
 You can find more details about us [here](https://dl.dropboxusercontent.com/u/85408224/sangraama/content/blog.html).
 
+### Setup Sangraama with Eclipse
+
+Here you can find [how to setup new eclipse project with Sangraama source] (https://groups.google.com/d/msg/sangraama-dev/VIW7AS17Eck/FcD0ZwLR1sEJ). For more details, refer to our documentation.
+
 ### Game Story Board
 
 Sangraama MMOG framework can use to develop Massively Multiplayer Online Games.

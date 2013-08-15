@@ -9,7 +9,7 @@ import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.thrift.server.ThriftServer;
 
-public class Listner implements javax.servlet.ServletContextListener {
+public class ServerStarter implements javax.servlet.ServletContextListener {
     private ThriftServer thriftServer = null;
     private Thread gameEngine = null;
     private Thread updateEngine = null;

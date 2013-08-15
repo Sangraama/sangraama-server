@@ -1,12 +1,12 @@
 package org.sangraama.controller.clientprotocol;
 
 public class SangraamaTile {
-        private float x,y,width,heigth;
+        private float x,y,w,h; // origin X, origin Y, width and height of the sub-tile
         
         public SangraamaTile(float x,float y,float width,float heigth){
             this.x = x;
             this.y = y;
-            this.width = width;
-            this.heigth = heigth;
+            this.w = width;
+            this.h = heigth;
         }
 }
