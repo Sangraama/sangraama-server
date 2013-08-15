@@ -231,7 +231,8 @@ public abstract class Player extends AbsPlayer {
                 x = x + rX;
                 y = y - rY;
             }
-            Bullet bullet = new Bullet(this.userID, x, y);
+            long id = (long) (Math.random() * 10000);
+            Bullet bullet = new Bullet(id,this.userID, x, y);
             this.newBulletList.add(bullet);
             System.out.println(TAG + ": Added a new bullet");
         }

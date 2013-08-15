@@ -17,8 +17,10 @@ public class Bullet {
     private Vec2 velocity;
     private Body body;
     private BulletDelta bulletDelta;
+    private long id;
 
-    public Bullet(long playerId, float x, float y) {
+    public Bullet(long id, long playerId, float x, float y) {
+        this.id = id;
         this.playerId = playerId;
         this.x = x;
         this.y = y;
@@ -58,9 +60,14 @@ public class Bullet {
         return velocity;
     }
 
+    
+    public long getId() {
+        return id;
+    }
+
     public BulletDelta getBulletDelta() {
         bulletDelta = new BulletDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.playerId);
+                this.body.getAngle(), this.playerId,this.id);
         return bulletDelta;
     }
 
