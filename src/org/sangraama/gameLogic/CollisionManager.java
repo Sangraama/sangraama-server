@@ -10,6 +10,8 @@ public enum CollisionManager implements Runnable {
     // Debug
     private String TAG = "Collision Manager :";
 
+    private volatile boolean isRun = true;
+
     private Contact collisions;
     private GameEngine gameEngine;
     private volatile boolean isUpdate = false;
@@ -19,6 +21,11 @@ public enum CollisionManager implements Runnable {
         System.out.println(TAG + " init ... ");
     }
 
+    public synchronized boolean setStop() {
+        this.isRun = false;
+        return this.isRun;
+    }
+
     public synchronized void setCollisionList(Contact col) {
         this.collisions = col;
         this.isUpdate = true;
@@ -26,7 +33,7 @@ public enum CollisionManager implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (this.isRun) {
             if (isUpdate) {
                 Contact colList = this.collisions;
                 do {

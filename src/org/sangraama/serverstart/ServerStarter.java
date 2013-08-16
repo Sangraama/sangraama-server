@@ -10,6 +10,8 @@ import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.thrift.server.ThriftServer;
 
+import com.hazelcast.core.Hazelcast;
+
 public class ServerStarter implements javax.servlet.ServletContextListener {
     private ThriftServer thriftServer = null;
     private Thread gameEngine = null;
@@ -20,7 +22,10 @@ public class ServerStarter implements javax.servlet.ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
-        // GameEngine.INSTANCE.stopGameWorld();
+        GameEngine.INSTANCE.setStop();
+        UpdateEngine.INSTANCE.setStop();
+        CollisionManager.INSTANCE.setStop();
+        Hazelcast.shutdownAll();
     }
 
     @Override

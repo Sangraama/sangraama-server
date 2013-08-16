@@ -19,6 +19,8 @@ public enum GameEngine implements Runnable {
     INSTANCE;
     // Debug
     private String TAG = "Game Engine :";
+    
+    private volatile boolean isRun = true;
 
     private World world;
     private UpdateEngine updateEngine;
@@ -46,6 +48,11 @@ public enum GameEngine implements Runnable {
         this.updateEngine = UpdateEngine.INSTANCE;
         this.collisionManager = CollisionManager.INSTANCE;
     }
+    
+    public synchronized boolean setStop(){
+        this.isRun = false;
+        return this.isRun;
+    }
 
     @Override
     public void run() {
@@ -63,7 +70,7 @@ public enum GameEngine implements Runnable {
         // });
         // timer.start();
 
-        while (true) {
+        while (this.isRun) {
             try {
                 Thread.sleep(Constants.simulatingDelay);
                 updateGameWorld();
