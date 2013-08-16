@@ -23,8 +23,8 @@ public class ServerStarter implements javax.servlet.ServletContextListener {
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
         GameEngine.INSTANCE.setStop();
-        UpdateEngine.INSTANCE.setStop();
         CollisionManager.INSTANCE.setStop();
+        UpdateEngine.INSTANCE.setStop();
         Hazelcast.shutdownAll();
     }
 
