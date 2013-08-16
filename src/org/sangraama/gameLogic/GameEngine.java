@@ -132,11 +132,11 @@ public enum GameEngine implements Runnable {
             peformBulletUpdates(ship);
         }
     }
-    
-    public void updateCollisions(){
-        Contact collisions=this.world.getContactList();
-        if(collisions!=null){
-            this.collisionManager.processCollisions(collisions);
+
+    public void updateCollisions() {
+        Contact collisions = this.world.getContactList();
+        if (collisions != null) {
+            this.collisionManager.setCollisionList(collisions);
         }
     }
 
@@ -162,21 +162,21 @@ public enum GameEngine implements Runnable {
         }
         ship.getNewBulletList().clear();
     }
-    
-    public void removeBullet(Bullet bullet){
+
+    public void removeBullet(Bullet bullet) {
         List<Bullet> bList;
-        for(Player player : playerList){
-            if(player.getUserID()==bullet.getPlayerId()){
-                bList=player.getBulletList();
-                for(Bullet blt : bList){
-                    if(blt.getId()==bullet.getId()){
+        for (Player player : playerList) {
+            if (player.getUserID() == bullet.getPlayerId()) {
+                bList = player.getBulletList();
+                for (Bullet blt : bList) {
+                    if (blt.getId() == bullet.getId()) {
                         world.destroyBody(blt.getBody());
                         bList.remove(blt);
-                        System.out.println(TAG+"Bullet removed..");
+                        System.out.println(TAG + "Bullet removed..");
                     }
                 }
             }
-            
+
         }
     }
 

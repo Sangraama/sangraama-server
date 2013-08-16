@@ -17,7 +17,7 @@ public enum SignMsg {
 
         try {
             InputStream keyfis = this.getClass().getResourceAsStream("/PrivateKey.txt");
-//            FileInputStream keyfis = new FileInputStream("/sangraama-server/WebContent/WEB-INF/sign/PrivateKey.txt");
+            //FileInputStream keyfis = new FileInputStream("/sangraama-server/WebContent/WEB-INF/sign/PrivateKey.txt");
             byte[] encKey = new byte[keyfis.available()];
             keyfis.read(encKey);
             keyfis.close();
@@ -28,7 +28,7 @@ public enum SignMsg {
             dsa.initSign(priKey);
             dsa.update(messsage.getBytes());
             signature = dsa.sign();
-            System.out.println(TAG + "Done signing the message");
+            //System.out.println(TAG + "Done signing the message");
 
         } catch (Exception e) {
             e.printStackTrace();
