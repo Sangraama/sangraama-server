@@ -6,6 +6,7 @@ import java.util.List;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 import org.sangraama.asserts.map.GameMap;
 import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
@@ -21,6 +22,7 @@ public enum GameEngine implements Runnable {
 
     private World world;
     private UpdateEngine updateEngine;
+    private CollisionManager collisionManager;
     // list for send updates
     private List<Player> playerList;
     private List<DummyPlayer> dummyList;
@@ -42,6 +44,7 @@ public enum GameEngine implements Runnable {
         this.removePlayerQueue = new ArrayList<Player>();
         this.removeDummyQueue = new ArrayList<DummyPlayer>();
         this.updateEngine = UpdateEngine.INSTANCE;
+        this.collisionManager = CollisionManager.INSTANCE;
     }
 
     @Override
@@ -66,6 +69,7 @@ public enum GameEngine implements Runnable {
                 updateGameWorld();
                 world.step(Constants.timeStep, Constants.velocityIterations,
                         Constants.positionIterations);
+                updateCollisions();
                 pushUpdate();
 
             } catch (InterruptedException e) {
@@ -128,6 +132,13 @@ public enum GameEngine implements Runnable {
             peformBulletUpdates(ship);
         }
     }
+    
+    public void updateCollisions(){
+        Contact collisions=this.world.getContactList();
+        if(collisions!=null){
+            this.collisionManager.processCollisions(collisions);
+        }
+    }
 
     /**
      * update game world with new bullets
@@ -150,6 +161,23 @@ public enum GameEngine implements Runnable {
 
         }
         ship.getNewBulletList().clear();
+    }
+    
+    public void removeBullet(Bullet bullet){
+        List<Bullet> bList;
+        for(Player player : playerList){
+            if(player.getUserID()==bullet.getPlayerId()){
+                bList=player.getBulletList();
+                for(Bullet blt : bList){
+                    if(blt.getId()==bullet.getId()){
+                        world.destroyBody(blt.getBody());
+                        bList.remove(blt);
+                        System.out.println(TAG+"Bullet removed..");
+                    }
+                }
+            }
+            
+        }
     }
 
     public void pushUpdate() {
