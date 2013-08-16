@@ -6,7 +6,6 @@ import java.util.List;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
-import org.jbox2d.dynamics.contacts.Contact;
 import org.sangraama.asserts.map.GameMap;
 import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
@@ -24,7 +23,6 @@ public enum GameEngine implements Runnable {
 
     private World world;
     private UpdateEngine updateEngine;
-    private CollisionManager collisionManager;
     // list for send updates
     private List<Player> playerList;
     private List<DummyPlayer> dummyList;
@@ -46,7 +44,6 @@ public enum GameEngine implements Runnable {
         this.removePlayerQueue = new ArrayList<Player>();
         this.removeDummyQueue = new ArrayList<DummyPlayer>();
         this.updateEngine = UpdateEngine.INSTANCE;
-        this.collisionManager = CollisionManager.INSTANCE;
     }
     
     public synchronized boolean setStop(){
@@ -76,7 +73,6 @@ public enum GameEngine implements Runnable {
                 updateGameWorld();
                 world.step(Constants.timeStep, Constants.velocityIterations,
                         Constants.positionIterations);
-                updateCollisions();
                 pushUpdate();
 
             } catch (InterruptedException e) {

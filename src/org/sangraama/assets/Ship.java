@@ -119,7 +119,6 @@ public class Ship extends Player {
         fd.friction = 0.2f;
         fd.restitution = 0.5f;
         fd.filter.groupIndex = 2;
-        fd.userData = this;
         return fd;
     }
 }
