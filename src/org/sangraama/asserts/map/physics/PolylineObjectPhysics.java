@@ -57,5 +57,6 @@ public class PolylineObjectPhysics {
 		//chainShape.set(vertices, count);
 		fixtureDef = new FixtureDef();
 		fixtureDef.shape = chainShape;
+		fixtureDef.userData="Island";
 	}
 }
