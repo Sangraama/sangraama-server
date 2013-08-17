@@ -97,6 +97,7 @@ public enum TileCoordinator {
                 subTileOriginY = (j * subTileHeight) + sangraamaMap.getOriginY();
                 subTileOrigins = Float.toString(subTileOriginX) + ":"
                         + Float.toString(subTileOriginY);
+                System.out.println("subTileOrigins"+subTileOrigins);
                 subtileMap.put(subTileOrigins, serverURL);
             }
         }

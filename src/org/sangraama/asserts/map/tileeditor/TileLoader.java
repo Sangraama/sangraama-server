@@ -87,7 +87,7 @@ public class TileLoader {
 			jc = JAXBContext.newInstance(Map.class);
 			Unmarshaller unmarshaller = jc.createUnmarshaller();
 		
-			InputStream inputstream=this.getClass().getResourceAsStream("/asset/gamemap.tmx");
+			InputStream inputstream=this.getClass().getResourceAsStream("/asset/worldMap.tmx");
 			
 			
 			Map obj = (Map)unmarshaller.unmarshal(inputstream);

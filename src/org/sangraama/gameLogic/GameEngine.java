@@ -71,28 +71,14 @@ public enum GameEngine implements Runnable {
         }
     }
 
+    /*Load static map objects into game engine and apply object physics using JBox2D*/
     public void init() {
-        // Load static map asserts into JBox2D
+        
     	GameMap g=GameMap.getMap();
-		g.generate();	//generate the static objects into game map, using any tile editor module.
-		PhysicsAPI physicsAPI=new PhysicsAPI();
-		for(int i=0;i<g.getStaticObjects().size();i++){
-			/*for(int k=0;k<g.getStaticObjects().get(i).getCoordinates().size();k++){
-				if(g.getStaticObjects().get(i).getCoordinates().get(k).getX()<SangraamaMap.INSTANCE.getSubTileWidth()){
-					System.out.println("Test");
-				System.out.println(g.getStaticObjects().get(i).getCoordinates().get(k).getX());
-				System.out.println(g.getStaticObjects().get(i).getCoordinates().get(k).getY());
-				}
-				}	*/
-		physicsAPI.applyPhysics(g.getStaticObjects().get(i));
-		if(physicsAPI.getBodyDef()!=null){
-		Body newStaticObjectBody=world.createBody(physicsAPI.getBodyDef());
-		newStaticObjectBody.createFixture(physicsAPI.getFixtureDef());
-		//System.out.println("polygon");
-		}
-	
-		}
-		System.out.println("finish");
+		g.generate();	//generate the static objects into game engine, using any tile editor module.
+		PhysicsAPI physicsAPI=new PhysicsAPI(); 
+		physicsAPI.applyPhysics(g.getStaticObjects(), world);// apply physics to the static objects, and add them to the game world.
+		System.out.println("Static Game Objects added to the game world!!");
     }
 
     public void updateGameWorld() {

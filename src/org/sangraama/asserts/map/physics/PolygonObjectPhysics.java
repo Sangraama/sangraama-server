@@ -1,5 +1,6 @@
 package org.sangraama.asserts.map.physics;
 
+import org.jbox2d.collision.shapes.ChainShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
@@ -36,6 +37,7 @@ public class PolygonObjectPhysics {
 	}
 	public void createFixtureDef(Vec2[] vertices, int count) {
 		polygonShape=new PolygonShape();
+	
 		polygonShape.set(vertices, count);
 		fixtureDef = new FixtureDef();
 		fixtureDef.shape = polygonShape;

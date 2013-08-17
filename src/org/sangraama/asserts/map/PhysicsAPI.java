@@ -1,21 +1,28 @@
 package org.sangraama.asserts.map;
 
+import java.util.List;
+
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.FixtureDef;
+import org.jbox2d.dynamics.World;
 import org.sangraama.asserts.map.physics.PolygonObjectPhysics;
 import org.sangraama.asserts.map.physics.PolylineObjectPhysics;
+import org.sangraama.assets.SangraamaMap;
 
 public class PhysicsAPI {
 	private BodyDef bodyDef;
 	private FixtureDef fixtureDef;
 	public void applyPhysics(StaticObject staticObject){
+		
 		if(staticObject.getType().equals("polygon")){
 			PolygonObjectPhysics polygon=new PolygonObjectPhysics();
 			polygon.createBodyDef(staticObject.getX(), staticObject.getY());
 			this.bodyDef=polygon.getBodyDef();
 			Vec2[] vertices=new Vec2[staticObject.getCoordinates().size()];
 			for(int i=0;i<vertices.length;i++){
+				vertices[i]=new Vec2();
 				vertices[i].set(staticObject.getCoordinates().get(i).getX(), staticObject.getCoordinates().get(i).getY());
 			}
 			
@@ -24,38 +31,47 @@ public class PhysicsAPI {
 		}
 		if(staticObject.getType().equals("polyline")){
 		PolylineObjectPhysics polyline=new PolylineObjectPhysics();
+		polyline.createBodyDef(staticObject.getX(), staticObject.getY());
+		this.bodyDef=polyline.getBodyDef();
 		Vec2[] vertices=new Vec2[staticObject.getCoordinates().size()];
-		//vertices[0]=new Vec2();
-		//System.out.println("Vec2"+vertices[0].x);
-		//System.out.println("polyline");
-		//System.out.println("length"+vertices.length);
-		//System.out.println(staticObject.getName());
-		//System.out.println(staticObject.getType());
-		//System.out.println(g.getStaticObjects().get(i).getHeight());
-		//System.out.println(g.getStaticObjects().get(i).getWidth());
-		//System.out.println(staticObject.getX());
-		//System.out.println(staticObject.getY());
-		//for(int k=0;k<staticObject.getCoordinates().size();k++){
-		///System.out.println(staticObject.getCoordinates().get(k).getX());
-		//System.out.println(staticObject.getCoordinates().get(k).getY());
-		//}
+		
 		for(int i=0;i<vertices.length;i++){
-		//	System.out.println("in for loop");
-			//System.out.println("x="+staticObject.getCoordinates().get(i).getX());
-			//System.out.println("y="+staticObject.getCoordinates().get(i).getY());
+		
 			vertices[i]=new Vec2();
 			vertices[i].set(staticObject.getCoordinates().get(i).getX(), staticObject.getCoordinates().get(i).getY());
-			//System.out.println("x="+vertices[i].x);
-			//System.out.println("*");
-			
-			//System.out.println("y="+vertices[i].y);
+			//System.out.println(staticObject.getCoordinates().get(i).getX()+"+++++"+staticObject.getCoordinates().get(i).getY());
 		}
-		//vertices[vertices.length-1]=new Vec2();
-		//vertices[vertices.length-1].set(staticObject.getCoordinates().get(0).getX(), staticObject.getCoordinates().get(0).getY());
-	//	System.out.println("xx="+vertices[vertices.length-1].x);
-		//System.out.println("yy="+vertices[vertices.length-1].y);
-		polyline.createChain(vertices, vertices.length);
+		polyline.createFixtureDef(vertices, vertices.length);
+		//System.out.println("Chain loop created!!!!!!!!!");
+		this.fixtureDef=polyline.getFixtureDef();
+		//polyline.createChain(vertices, vertices.length);
 		}
+	}
+	
+	public void applyPhysics(List<StaticObject> staticObjects,World world){
+		float xLimit=SangraamaMap.INSTANCE.getOriginX()+SangraamaMap.INSTANCE.getMapWidth(); 	//The limit in X-axis of the map related to the server.
+    	float yLimit=SangraamaMap.INSTANCE.getOriginY()+SangraamaMap.INSTANCE.getMapHeight();	//The limit in Y-axis of the map related to the server.
+    	for(int i=0;i<staticObjects.size();i++){ // for each static object
+    		int count=0;
+    			for(int k=0;k<staticObjects.get(i).getCoordinates().size();k++){ //for each coordinate of the object
+    				if(staticObjects.get(i).getCoordinates().get(k).getX()<xLimit && staticObjects.get(i).getCoordinates().get(k).getY()<yLimit){ //if the x and y coordiantes of the object is within the map 
+    					count++;
+    				//	System.out.println("Test");
+    				//System.out.println(staticObjects.get(i).getCoordinates().get(k).getX());
+    				//System.out.println(staticObjects.get(i).getCoordinates().get(k).getY());
+    				
+    				}
+    				}	
+    		
+    			if(count==staticObjects.get(i).getCoordinates().size()){ //if all the coordinates of the object is within the map
+    				//System.out.println("count="+count);
+    				applyPhysics(staticObjects.get(i)); //apply the physics to that object.
+    				Body newStaticObjectBody=world.createBody(this.getBodyDef()); // add the static object to the game world.
+    				newStaticObjectBody.createFixture(this.getFixtureDef());
+    				
+    			}
+    		
+    		}
 	}
 	public BodyDef getBodyDef() {
 		return bodyDef;

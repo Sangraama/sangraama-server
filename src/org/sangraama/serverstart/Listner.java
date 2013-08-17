@@ -44,10 +44,12 @@ public class Listner implements javax.servlet.ServletContextListener {
                 Float.parseFloat(prop.getProperty("subtileheight")));
         this.updateEngine = new Thread(UpdateEngine.INSTANCE);
         this.updateEngine.start();
+        
         this.gameEngine = new Thread(GameEngine.INSTANCE);
         this.gameEngine.start();
         TileCoordinator.INSTANCE.generateSubtiles();
         TileCoordinator.INSTANCE.printEntriesInSubtileMap();
+       
         // thriftServer = new ThriftServer(Integer.parseInt(prop.getProperty("thriftserverport")));
         // thriftServerThread = new Thread(thriftServer);
         // thriftServerThread.start();
