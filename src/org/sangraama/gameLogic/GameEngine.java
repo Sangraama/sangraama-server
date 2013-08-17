@@ -1,22 +1,16 @@
 package org.sangraama.gameLogic;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.Timer;
-
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
-
 import org.sangraama.asserts.map.GameMap;
 import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
+import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
-import org.sangraama.assets.SangraamaMap;
 import org.sangraama.common.Constants;
 
 public enum GameEngine implements Runnable {
@@ -24,28 +18,44 @@ public enum GameEngine implements Runnable {
     INSTANCE;
     // Debug
     private String TAG = "Game Engine :";
+    
+    private volatile boolean isRun = true;
 
     private World world;
     private UpdateEngine updateEngine;
+    // list for send updates
     private List<Player> playerList;
+    private List<DummyPlayer> dummyList;
+    // list of newly adding players
     private List<Player> newPlayerQueue;
+    private List<DummyPlayer> newDummyQueue;
+    // list of removing players
     private List<Player> removePlayerQueue;
+    private List<DummyPlayer> removeDummyQueue;
 
     // this method only access via class
     GameEngine() {
         System.out.println(TAG + "Init GameEngine...");
         this.world = new World(new Vec2(0.0f, 0.0f));
         this.playerList = new ArrayList<Player>();
+        this.dummyList = new ArrayList<DummyPlayer>();
         this.newPlayerQueue = new ArrayList<Player>();
+        this.newDummyQueue = new ArrayList<DummyPlayer>();
         this.removePlayerQueue = new ArrayList<Player>();
+        this.removeDummyQueue = new ArrayList<DummyPlayer>();
         this.updateEngine = UpdateEngine.INSTANCE;
+    }
+    
+    public synchronized boolean setStop(){
+        this.isRun = false;
+        return this.isRun;
     }
 
     @Override
     public void run() {
         System.out.println(TAG + "GameEngine Start running.. fps:" + Constants.fps + " timesteps:"
                 + Constants.timeStep);
-      init();
+        init();
         // Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
         // @Override
         // public void actionPerformed(ActionEvent arg0) {
@@ -57,7 +67,7 @@ public enum GameEngine implements Runnable {
         // });
         // timer.start();
 
-        while (true) {
+        while (this.isRun) {
             try {
                 Thread.sleep(Constants.simulatingDelay);
                 updateGameWorld();
@@ -86,6 +96,7 @@ public enum GameEngine implements Runnable {
         for (Player rmPlayer : removePlayerQueue) {
             System.out.println(TAG + "Removing players");
             this.playerList.remove(rmPlayer);
+            this.world.destroyBody(rmPlayer.getBody());
             System.out.println(TAG + "Removed player :" + rmPlayer.getUserID());
         }
         this.removePlayerQueue.clear();
@@ -104,48 +115,77 @@ public enum GameEngine implements Runnable {
         }
         this.newPlayerQueue.clear();
 
-        for (Player player : playerList) {
-            player.applyUpdate();
-            peformBulletUpdates(player);
+        for (Player ship : playerList) {
+            ship.applyUpdate();
+            peformBulletUpdates(ship);
         }
+    }
 
+    public void updateCollisions() {
+        Contact collisions = this.world.getContactList();
+        if (collisions != null) {
+            this.collisionManager.setCollisionList(collisions);
+        }
     }
 
     /**
      * update game world with new bullets
      * 
-     * @param player
+     * @param ship
      *            player who belongs the bullets
      * 
      */
-    private void peformBulletUpdates(Player player) {
-        for (Bullet newBullet : player.getNewBulletList()) {
+    private void peformBulletUpdates(Player ship) {
+        for (Bullet newBullet : ship.getNewBulletList()) {
             System.out.println(TAG + "Adding new bullet");
             Body newBulletBody = world.createBody(newBullet.getBodyDef());
-            newBulletBody.setTransform(newBulletBody.getPosition(), player.getAngle());
+            newBulletBody.setTransform(newBulletBody.getPosition(), ship.getAngle());
             newBulletBody.createFixture(newBullet.getFixtureDef());
             newBullet.setBody(newBulletBody);
-            Vec2 velocity = new Vec2(newBulletBody.getPosition().x - player.getX(),
-                    newBulletBody.getPosition().y - player.getY());
+            Vec2 velocity = new Vec2(newBulletBody.getPosition().x - ship.getX(),
+                    newBulletBody.getPosition().y - ship.getY());
             newBulletBody.setLinearVelocity(velocity);
-            player.getBulletList().add(newBullet);
+            ship.getBulletList().add(newBullet);
 
         }
-        player.getNewBulletList().clear();
+        ship.getNewBulletList().clear();
+    }
+
+    public void removeBullet(Bullet bullet) {
+        List<Bullet> bList;
+        for (Player player : playerList) {
+            if (player.getUserID() == bullet.getPlayerId()) {
+                bList = player.getBulletList();
+                for (Bullet blt : bList) {
+                    if (blt.getId() == bullet.getId()) {
+                        world.destroyBody(blt.getBody());
+                        bList.remove(blt);
+                        System.out.println(TAG + "Bullet removed..");
+                    }
+                }
+            }
+
+        }
     }
 
     public void pushUpdate() {
         this.updateEngine.setWaitingPlayerList(playerList);
     }
 
-    public void addToPlayerQueue(Player player) {
-        this.newPlayerQueue.add(player);
-
+    public synchronized void addToPlayerQueue(Player ship) {
+        this.newPlayerQueue.add(ship);
     }
 
-    public void addToRemovePlayerQueue(Player player) {
-        this.removePlayerQueue.add(player);
+    public synchronized void addToDummyQueue(DummyPlayer player) {
+        this.newDummyQueue.add(player);
+    }
 
+    public synchronized void addToRemovePlayerQueue(Player ship) {
+        this.removePlayerQueue.add(ship);
+    }
+
+    public synchronized void addToRemoveDummyQueue(DummyPlayer player) {
+        this.removeDummyQueue.add(player);
     }
 
 }

@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.swing.Timer;
 
 import org.sangraama.assets.Player;
+import org.sangraama.assets.Ship;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
@@ -19,6 +20,9 @@ public enum UpdateEngine implements Runnable {
     // Debug
     private String TAG = "Update Engine :";
 
+    private volatile boolean isRun = true;
+    private volatile boolean isUpdate = false;
+
     private List<Player> playerList; // don't modify;read only
     /* Should be atomic operation. */
     private volatile List<Player> waitingPlayerList;
@@ -27,8 +31,13 @@ public enum UpdateEngine implements Runnable {
     UpdateEngine() {
         System.out.println(TAG + "Init Update Engine ...");
         this.playerList = new ArrayList<Player>();
-        this.waitingPlayerList = new ArrayList<>();
+        this.waitingPlayerList = new ArrayList<Player>();
         // this.locations = new float[100][3];
+    }
+
+    public synchronized boolean setStop() {
+        this.isRun = false;
+        return this.isRun;
     }
 
     public void setWaitingPlayerList(List<Player> playerList) {
@@ -37,18 +46,22 @@ public enum UpdateEngine implements Runnable {
          * update sent.
          */
         this.waitingPlayerList = playerList;
+        this.isUpdate = true;
     }
 
     @Override
     public void run() {
-        Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                pushUpdate();
+        while (this.isRun) {
+            if (this.isUpdate) {
+                this.pushUpdate();
+            } else {
+                try {
+                    Thread.sleep(Constants.simulatingDelay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-        });
-
-        timer.start();
+        }
     }
 
     public void pushUpdate() {

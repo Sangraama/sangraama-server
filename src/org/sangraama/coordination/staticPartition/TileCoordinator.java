@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.catalina.Server;
@@ -30,6 +29,8 @@ public enum TileCoordinator {
     private String TAG = "TileCoordinator : ";
     private boolean D = true;
 
+    private HazelcastInstance hazelcastInstance;
+
     Map<String, String> subtileMap;
     private float subTileHeight;
     private float subTileWidth;
@@ -38,7 +39,8 @@ public enum TileCoordinator {
     private ArrayList<SangraamaTile> tileInfo;
 
     TileCoordinator() {
-        subtileMap = Hazelcast.getMap("subtile");
+        hazelcastInstance = Hazelcast.newHazelcastInstance(new Config());
+        this.subtileMap = hazelcastInstance.getMap("subtile");
         this.sangraamaMap = SangraamaMap.INSTANCE;
         this.subTileHeight = sangraamaMap.getSubTileWidth();
         this.subTileWidth = sangraamaMap.getSubTileHeight();
@@ -50,6 +52,7 @@ public enum TileCoordinator {
                     + prop.getProperty("dir") + "/sangraama/player";
             System.out.println(TAG + serverURL);
         } catch (Exception e) {
+            System.out.println("sangraamaserver.properties file not found.");
             e.printStackTrace();
         }
 
@@ -112,7 +115,7 @@ public enum TileCoordinator {
         String host = "";
         float subTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        host = (String) Hazelcast.getMap("subtile").get(
+        host = (String) subtileMap.get(
                 Float.toString(subTileOriginX) + ":" + Float.toString(subTileOriginY));
         return host;
     }
@@ -124,7 +127,7 @@ public enum TileCoordinator {
      * @return ArrayList<SangraamaTile> about coordinations of sub-tiles
      */
     private ArrayList<SangraamaTile> calSubTilesCoordinations() {
-        ArrayList<SangraamaTile> tiles = new ArrayList<>();
+        ArrayList<SangraamaTile> tiles = new ArrayList<SangraamaTile>();
         Set<String> keySet = subtileMap.keySet();
         
         // Iterate though all keys
@@ -159,5 +162,9 @@ public enum TileCoordinator {
         for (String key : keyset) {
             System.out.println(TAG + key);
         }
+    }
+    
+    public HazelcastInstance getHazelcastInstance() {
+        return hazelcastInstance;
     }
 }

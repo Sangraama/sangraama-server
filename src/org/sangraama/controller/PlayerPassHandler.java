@@ -2,7 +2,9 @@ package org.sangraama.controller;
 
 import java.util.ArrayList;
 
+import org.sangraama.assets.AbsPlayer;
 import org.sangraama.assets.Player;
+import org.sangraama.assets.Ship;
 import org.sangraama.assets.SangraamaMap;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.coordination.ServerHandler;
@@ -15,15 +17,15 @@ import org.sangraama.thrift.client.ThriftClient;
 public enum PlayerPassHandler {
     INSTANCE;
     private static final String TAG = "PlayerPassHandler :";
-    private ArrayList<Player> passPlayerList;
-    private ArrayList<Player> connectionList;
+    private ArrayList<AbsPlayer> passPlayerList;
+    private ArrayList<AbsPlayer> connectionList;
     private volatile boolean isPass;
     private ServerHandler sHandler;
     private GameEngine gameEngine;
 
     private PlayerPassHandler() {
-        this.passPlayerList = new ArrayList<Player>();
-        this.connectionList = new ArrayList<Player>();
+        this.passPlayerList = new ArrayList<AbsPlayer>();
+        this.connectionList = new ArrayList<AbsPlayer>();
         this.sHandler = ServerHandler.INSTANCE;
         this.gameEngine = GameEngine.INSTANCE;
     }
@@ -32,23 +34,23 @@ public enum PlayerPassHandler {
 
         if (this.isPass) {
             // System.out.println(TAG + " is pass true");
-            for (Player player : passPlayerList) {
+            for (AbsPlayer ship : passPlayerList) {
                 /*
                  * Pass player information into another server using Thrift. This technique removed
                  * by introducing a new concept of client is responsible for handling and connecting
                  * to other servers. Security issue of attacking by other players is avoid by
                  * assigning messages which are passed between players and decentralized servers.
                  * 
-                 * @author : Gihan Karunarathne
+                 *
                  */
                 // callThriftServer(player);
 
-                passNewServerInfo(player);
+                passNewServerInfo(ship);
                 // this.gameEngine.addToRemovePlayerQueue(player);
             }
             // Loop to send new deatils about update servers
-            for (Player player : this.connectionList) {
-                this.passNewConnectionInfo(player);
+            for (AbsPlayer ship : this.connectionList) {
+                this.passNewConnectionInfo(ship);
             }
             isPass = false;
             this.passPlayerList.clear();
@@ -56,15 +58,15 @@ public enum PlayerPassHandler {
 
     }
 
-    public void callThriftServer(Player player) {
+    public void callThriftServer(Ship ship) {
         TPlayer tPlayer = new TPlayer();
-        ServerLocation serverLoc = sHandler.getThriftServerLocation(player.getX(), player.getY());
+        ServerLocation serverLoc = sHandler.getThriftServerLocation(ship.getX(), ship.getY());
 
-        tPlayer.id = player.getUserID();
-        tPlayer.x = (int) (player.getX() + SangraamaMap.INSTANCE.getOriginX());
-        tPlayer.y = (int) (player.getY() + SangraamaMap.INSTANCE.getOriginY());
-        tPlayer.v_x = player.getV().x;
-        tPlayer.v_y = player.getV().y;
+        tPlayer.id = ship.getUserID();
+        tPlayer.x = (int) (ship.getX() + SangraamaMap.INSTANCE.getOriginX());
+        tPlayer.y = (int) (ship.getY() + SangraamaMap.INSTANCE.getOriginY());
+        tPlayer.v_x = ship.getV().x;
+        tPlayer.v_y = ship.getV().y;
         if (serverLoc != null) {
             ThriftClient thriftClient = new ThriftClient(tPlayer, serverLoc.getServerURL(),
                     serverLoc.getServerPort());
@@ -72,8 +74,8 @@ public enum PlayerPassHandler {
         }
     }
 
-    public synchronized void setPassPlayer(Player player) {
-        this.passPlayerList.add(player);
+    public synchronized void setPassPlayer(Player ship) {
+        this.passPlayerList.add(ship);
         isPass = true;
         System.out.println(TAG + "Added passed player");
         this.run();
@@ -82,17 +84,17 @@ public enum PlayerPassHandler {
     /**
      * Send parameters of new connection to get server updates
      * 
-     * @param player
+     * @param ship
      *            Player who need details about the server
      */
-    public synchronized void setPassConnection(Player player) {
-        this.connectionList.add(player);
+    public synchronized void setPassConnection(AbsPlayer ship) {
+        this.connectionList.add(ship);
         this.isPass = true;
         System.out.println(TAG + " added to Pass Connection details");
         this.run();
     }
 
-    private void passNewServerInfo(Player player) {
+    private void passNewServerInfo(AbsPlayer ship) {
         /*
          * ServerLocation serverLoc = this.sHandler.getServerLocation(player.getX(), player.getY());
          * 
@@ -105,23 +107,23 @@ public enum PlayerPassHandler {
          * " serverPort:" + serverLoc.getServerPort()); }
          */
 
-        String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(player.getX(),
-                player.getY());
-        ClientTransferReq transferReq = new ClientTransferReq(2, player.getUserID(), player.getX(),
-                player.getY(), newHost);
-        player.sendNewConnection(transferReq);
+        String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(ship.getX(),
+                ship.getY());
+        ClientTransferReq transferReq = new ClientTransferReq(2, ship.getUserID(), ship.getX(),
+                ship.getY(), newHost);
+        ship.sendNewConnection(transferReq);
     }
 
     /**
      * Send the connection details about new server that player needs to get updates
-     * @param player Player that needs updates
+     * @param ship Player that needs updates
      */
-    private void passNewConnectionInfo(Player player) {
-        String updateHost = (String) TileCoordinator.INSTANCE.getSubTileHost(player.getX(),
-                player.getY());
-        ClientTransferReq transferReq = new ClientTransferReq(3, player.getUserID(), player.getX(),
-                player.getY(), updateHost);
-        player.sendNewConnection(transferReq);
+    private void passNewConnectionInfo(AbsPlayer ship) {
+        String updateHost = (String) TileCoordinator.INSTANCE.getSubTileHost(ship.getX(),
+                ship.getY());
+        ClientTransferReq transferReq = new ClientTransferReq(3, ship.getUserID(), ship.getX(),
+                ship.getY(), updateHost);
+        ship.sendNewConnection(transferReq);
     }
 
 }

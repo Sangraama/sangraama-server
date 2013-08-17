@@ -3,7 +3,7 @@ package org.sangraama.gameLogic;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sangraama.assets.Player;
+import org.sangraama.assets.Ship;
 import org.sangraama.assets.SangraamaMap;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.thrift.assets.TPlayer;
@@ -29,9 +29,9 @@ public enum PassedPlayer {
 		System.out.println(TAG + "Added new passed player");
 	}
 
-	private Player fillPlayer(TPlayer tp, WebSocketConnection con) {
+	private Ship fillPlayer(TPlayer tp, WebSocketConnection con) {
 		SangraamaMap map = SangraamaMap.INSTANCE;
-		Player p = new Player(tp.getId(), tp.getX() - map.getOriginX(),
+		Ship p = new Ship(tp.getId(), tp.getX() - map.getOriginX(),
 				tp.getY() - map.getOriginY(), con);
 		p.setV((float) tp.getV_x(), (float) tp.getV_y());
 
@@ -43,8 +43,8 @@ public enum PassedPlayer {
 		if (!passdePlayers.isEmpty()) {
 			TPlayer p = this.passdePlayers.get(userID);
 			if (p != null) {
-				Player player = fillPlayer(p, con);
-				con.setPlayer(player);
+				Ship ship = fillPlayer(p, con);
+				con.setPlayer(ship);
 				this.passdePlayers.remove(userID);
 				System.out.println(TAG
 						+ "Added passed player to GameEngine queue");

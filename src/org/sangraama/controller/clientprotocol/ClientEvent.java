@@ -9,6 +9,8 @@ public class ClientEvent {
     private float v_y;
     private float v_a;
     private float s;
+    private float aoi_w;
+    private float aoi_h;
     private String info;
     private byte[] signedInfo;
 
@@ -44,6 +46,14 @@ public class ClientEvent {
         return s;
     }
     
+    public float getAoi_w() {
+        return aoi_w;
+    }
+
+    public float getAoi_h() {
+        return aoi_h;
+    }
+
     public String getInfo() {
         return info;
     }
