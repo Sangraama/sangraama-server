@@ -6,6 +6,7 @@ import java.util.List;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 import org.sangraama.asserts.map.GameMap;
 import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
@@ -124,7 +125,7 @@ public enum GameEngine implements Runnable {
     public void updateCollisions() {
         Contact collisions = this.world.getContactList();
         if (collisions != null) {
-            this.collisionManager.setCollisionList(collisions);
+            CollisionManager.INSTANCE.setCollisionList(collisions);
         }
     }
 

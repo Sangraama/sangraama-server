@@ -80,7 +80,7 @@ public enum CollisionManager implements Runnable {
 
     private void processBulletShipCollition(Player ship, Bullet bullet) {
         System.out.println("Victime ship : " + ship.getUserID());
-        System.out.println("Shooter ship : " + bullet.getPlayerId());
+        //System.out.println("Shooter ship : " + bullet.getPlayerId());
         // this.gameEngine.removeBullet(bullet);
     }
 }
