@@ -72,6 +72,9 @@ public enum CollisionManager implements Runnable {
                 processBulletShipCollition(ship, bullet);
             }
         }
+       /* else if(){
+        	
+        }*/
     }
 
     private void processShipsCollision() {

@@ -41,5 +41,6 @@ public class PolygonObjectPhysics {
 		polygonShape.set(vertices, count);
 		fixtureDef = new FixtureDef();
 		fixtureDef.shape = polygonShape;
+		fixtureDef.filter.groupIndex=1;
 	}
 }
