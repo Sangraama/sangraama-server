@@ -6,6 +6,7 @@ import java.util.List;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 import org.sangraama.asserts.map.GameMap;
 import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
@@ -18,6 +19,8 @@ public enum GameEngine implements Runnable {
     INSTANCE;
     // Debug
     private String TAG = "Game Engine :";
+    
+    private volatile boolean isRun = true;
 
     private World world;
     private UpdateEngine updateEngine;
@@ -43,6 +46,11 @@ public enum GameEngine implements Runnable {
         this.removeDummyQueue = new ArrayList<DummyPlayer>();
         this.updateEngine = UpdateEngine.INSTANCE;
     }
+    
+    public synchronized boolean setStop(){
+        this.isRun = false;
+        return this.isRun;
+    }
 
     @Override
     public void run() {
@@ -60,7 +68,7 @@ public enum GameEngine implements Runnable {
         // });
         // timer.start();
 
-        while (true) {
+        while (this.isRun) {
             try {
                 Thread.sleep(Constants.simulatingDelay);
                 updateGameWorld();
@@ -74,29 +82,14 @@ public enum GameEngine implements Runnable {
         }
     }
 
+    /*Load static map objects into game engine and apply object physics using JBox2D*/
     public void init() {
-        // Load static map asserts into JBox2D
-        GameMap g = GameMap.getMap();
-        g.generate(); // generate the static objects into game map, using any tile editor module.
-        PhysicsAPI physicsAPI = new PhysicsAPI();
-        for (int i = 0; i < g.getStaticObjects().size(); i++) {
-            /*
-             * for(int k=0;k<g.getStaticObjects().get(i).getCoordinates().size();k++){
-             * if(g.getStaticObjects
-             * ().get(i).getCoordinates().get(k).getX()<SangraamaMap.INSTANCE.getSubTileWidth()){
-             * System.out.println("Test");
-             * System.out.println(g.getStaticObjects().get(i).getCoordinates().get(k).getX());
-             * System.out.println(g.getStaticObjects().get(i).getCoordinates().get(k).getY()); } }
-             */
-            physicsAPI.applyPhysics(g.getStaticObjects().get(i));
-            if (physicsAPI.getBodyDef() != null) {
-                Body newStaticObjectBody = world.createBody(physicsAPI.getBodyDef());
-                newStaticObjectBody.createFixture(physicsAPI.getFixtureDef());
-                // System.out.println("polygon");
-            }
-
-        }
-        System.out.println("finish");
+        
+    	GameMap g=GameMap.getMap();
+		g.generate();	//generate the static objects into game engine, using any tile editor module.
+		PhysicsAPI physicsAPI=new PhysicsAPI(); 
+		physicsAPI.applyPhysics(g.getStaticObjects(), world);// apply physics to the static objects, and add them to the game world.
+		System.out.println("Static Game Objects added to the game world!!");
     }
 
     public void updateGameWorld() {
@@ -129,6 +122,13 @@ public enum GameEngine implements Runnable {
         }
     }
 
+    public void updateCollisions() {
+        Contact collisions = this.world.getContactList();
+        if (collisions != null) {
+            CollisionManager.INSTANCE.setCollisionList(collisions);
+        }
+    }
+
     /**
      * update game world with new bullets
      * 
@@ -150,6 +150,23 @@ public enum GameEngine implements Runnable {
 
         }
         ship.getNewBulletList().clear();
+    }
+
+    public void removeBullet(Bullet bullet) {
+        List<Bullet> bList;
+        for (Player player : playerList) {
+            if (player.getUserID() == bullet.getPlayerId()) {
+                bList = player.getBulletList();
+                for (Bullet blt : bList) {
+                    if (blt.getId() == bullet.getId()) {
+                        world.destroyBody(blt.getBody());
+                        bList.remove(blt);
+                        System.out.println(TAG + "Bullet removed..");
+                    }
+                }
+            }
+
+        }
     }
 
     public void pushUpdate() {

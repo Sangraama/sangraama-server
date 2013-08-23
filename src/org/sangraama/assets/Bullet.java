@@ -64,6 +64,10 @@ public class Bullet {
     public long getId() {
         return id;
     }
+    
+    public long getPlayerId(){
+    	return this.playerId;
+    }
 
     public BulletDelta getBulletDelta() {
         bulletDelta = new BulletDelta(this.body.getPosition().x, this.body.getPosition().y,

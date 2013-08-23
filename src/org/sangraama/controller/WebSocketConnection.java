@@ -233,7 +233,7 @@ public class WebSocketConnection extends MessageInbound {
     public void sendNewConnection(ArrayList<ClientTransferReq> transferReq) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
-            System.out.println(TAG + " new con details " + gson.toJson(transferReq));
+            //System.out.println(TAG + " new con details " + gson.toJson(transferReq));
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send new connnection information");
             log.error(TAG, e);
@@ -249,7 +249,7 @@ public class WebSocketConnection extends MessageInbound {
     public void sendTileSizeInfo(ArrayList<TileInfo> tilesInfo) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tilesInfo)));
-            System.out.println(TAG + " send size of tile " + gson.toJson(tilesInfo));
+            //System.out.println(TAG + " send size of tile " + gson.toJson(tilesInfo));
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send tile size information");
             log.error(TAG, e);
