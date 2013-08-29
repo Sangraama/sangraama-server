@@ -9,6 +9,8 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 import org.sangraama.asserts.map.physics.PolygonObjectPhysics;
 import org.sangraama.asserts.map.physics.PolylineObjectPhysics;
+import org.sangraama.assets.Bullet;
+import org.sangraama.assets.Player;
 import org.sangraama.assets.SangraamaMap;
 
 public class PhysicsAPI {
@@ -39,12 +41,12 @@ public class PhysicsAPI {
 		
 			vertices[i]=new Vec2();
 			vertices[i].set(staticObject.getCoordinates().get(i).getX(), staticObject.getCoordinates().get(i).getY());
-			//System.out.println(staticObject.getCoordinates().get(i).getX()+"+++++"+staticObject.getCoordinates().get(i).getY());
+			
 		}
 		polyline.createFixtureDef(vertices, vertices.length);
-		//System.out.println("Chain loop created!!!!!!!!!");
+		
 		this.fixtureDef=polyline.getFixtureDef();
-		//polyline.createChain(vertices, vertices.length);
+		
 		}
 	}
 	
@@ -56,15 +58,11 @@ public class PhysicsAPI {
     			for(int k=0;k<staticObjects.get(i).getCoordinates().size();k++){ //for each coordinate of the object
     				if(staticObjects.get(i).getCoordinates().get(k).getX()<xLimit && staticObjects.get(i).getCoordinates().get(k).getY()<yLimit){ //if the x and y coordiantes of the object is within the map 
     					count++;
-    				//	System.out.println("Test");
-    				//System.out.println(staticObjects.get(i).getCoordinates().get(k).getX());
-    				//System.out.println(staticObjects.get(i).getCoordinates().get(k).getY());
     				
     				}
     				}	
     		
     			if(count==staticObjects.get(i).getCoordinates().size()){ //if all the coordinates of the object is within the map
-    				//System.out.println("count="+count);
     				applyPhysics(staticObjects.get(i)); //apply the physics to that object.
     				Body newStaticObjectBody=world.createBody(this.getBodyDef()); // add the static object to the game world.
     				newStaticObjectBody.createFixture(this.getFixtureDef());
@@ -73,6 +71,20 @@ public class PhysicsAPI {
     		
     		}
 	}
+	
+	public void applyPhysics(Player player,World world){
+		Body newPlayerBody = world.createBody(player.getBodyDef());
+        newPlayerBody.createFixture(player.getFixtureDef());
+        player.setBody(newPlayerBody);
+	}
+	public void applyPhysics(Bullet bullet,World world){
+		 Body newBulletBody = world.createBody(bullet.getBodyDef());
+		
+		/*Body newPlayerBody = world.createBody(player.getBodyDef());
+        newPlayerBody.createFixture(player.getFixtureDef());
+        player.setBody(newPlayerBody);*/
+	}
+	
 	public BodyDef getBodyDef() {
 		return bodyDef;
 	}
