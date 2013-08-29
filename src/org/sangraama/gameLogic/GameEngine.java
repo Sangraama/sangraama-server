@@ -74,6 +74,7 @@ public enum GameEngine implements Runnable {
                 updateGameWorld();
                 world.step(Constants.timeStep, Constants.velocityIterations,
                         Constants.positionIterations);
+                //updateCollisions();
                 pushUpdate();
 
             } catch (InterruptedException e) {
