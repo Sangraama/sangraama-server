@@ -51,17 +51,15 @@ public enum UpdateEngine implements Runnable {
 
     @Override
     public void run() {
-        while (this.isRun) {
-            if (this.isUpdate) {
-                this.pushUpdate();
-            } else {
-                try {
-                    Thread.sleep(Constants.simulatingDelay);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                if (isUpdate) {
+                    pushUpdate();
                 }
             }
-        }
+        });
+        timer.start();
     }
 
     public void pushUpdate() {
