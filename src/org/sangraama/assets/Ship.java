@@ -22,8 +22,8 @@ public class Ship extends Player {
         super(userID, con);
     }
 
-    public Ship(long userID, float x, float y, WebSocketConnection con) {
-        super(userID, x, y, con);
+    public Ship(long userID, float x, float y, float w, float h, WebSocketConnection con) {
+        super(userID, x, y, w, h, con);
     }
 
     public PlayerDelta getPlayerDelta() {
@@ -37,7 +37,10 @@ public class Ship extends Player {
         this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
                 this.body.getAngle(), this.userID);
         for (Bullet bullet : this.bulletList) {
-            delta.getBulletDeltaList().add(bullet.getBulletDelta());
+            delta.getBulletDeltaList().add(bullet.getBulletDelta(1));
+        }
+        for (Bullet bullet : this.removedBulletList) {
+            delta.getBulletDeltaList().add(bullet.getBulletDelta(2));
         }
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
@@ -102,7 +105,7 @@ public class Ship extends Player {
         System.out.println(TAG + "create body def player x:" + this.x + " :" + this.y);
         bd.position.set(this.x, this.y);
         bd.type = BodyType.DYNAMIC;
-        //bd.fixedRotation = true;
+        // bd.fixedRotation = true;
         return bd;
     }
 

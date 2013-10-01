@@ -46,8 +46,8 @@ public class DummyPlayer extends AbsPlayer {
         this.bulletList = new ArrayList<Bullet>();
     }
 
-    public DummyPlayer(long userID, float x, float y, WebSocketConnection con) {
-        super(userID, x, y);
+    public DummyPlayer(long userID, float x, float y, float w, float h, WebSocketConnection con) {
+        super(userID, x, y, w, h);
         super.isPlayer = 2;
         super.conDummy = con;
         this.gameEngine.addToDummyQueue(this);

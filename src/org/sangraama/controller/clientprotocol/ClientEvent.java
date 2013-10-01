@@ -1,10 +1,14 @@
 package org.sangraama.controller.clientprotocol;
 
+import java.util.Arrays;
+
 public class ClientEvent {
     private String type;
     private long userID;
     private float x;
     private float y;
+    private float w;
+    private float h;
     private float v_x;
     private float v_y;
     private float v_a;
@@ -60,6 +64,22 @@ public class ClientEvent {
     
     public byte[] getSignedInfo() {
         return signedInfo;
+    }
+
+    public float getW() {
+        return w;
+    }
+
+    public float getH() {
+        return h;
+    }
+
+    @Override
+    public String toString() {
+        return "ClientEvent [type=" + type + ", userID=" + userID + ", x=" + x + ", y=" + y
+                + ", w=" + w + ", h=" + h + ", v_x=" + v_x + ", v_y=" + v_y + ", v_a=" + v_a
+                + ", s=" + s + ", aoi_w=" + aoi_w + ", aoi_h=" + aoi_h + ", info=" + info
+                + ", signedInfo=" + Arrays.toString(signedInfo) + "]";
     }
 
 }

@@ -37,12 +37,12 @@ public abstract class AbsPlayer {
     // WebSocket Connection
     WebSocketConnection conPlayer;
     WebSocketConnection conDummy;
-    
+
     volatile boolean isUpdate = false;
     short isPlayer = 2;
 
     // Player Dynamic Parameters
-    float x, y;
+    float x, y, screenWidth, screenHeight;
 
     // Area of Interest
     float halfWidth = 10f;
@@ -74,10 +74,12 @@ public abstract class AbsPlayer {
         System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
     }
 
-    public AbsPlayer(long userID, float x, float y) {
+    public AbsPlayer(long userID, float x, float y, float w, float h) {
         this.userID = userID;
         this.x = x;
         this.y = y;
+        this.screenWidth = w;
+        this.screenHeight = h;
         this.sangraamaMap = SangraamaMap.INSTANCE;
         /*
          * Note: this should replace by sangraama map method. Player shouldn't responsible for
@@ -206,6 +208,22 @@ public abstract class AbsPlayer {
 
     public float getAOIHeight() {
         return this.halfHieght;
+    }
+
+    public float getScreenWidth() {
+        return screenWidth;
+    }
+
+    public void setScreenWidth(float screenWidth) {
+        this.screenWidth = screenWidth;
+    }
+
+    public float getScreenHeight() {
+        return screenHeight;
+    }
+
+    public void setScreenHeight(float screenHeight) {
+        this.screenHeight = screenHeight;
     }
 
 }

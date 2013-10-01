@@ -2,6 +2,7 @@ package org.sangraama.assets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -24,7 +25,7 @@ public abstract class Player extends AbsPlayer {
     // Local Debug or logs
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "player : ";
-
+    private static Random generator = new Random();
     Body body;
 
     // Player Dynamic Parameters
@@ -36,6 +37,7 @@ public abstract class Player extends AbsPlayer {
     // bullets
     List<Bullet> newBulletList;
     List<Bullet> bulletList;
+    List<Bullet> removedBulletList;
 
     public Player(long userID, WebSocketConnection con) {
         super(userID);
@@ -46,8 +48,8 @@ public abstract class Player extends AbsPlayer {
         this.bulletList = new ArrayList<Bullet>();
     }
 
-    public Player(long userID, float x, float y, WebSocketConnection con) {
-        super(userID, x, y);
+    public Player(long userID, float x, float y, float w, float h, WebSocketConnection con) {
+        super(userID, x, y, w, h);
         super.isPlayer = 1;
         super.conPlayer = con;
         this.gameEngine.addToPlayerQueue(this);
@@ -71,7 +73,10 @@ public abstract class Player extends AbsPlayer {
         this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
                 this.body.getAngle(), this.userID);
         for (Bullet bullet : this.bulletList) {
-            delta.getBulletDeltaList().add(bullet.getBulletDelta());
+            delta.getBulletDeltaList().add(bullet.getBulletDelta(1));
+        }
+        for (Bullet bullet : this.removedBulletList) {
+            delta.getBulletDeltaList().add(bullet.getBulletDelta(2));
         }
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
@@ -93,8 +98,8 @@ public abstract class Player extends AbsPlayer {
 
     public void applyUpdate() {
         this.body.setLinearVelocity(this.getV());
-        // this.body.setTransform(this.body.getPosition(), angle);
-        this.body.setAngularVelocity(this.angle);
+        this.body.setTransform(this.body.getPosition(), this.angle);
+        // this.body.setAngularVelocity(this.angle);
         // System.out.println(TAG + " angle velocity : " + this.body.getAngularVelocity());
     }
 
@@ -249,7 +254,7 @@ public abstract class Player extends AbsPlayer {
                 x = x + rX;
                 y = y - rY;
             }
-            long id = (long) (Math.random() * 10000);
+            long id = (long) (generator.nextInt(10000));
             Bullet bullet = new Bullet(id, this.userID, x, y);
             this.newBulletList.add(bullet);
             System.out.println(TAG + ": Added a new bullet");
@@ -294,6 +299,14 @@ public abstract class Player extends AbsPlayer {
 
     public List<Bullet> getBulletList() {
         return bulletList;
+    }
+
+    public List<Bullet> getRemovedBulletList() {
+        return removedBulletList;
+    }
+
+    public void setRemovedBulletList(List<Bullet> removedBulletList) {
+        this.removedBulletList = removedBulletList;
     }
 
     public float getAngle() {

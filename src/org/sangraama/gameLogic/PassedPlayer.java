@@ -31,8 +31,9 @@ public enum PassedPlayer {
 
 	private Ship fillPlayer(TPlayer tp, WebSocketConnection con) {
 		SangraamaMap map = SangraamaMap.INSTANCE;
+		//to be add w and h
 		Ship p = new Ship(tp.getId(), tp.getX() - map.getOriginX(),
-				tp.getY() - map.getOriginY(), con);
+				tp.getY() - map.getOriginY(),0,0, con);
 		p.setV((float) tp.getV_x(), (float) tp.getV_y());
 
 		return p;
