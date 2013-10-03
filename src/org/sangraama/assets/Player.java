@@ -2,6 +2,7 @@ package org.sangraama.assets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -24,7 +25,7 @@ public abstract class Player extends AbsPlayer {
     // Local Debug or logs
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "player : ";
-
+    private static Random generator = new Random();
     Body body;
 
     // Player Dynamic Parameters
@@ -36,26 +37,35 @@ public abstract class Player extends AbsPlayer {
     // bullets
     List<Bullet> newBulletList;
     List<Bullet> bulletList;
+    List<Bullet> removedBulletList;
 
     public Player(long userID, WebSocketConnection con) {
-        super(userID, con);
+        super(userID);
+        super.isPlayer = 1;
         System.out.println(TAG + " player added to queue");
         this.gameEngine.addToPlayerQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
     }
 
-    public Player(long userID, float x, float y, WebSocketConnection con) {
-        super(userID, x, y, con);
+    public Player(long userID, float x, float y, float w, float h, WebSocketConnection con) {
+        super(userID, x, y, w, h);
+        super.isPlayer = 1;
+        super.conPlayer = con;
         this.gameEngine.addToPlayerQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
     }
 
+    public void removeWebSocketConnection() {
+        super.conPlayer = null;
+    }
+
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
-            System.out.println(TAG + "id : " + this.userID + " x:" + x + " " + "y:" + y);
+            System.out.println(TAG + "id : " + this.userID + " x:" + x + " " + "y:" + y + " angle:"
+                    + this.body.getAngle() + "&" + this.body.getAngularVelocity());
         }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
@@ -63,7 +73,10 @@ public abstract class Player extends AbsPlayer {
         this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
                 this.body.getAngle(), this.userID);
         for (Bullet bullet : this.bulletList) {
-            delta.getBulletDeltaList().add(bullet.getBulletDelta());
+            delta.getBulletDeltaList().add(bullet.getBulletDelta(1));
+        }
+        for (Bullet bullet : this.removedBulletList) {
+            delta.getBulletDeltaList().add(bullet.getBulletDelta(2));
         }
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
@@ -83,18 +96,11 @@ public abstract class Player extends AbsPlayer {
         return this.delta;
     }
 
-    public void sendUpdate(List<PlayerDelta> deltaList) {
-        if (this.con != null) {
-            con.sendUpdate(deltaList);
-        } else {
-            this.gameEngine.addToRemovePlayerQueue(this);
-            System.out.println(TAG + "Unable to send updates,coz con :" + this.con);
-        }
-    }
-
     public void applyUpdate() {
         this.body.setLinearVelocity(this.getV());
-        this.body.setTransform(body.getPosition(), angle);
+        this.body.setTransform(this.body.getPosition(), this.angle);
+        // this.body.setAngularVelocity(this.angle);
+        // System.out.println(TAG + " angle velocity : " + this.body.getAngularVelocity());
     }
 
     /**
@@ -162,6 +168,19 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
+    public void sendUpdate(List<PlayerDelta> deltaList) {
+        if (super.conPlayer != null) {
+            conPlayer.sendUpdate(deltaList);
+        } else if (super.isPlayer == 1) {
+            this.gameEngine.addToRemovePlayerQueue(this);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send updates,coz con :" + super.conPlayer
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
+        }
+    }
+
     /**
      * Send New connection Address and other details to Client
      * 
@@ -169,13 +188,17 @@ public abstract class Player extends AbsPlayer {
      *            Object of Client transferring protocol
      */
     public void sendNewConnection(ClientTransferReq transferReq) {
-        if (this.con != null) {
+        if (super.conPlayer != null) {
             ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
             transferReqList.add(transferReq);
-            con.sendNewConnection(transferReqList);
-        } else {
+            conPlayer.sendNewConnection(transferReqList);
+        } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
-            System.out.println(TAG + "Unable to send new connection,coz con :" + this.con);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conPlayer
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
         }
     }
 
@@ -186,7 +209,7 @@ public abstract class Player extends AbsPlayer {
      *            ArrayList of sub-tile details
      */
     public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
-        this.con.sendTileSizeInfo(new TileInfo(this.userID, tiles));
+        super.conPlayer.sendTileSizeInfo(new TileInfo(this.userID, tiles));
     }
 
     /**
@@ -195,7 +218,7 @@ public abstract class Player extends AbsPlayer {
      * 
      */
     public void sendTileSizeInfo() {
-        this.con.sendTileSizeInfo(new TileInfo(this.userID));
+        super.conPlayer.sendTileSizeInfo(new TileInfo(this.userID));
     }
 
     public void shoot(float s) {
@@ -231,8 +254,8 @@ public abstract class Player extends AbsPlayer {
                 x = x + rX;
                 y = y - rY;
             }
-            long id = (long) (Math.random() * 10000);
-            Bullet bullet = new Bullet(id,this.userID, x, y);
+            long id = (long) (generator.nextInt(10000));
+            Bullet bullet = new Bullet(id, this.userID, x, y);
             this.newBulletList.add(bullet);
             System.out.println(TAG + ": Added a new bullet");
         }
@@ -245,8 +268,8 @@ public abstract class Player extends AbsPlayer {
     public void setBody(Body body) {
         this.body = body;
     }
-    
-    public Body getBody(Body body){
+
+    public Body getBody(Body body) {
         return this.body;
     }
 
@@ -267,6 +290,7 @@ public abstract class Player extends AbsPlayer {
     public void setAngle(float a) {
         this.angle = a % 360;
         // this.angle %= 360;
+        System.out.println(TAG + " set angle " + this.angle);
     }
 
     public List<Bullet> getNewBulletList() {
@@ -275,6 +299,14 @@ public abstract class Player extends AbsPlayer {
 
     public List<Bullet> getBulletList() {
         return bulletList;
+    }
+
+    public List<Bullet> getRemovedBulletList() {
+        return removedBulletList;
+    }
+
+    public void setRemovedBulletList(List<Bullet> removedBulletList) {
+        this.removedBulletList = removedBulletList;
     }
 
     public float getAngle() {

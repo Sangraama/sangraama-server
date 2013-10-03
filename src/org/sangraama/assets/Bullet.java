@@ -69,9 +69,9 @@ public class Bullet {
     	return this.playerId;
     }
 
-    public BulletDelta getBulletDelta() {
+    public BulletDelta getBulletDelta(int type) {
         bulletDelta = new BulletDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.playerId,this.id);
+                this.body.getAngle(), this.playerId,this.id,type);
         return bulletDelta;
     }
 

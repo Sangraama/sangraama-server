@@ -19,7 +19,7 @@ public class DummyPlayer extends AbsPlayer {
     // Debug
     // Local Debug or logs
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
-    private static final String TAG = "AbsPlayer : ";
+    private static final String TAG = "DummyPlayer : ";
 
     // Area of Interest
     private float halfWidth = 10f;
@@ -38,21 +38,18 @@ public class DummyPlayer extends AbsPlayer {
     }
 
     public DummyPlayer(long userID, WebSocketConnection con) {
-        super(userID, con);
+        super(userID);
+        super.isPlayer = 2;
+        super.conDummy = con;
         this.gameEngine.addToDummyQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
     }
 
-    public DummyPlayer(long userID, float x, float y, WebSocketConnection con) {
-        super(userID, x, y, con);
-        this.gameEngine.addToDummyQueue(this);
-        this.newBulletList = new ArrayList<Bullet>();
-        this.bulletList = new ArrayList<Bullet>();
-    }
-    
-    public DummyPlayer(long userID, float x, float y, DummyWebScocketConnection con) {
-        super(userID, x, y, con);
+    public DummyPlayer(long userID, float x, float y, float w, float h, WebSocketConnection con) {
+        super(userID, x, y, w, h);
+        super.isPlayer = 2;
+        super.conDummy = con;
         this.gameEngine.addToDummyQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
@@ -62,16 +59,7 @@ public class DummyPlayer extends AbsPlayer {
      * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
      */
     public void removeWebSocketConnection() {
-        this.con = null;
-    }
-
-    public void sendUpdate(List<PlayerDelta> deltaList) {
-        if (this.con != null) {
-            con.sendUpdate(deltaList);
-        } else {
-            this.gameEngine.addToRemoveDummyQueue(this);
-            System.out.println(TAG + "Unable to send updates,coz con :" + this.con);
-        }
+        super.conDummy = null;
     }
 
     /**
@@ -139,14 +127,31 @@ public class DummyPlayer extends AbsPlayer {
         }
     }
 
+    public void sendUpdate(List<PlayerDelta> deltaList) {
+        if (super.conDummy != null) {
+            conPlayer.sendUpdate(deltaList);
+        } else if (super.isPlayer == 2) {
+            this.gameEngine.addToRemoveDummyQueue(this);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send updates,coz con :" + super.conDummy
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
+        }
+    }
+
     public void sendNewConnection(ClientTransferReq transferReq) {
-        if (this.con != null) {
+        if (super.conDummy != null) {
             ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
             transferReqList.add(transferReq);
-            con.sendNewConnection(transferReqList);
-        } else {
+            conPlayer.sendNewConnection(transferReqList);
+        } else if (super.isPlayer == 2) {
             this.gameEngine.addToRemoveDummyQueue(this);
-            System.out.println(TAG + "Unable to send new connection,coz con :" + this.con);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conDummy
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
         }
     }
 
@@ -157,7 +162,7 @@ public class DummyPlayer extends AbsPlayer {
      *            ArrayList of sub-tile details
      */
     public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
-        this.con.sendTileSizeInfo(new TileInfo(this.userID, tiles));
+        super.conDummy.sendTileSizeInfo(new TileInfo(this.userID, tiles));
     }
 
     /**
@@ -166,7 +171,7 @@ public class DummyPlayer extends AbsPlayer {
      * 
      */
     public void sendTileSizeInfo() {
-        this.con.sendTileSizeInfo(new TileInfo(this.userID));
+        super.conDummy.sendTileSizeInfo(new TileInfo(this.userID));
     }
 
     public void setX(float x) {

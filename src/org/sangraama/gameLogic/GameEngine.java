@@ -66,6 +66,7 @@ public enum GameEngine implements Runnable {
                 updateGameWorld();
                 world.step(Constants.timeStep, Constants.velocityIterations,
                         Constants.positionIterations);
+                // updateCollisions();
                 pushUpdate();
             }
         });
@@ -123,6 +124,7 @@ public enum GameEngine implements Runnable {
         for (Player ship : playerList) {
             ship.applyUpdate();
             peformBulletUpdates(ship);
+            removeBullet(ship);
         }
     }
 
@@ -156,21 +158,27 @@ public enum GameEngine implements Runnable {
         ship.getNewBulletList().clear();
     }
 
-    public void removeBullet(Bullet bullet) {
-        List<Bullet> bList;
-        for (Player player : playerList) {
-            if (player.getUserID() == bullet.getPlayerId()) {
-                bList = player.getBulletList();
-                for (Bullet blt : bList) {
-                    if (blt.getId() == bullet.getId()) {
-                        world.destroyBody(blt.getBody());
-                        bList.remove(blt);
-                        System.out.println(TAG + "Bullet removed..");
-                    }
-                }
+    public void removeBullet(Player player) {
+        float w = player.getScreenWidth();
+        float h = player.getScreenHeight() - 40;
+        float x = player.getBody().getPosition().x;
+        float y = player.getBody().getPosition().y;
+        float minX = x - x % w;
+        float maxX = minX + w;
+        float minY = y - y % h;
+        float maxY = minY + h;
+        List<Bullet> rmvList = new ArrayList<>();
+        for (Bullet bullet : player.getBulletList()) {
+            float bulletX = bullet.getBody().getPosition().x;
+            float bulletY = bullet.getBody().getPosition().y;
+            if (bulletX < minX || bulletX > maxX || bulletY < minY || bulletY > maxY) {
+                world.destroyBody(bullet.getBody());
+                rmvList.add(bullet);
+                System.out.println(TAG + "Bullet removed..");
             }
-
         }
+        player.getBulletList().removeAll(rmvList);
+        player.setRemovedBulletList(rmvList);
     }
 
     public void pushUpdate() {

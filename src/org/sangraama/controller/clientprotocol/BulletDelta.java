@@ -6,12 +6,13 @@ public class BulletDelta {
     private long playerID;
     private long id;
 
-    public BulletDelta(float dx, float dy, float a, long playerID, long id) {
+    public BulletDelta(float dx, float dy, float a, long playerID, long id, int type) {
         this.dx = dx;
         this.dy = dy;
         this.a = a;
         this.playerID = playerID;
         this.id = id;
+        this.type = type;
 
     }
 

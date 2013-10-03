@@ -95,8 +95,8 @@ public class DummyWebScocketConnection extends MessageInbound {
         } else {
             if (clientEvent.getType().equals("1")) { // create new player & set the
                 // connection
-                this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), clientEvent.getX(),
-                        clientEvent.getY(), this);
+//                this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), clientEvent.getX(),
+//                        clientEvent.getY(), this);
                 System.out.println(TAG + " Add new dummy Player " + clientEvent.getUserID());
             }else if (clientEvent.getType().equals("2")) {
                 TransferInfo playerInfo;
@@ -105,8 +105,8 @@ public class DummyWebScocketConnection extends MessageInbound {
                 boolean msgVerification = VerifyMsg.INSTANCE.verifyMessage(info, signedInfo);
                 if(msgVerification){
                     playerInfo = gson.fromJson(info, TransferInfo.class);
-                    this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), playerInfo.getPositionX(),
-                            playerInfo.getPositionY(), this);
+//                    this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), playerInfo.getPositionX(),
+//                            playerInfo.getPositionY(), this);
                     System.out.println(TAG + "Adding player from another server to GameEngine.");
                 }
             }

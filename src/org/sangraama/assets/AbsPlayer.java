@@ -35,13 +35,14 @@ public abstract class AbsPlayer {
     GameEngine gameEngine;
     SangraamaMap sangraamaMap;
     // WebSocket Connection
-    WebSocketConnection con;
-    // temporary
-    DummyWebScocketConnection dcon;
-    volatile boolean isUpdate;
+    WebSocketConnection conPlayer;
+    WebSocketConnection conDummy;
+
+    volatile boolean isUpdate = false;
+    short isPlayer = 2;
 
     // Player Dynamic Parameters
-    float x, y;
+    float x, y, screenWidth, screenHeight;
 
     // Area of Interest
     float halfWidth = 10f;
@@ -55,7 +56,7 @@ public abstract class AbsPlayer {
         return this.isUpdate;
     }
 
-    public AbsPlayer(long userID, WebSocketConnection con) {
+    public AbsPlayer(long userID) {
         Random r = new Random();
 
         this.userID = userID;
@@ -68,16 +69,17 @@ public abstract class AbsPlayer {
          */
         this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        this.con = con;
         this.gameEngine = GameEngine.INSTANCE;
 
         System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
     }
 
-    public AbsPlayer(long userID, float x, float y, WebSocketConnection con) {
+    public AbsPlayer(long userID, float x, float y, float w, float h) {
         this.userID = userID;
         this.x = x;
         this.y = y;
+        this.screenWidth = w;
+        this.screenHeight = h;
         this.sangraamaMap = SangraamaMap.INSTANCE;
         /*
          * Note: this should replace by sangraama map method. Player shouldn't responsible for
@@ -85,24 +87,6 @@ public abstract class AbsPlayer {
          */
         this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        this.con = con;
-        this.gameEngine = GameEngine.INSTANCE;
-
-        System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
-    }
-    
-    public AbsPlayer(long userID, float x, float y, DummyWebScocketConnection con) {
-        this.userID = userID;
-        this.x = x;
-        this.y = y;
-        this.sangraamaMap = SangraamaMap.INSTANCE;
-        /*
-         * Note: this should replace by sangraama map method. Player shouldn't responsible for
-         * Deciding it's sub-tile
-         */
-        this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
-        this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        this.dcon = con;
         this.gameEngine = GameEngine.INSTANCE;
 
         System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
@@ -111,9 +95,7 @@ public abstract class AbsPlayer {
     /**
      * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
      */
-    public void removeWebSocketConnection() {
-        this.con = null;
-    }
+    public abstract void removeWebSocketConnection();
 
     public abstract void sendUpdate(List<PlayerDelta> deltaList);
 
@@ -191,7 +173,7 @@ public abstract class AbsPlayer {
      *            ArrayList of sub-tile details
      */
     public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
-        this.con.sendTileSizeInfo(new TileInfo(this.userID, tiles));
+        this.conPlayer.sendTileSizeInfo(new TileInfo(this.userID, tiles));
     }
 
     /**
@@ -200,7 +182,7 @@ public abstract class AbsPlayer {
      * 
      */
     public void sendTileSizeInfo() {
-        this.con.sendTileSizeInfo(new TileInfo(this.userID));
+        this.conPlayer.sendTileSizeInfo(new TileInfo(this.userID));
     }
 
     public float getX() {
@@ -226,6 +208,22 @@ public abstract class AbsPlayer {
 
     public float getAOIHeight() {
         return this.halfHieght;
+    }
+
+    public float getScreenWidth() {
+        return screenWidth;
+    }
+
+    public void setScreenWidth(float screenWidth) {
+        this.screenWidth = screenWidth;
+    }
+
+    public float getScreenHeight() {
+        return screenHeight;
+    }
+
+    public void setScreenHeight(float screenHeight) {
+        this.screenHeight = screenHeight;
     }
 
 }

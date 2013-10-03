@@ -70,13 +70,14 @@ public class WebSocketConnection extends MessageInbound {
     @Override
     protected void onClose(int status) {
         // log.info("Connection closed");
-        System.out.println(TAG + " Close connection");
+        
         if (this.player != null) {
             this.player.removeWebSocketConnection();
         }
         if (this.dPlayer != null) {
             this.dPlayer.removeWebSocketConnection();
         }
+        System.out.println(TAG + " Close connection");
     }
 
     @Override
@@ -96,16 +97,16 @@ public class WebSocketConnection extends MessageInbound {
         } else if (this.dPlayer != null) {
             this.dummyPlayerEvents(event);
         } else {
-            this.playerNotCreated(event);
+            this.newPlayerEvent(event);
         }
     }
 
-    private void playerNotCreated(ClientEvent event) {
-        String T = " notcreated ";
+    private void newPlayerEvent(ClientEvent event) {
+        String T = " newPlayerEvent ";
         switch (Integer.parseInt(event.getType())) {
             case 1:// create new player & set the connection
-                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(), this));
-                System.out.println(TAG + T + " Add new Player " + event.getUserID());
+                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),event.getW(),event.getH(), this));
+                System.out.println(TAG + T + " Add new Player " + event.toString());
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getV_a());
                 // this.player.shoot(clientEvent.getS());
@@ -119,15 +120,17 @@ public class WebSocketConnection extends MessageInbound {
                 boolean msgVerification = VerifyMsg.INSTANCE.verifyMessage(info, signedInfo);
                 if (msgVerification) {
                     playerInfo = gson.fromJson(info, TransferInfo.class);
+                    //to be add w and h
                     this.player = new Ship(event.getUserID(), playerInfo.getPositionX(),
-                            playerInfo.getPositionY(), this);
+                            playerInfo.getPositionY(),0,0, this);
                     System.out
                             .println(TAG + T + "Adding player from another server to GameEngine.");
                 }
                 break;
             // Create a dummy player and set AOI of the player
             case 3:
-                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
+                //to be add w and h
+                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),0,0,
                         this));
                 this.dPlayer.setAOI(event.getAoi_w(), event.getAoi_h());
                 System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
@@ -164,7 +167,8 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.shoot(event.getS());
                 System.out.println(TAG + T + " RESET user events " + event.getV_x() + " : "
                         + event.getV_y());
-                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
+                //to be add w and h
+                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),0,0,
                         this));
                 this.dPlayer.setAOI(event.getAoi_w(), event.getAoi_h());
                 this.player = null;
@@ -179,7 +183,8 @@ public class WebSocketConnection extends MessageInbound {
         String T = " dummyPlayerEvent ";
         switch (Integer.parseInt(event.getType())) {
             case 1: // create new player and pass the connection
-                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(), this));
+                //to be add w and h
+                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),0,0, this));
                 System.out.println(TAG + T + " changed to Player " + event.getUserID());
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getV_a());
