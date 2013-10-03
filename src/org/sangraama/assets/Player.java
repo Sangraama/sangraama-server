@@ -99,8 +99,8 @@ public abstract class Player extends AbsPlayer {
     public void applyUpdate() {
         this.body.setLinearVelocity(this.getV());
         this.body.setTransform(this.body.getPosition(), this.angle);
-        // this.body.setAngularVelocity(this.angle);
         // System.out.println(TAG + " angle velocity : " + this.body.getAngularVelocity());
+        // this.body.setAngularVelocity(this.angle);
     }
 
     /**
@@ -285,6 +285,9 @@ public abstract class Player extends AbsPlayer {
         // Issue: if client send x value greater than 1
         this.v.set(x * 200, y * 200);
         System.out.println(TAG + " set V :" + this.v.x + ":" + this.v.y);
+        
+        // To fixed the problem of unable to stop after begin to rotate when hit by something
+        this.body.setAngularVelocity(this.angle);
     }
 
     public void setAngle(float a) {

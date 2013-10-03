@@ -29,7 +29,8 @@ public class Ship extends Player {
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
-            System.out.println(TAG + "id : " + this.userID + " x:" + x + " " + "y:" + y);
+            System.out.println(TAG + "id : " + this.userID + " x:" + x + " " + "y:" + y + " angle:"
+                    + this.body.getAngle() + "&" + this.body.getAngularVelocity());
         }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
