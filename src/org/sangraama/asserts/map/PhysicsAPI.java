@@ -47,6 +47,9 @@ public class PhysicsAPI {
 		
 		this.fixtureDef=polyline.getFixtureDef();
 		
+		System.out.println("XXXXXXXXXX"+staticObject.getX());
+		System.out.println("YYYYYYYYYYYYYYY"+staticObject.getY());
+		
 		}
 	}
 	
@@ -58,16 +61,18 @@ public class PhysicsAPI {
     			for(int k=0;k<staticObjects.get(i).getCoordinates().size();k++){ //for each coordinate of the object
     				if(staticObjects.get(i).getCoordinates().get(k).getX()<xLimit && staticObjects.get(i).getCoordinates().get(k).getY()<yLimit){ //if the x and y coordiantes of the object is within the map 
     					count++;
-    				
+    					applyPhysics(staticObjects.get(i)); //apply the physics to that object.
+        				Body newStaticObjectBody=world.createBody(this.getBodyDef()); // add the static object to the game world.
+        				newStaticObjectBody.createFixture(this.getFixtureDef());
     				}
+    				if(count>0)
+    					break;
     				}	
     		
-    			if(count==staticObjects.get(i).getCoordinates().size()){ //if all the coordinates of the object is within the map
-    				applyPhysics(staticObjects.get(i)); //apply the physics to that object.
-    				Body newStaticObjectBody=world.createBody(this.getBodyDef()); // add the static object to the game world.
-    				newStaticObjectBody.createFixture(this.getFixtureDef());
+    			//if(count>0 && count<=staticObjects.get(i).getCoordinates().size()){ //if at least one coordinate is within the map or all the coordinates of the object is within the map
     				
-    			}
+    				
+    			//}
     		
     		}
 	}

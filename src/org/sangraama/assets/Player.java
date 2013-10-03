@@ -260,7 +260,7 @@ public abstract class Player extends AbsPlayer {
 
     public void setV(float x, float y) {
         // Issue: if client send x value greater than 1
-        this.v.set(x * 2, y * 2);
+        this.v.set(x * 200, y * 200);
         System.out.println(TAG + " set V :" + this.v.x + ":" + this.v.y);
     }
 

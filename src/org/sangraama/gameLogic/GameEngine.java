@@ -1,8 +1,8 @@
 package org.sangraama.gameLogic;
 
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
@@ -13,13 +13,16 @@ import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.common.Constants;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Timer;
 
 public enum GameEngine implements Runnable {
 
     INSTANCE;
     // Debug
     private String TAG = "Game Engine :";
-    
+
     private volatile boolean isRun = true;
 
     private World world;
@@ -46,8 +49,8 @@ public enum GameEngine implements Runnable {
         this.removeDummyQueue = new ArrayList<DummyPlayer>();
         this.updateEngine = UpdateEngine.INSTANCE;
     }
-    
-    public synchronized boolean setStop(){
+
+    public synchronized boolean setStop() {
         this.isRun = false;
         return this.isRun;
     }
@@ -57,39 +60,38 @@ public enum GameEngine implements Runnable {
         System.out.println(TAG + "GameEngine Start running.. fps:" + Constants.fps + " timesteps:"
                 + Constants.timeStep);
         init();
-        // Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
-        // @Override
-        // public void actionPerformed(ActionEvent arg0) {
-        // updateGameWorld();
-        // world.step(Constants.timeStep, Constants.velocityIterations,
-        // Constants.positionIterations);
-        // pushUpdate();
-        // }
-        // });
-        // timer.start();
-
-        while (this.isRun) {
-            try {
-                Thread.sleep(Constants.simulatingDelay);
+        Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
                 updateGameWorld();
                 world.step(Constants.timeStep, Constants.velocityIterations,
                         Constants.positionIterations);
                 pushUpdate();
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
-        }
+        });
+       Body bodyList= world.getBodyList();
+      System.out.println("bodyX="+bodyList.getPosition().x+"bodyY="+bodyList.getPosition().y); 
+        timer.start();
+
+        /*
+         * while (this.isRun) { try { Thread.sleep(Constants.simulatingDelay); updateGameWorld();
+         * world.step(Constants.timeStep, Constants.velocityIterations,
+         * Constants.positionIterations); pushUpdate();
+         * 
+         * } catch (InterruptedException e) { e.printStackTrace(); } }
+         */
     }
 
-    /*Load static map objects into game engine and apply object physics using JBox2D*/
+    /* Load static map objects into game engine and apply object physics using JBox2D */
     public void init() {
+
         
     	GameMap gameMap=GameMap.getMap();
 		gameMap.generate();	//generate the static objects into game engine, using any tile editor module.
 		PhysicsAPI physicsAPI=new PhysicsAPI(); 
 		physicsAPI.applyPhysics(gameMap.getStaticObjects(), world);// apply physics to the static objects, and add them to the game world.
 		System.out.println("Static Game Objects added to the game world!!");
+
     }
 
     public void updateGameWorld() {

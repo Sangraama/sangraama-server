@@ -39,11 +39,11 @@ public class MapAPI {
 			for(String s : items) {
 				Pattern pattern= Pattern.compile(",");
 				String[] digits = pattern.split(s);
-				Integer digit1=Integer.parseInt(digits[0]);
-				Integer digit2=Integer.parseInt(digits[1]);
+				int digit1=Integer.parseInt(digits[0]);
+				int digit2=Integer.parseInt(digits[1]);
 				Points point=new Points();
-				point.setX(digit1+x);
-				point.setY(digit2+y);
+				point.setX(digit1);
+				point.setY(digit2);
 				coordinates.add(point);
 	            //System.out.println(s);
 	        }

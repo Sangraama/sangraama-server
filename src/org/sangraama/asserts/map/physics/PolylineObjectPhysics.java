@@ -8,8 +8,8 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
-
 public class PolylineObjectPhysics {
+
 	private BodyDef bodyDef;
 	private FixtureDef fixtureDef;
 	public BodyDef getBodyDef() {
@@ -60,4 +60,5 @@ public class PolylineObjectPhysics {
 		fixtureDef.filter.groupIndex = 1;
 		fixtureDef.userData="Island";
 	}
+
 }
