@@ -287,7 +287,7 @@ public abstract class Player extends AbsPlayer {
         System.out.println(TAG + " set V :" + this.v.x + ":" + this.v.y);
         
         // To fixed the problem of unable to stop after begin to rotate when hit by something
-        this.body.setAngularVelocity(this.angle);
+        //this.body.setAngularVelocity(this.angle);
     }
 
     public void setAngle(float a) {
