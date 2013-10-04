@@ -59,7 +59,7 @@ public class PhysicsAPI {
     	for(int i=0;i<staticObjects.size();i++){ // for each static object
     		int count=0;
     			for(int k=0;k<staticObjects.get(i).getCoordinates().size();k++){ //for each coordinate of the object
-    				if(staticObjects.get(i).getCoordinates().get(k).getX()<xLimit && staticObjects.get(i).getCoordinates().get(k).getY()<yLimit){ //if the x and y coordiantes of the object is within the map 
+    				if(staticObjects.get(i).getX()<xLimit && staticObjects.get(i).getY()<yLimit){ //if the x and y coordiantes of the object is within the map 
     					count++;
     					applyPhysics(staticObjects.get(i)); //apply the physics to that object.
         				Body newStaticObjectBody=world.createBody(this.getBodyDef()); // add the static object to the game world.
@@ -68,11 +68,6 @@ public class PhysicsAPI {
     				if(count>0)
     					break;
     				}	
-    		
-    			//if(count>0 && count<=staticObjects.get(i).getCoordinates().size()){ //if at least one coordinate is within the map or all the coordinates of the object is within the map
-    				
-    				
-    			//}
     		
     		}
 	}
