@@ -37,7 +37,7 @@ public class Ship extends Player {
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
         this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.userID);
+                this.body.getAngle(), this.userID, this.health, this.score);
         for (Bullet bullet : this.bulletList) {
             delta.getBulletDeltaList().add(bullet.getBulletDelta(1));
         }
