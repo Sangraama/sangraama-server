@@ -50,60 +50,22 @@ public class PhysicsAPI {
 
             this.fixtureDef = polyline.getFixtureDef();
 
-            System.out.println("XXXXXXXXXX" + staticObject.getX());
-            System.out.println("YYYYYYYYYYYYYYY" + staticObject.getY());
+           // System.out.println("XXXXXXXXXX" + staticObject.getX());
+           // System.out.println("YYYYYYYYYYYYYYY" + staticObject.getY());
 
         }
     }
 
     public void applyPhysics(List<StaticObject> staticObjects, World world) {
-        float xLimit = SangraamaMap.INSTANCE.getOriginX() + SangraamaMap.INSTANCE.getMapWidth(); // The
-                                                                                                 // limit
-                                                                                                 // in
-                                                                                                 // X-axis
-                                                                                                 // of
-                                                                                                 // the
-                                                                                                 // map
-                                                                                                 // related
-                                                                                                 // to
-                                                                                                 // the
-                                                                                                 // server.
-        float yLimit = SangraamaMap.INSTANCE.getOriginY() + SangraamaMap.INSTANCE.getMapHeight(); // The
-                                                                                                  // limit
-                                                                                                  // in
-                                                                                                  // Y-axis
-                                                                                                  // of
-                                                                                                  // the
-                                                                                                  // map
-                                                                                                  // related
-                                                                                                  // to
-                                                                                                  // the
-                                                                                                  // server.
+        float xLimit = SangraamaMap.INSTANCE.getOriginX() + SangraamaMap.INSTANCE.getMapWidth(); //The limit in X-axis of the map related to the server.
+        float yLimit = SangraamaMap.INSTANCE.getOriginY() + SangraamaMap.INSTANCE.getMapHeight(); //The limit in Y-axis of the map related to the server.
         for (int i = 0; i < staticObjects.size(); i++) { // for each static object
             int count = 0;
-            for (int k = 0; k < staticObjects.get(i).getCoordinates().size(); k++) { // for each
-                                                                                     // coordinate
-                                                                                     // of the
-                                                                                     // object
-                if (staticObjects.get(i).getX() < xLimit && staticObjects.get(i).getY() < yLimit) { // if
-                                                                                                    // the
-                                                                                                    // x
-                                                                                                    // and
-                                                                                                    // y
-                                                                                                    // coordiantes
-                                                                                                    // of
-                                                                                                    // the
-                                                                                                    // object
-                                                                                                    // is
-                                                                                                    // within
-                                                                                                    // the
-                                                                                                    // map
+            for (int k = 0; k < staticObjects.get(i).getCoordinates().size(); k++) {//for each coordinate of the object
+                if (staticObjects.get(i).getX() < xLimit && staticObjects.get(i).getY() < yLimit) {//if the x and y coordiantes of the object is within the map 
                     count++;
                     applyPhysics(staticObjects.get(i)); // apply the physics to that object.
-                    Body newStaticObjectBody = world.createBody(this.getBodyDef()); // add the
-                                                                                    // static object
-                                                                                    // to the game
-                                                                                    // world.
+                    Body newStaticObjectBody = world.createBody(this.getBodyDef()); // add the static object to the game world.
                     newStaticObjectBody.createFixture(this.getFixtureDef());
                 }
                 if (count > 0)
