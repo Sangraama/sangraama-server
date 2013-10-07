@@ -30,7 +30,8 @@ public class Ship extends Player {
         // if (!isUpdate) {
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
             System.out.println(TAG + "id : " + this.userID + " x:" + x + " " + "y:" + y + " angle:"
-                    + this.body.getAngle() + "&" + this.body.getAngularVelocity());
+                    + this.body.getAngle() + "&" + this.body.getAngularVelocity() + " health : "
+                    + this.getHealth()+" score : " + this.getScore());
         }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
@@ -123,6 +124,7 @@ public class Ship extends Player {
         fd.friction = 0.2f;
         fd.restitution = 0.5f;
         fd.filter.groupIndex = 2;
+        fd.userData = this;
         return fd;
     }
 }

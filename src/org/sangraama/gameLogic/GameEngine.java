@@ -36,6 +36,7 @@ public enum GameEngine implements Runnable {
     // list of removing players
     private List<Player> removePlayerQueue;
     private List<DummyPlayer> removeDummyQueue;
+    private CollisionDetector sangraamaCollisionDet;
 
     // this method only access via class
     GameEngine() {
@@ -66,7 +67,6 @@ public enum GameEngine implements Runnable {
                 updateGameWorld();
                 world.step(Constants.timeStep, Constants.velocityIterations,
                         Constants.positionIterations);
-                // updateCollisions();
                 pushUpdate();
             }
         });
@@ -90,6 +90,8 @@ public enum GameEngine implements Runnable {
         physicsAPI.applyPhysics(g.getStaticObjects(), world);// apply physics to the static objects,
                                                              // and add them to the game world.
         System.out.println("Static Game Objects added to the game world!!");
+        this.sangraamaCollisionDet = new CollisionDetector();
+        world.setContactListener(sangraamaCollisionDet);
     }
 
     public void updateGameWorld() {
@@ -120,13 +122,6 @@ public enum GameEngine implements Runnable {
             ship.applyUpdate();
             peformBulletUpdates(ship);
             removeBullet(ship);
-        }
-    }
-
-    public void updateCollisions() {
-        Contact collisions = this.world.getContactList();
-        if (collisions != null) {
-            CollisionManager.INSTANCE.setCollisionList(collisions);
         }
     }
 
@@ -175,6 +170,18 @@ public enum GameEngine implements Runnable {
         player.getBulletList().removeAll(rmvList);
         player.setRemovedBulletList(rmvList);
     }
+    
+    public void removeBullet(Bullet bullet){
+        List<Bullet> rmvList = new ArrayList<>();
+        world.destroyBody(bullet.getBody());
+        rmvList.add(bullet);
+        for(Player player : playerList){
+            if(player.getUserID()==bullet.getPlayerId()){
+                player.getBulletList().removeAll(rmvList);
+                player.setRemovedBulletList(rmvList);
+            }
+        }
+    }
 
     public void pushUpdate() {
         this.updateEngine.setWaitingPlayerList(playerList);
@@ -194,6 +201,10 @@ public enum GameEngine implements Runnable {
 
     public synchronized void addToRemoveDummyQueue(DummyPlayer player) {
         this.removeDummyQueue.add(player);
+    }
+
+    public List<Player> getPlayerList() {
+        return playerList;
     }
 
 }

@@ -8,13 +8,17 @@ public class PlayerDelta {
     private float dx, dy, da;
     private long userID;
     private List<BulletDelta> bulletDeltaList;
+    private float health;
+    private float score;
 
-    public PlayerDelta(float dx, float dy, float da, long userID) {
+    public PlayerDelta(float dx, float dy, float da, long userID, float health, float score) {
         this.dx = dx;
         this.dy = dy;
         this.da = da;
         this.userID = userID;
         this.bulletDeltaList = new ArrayList<BulletDelta>();
+        this.health = health;
+        this.score = score;
     }
 
     public long getUserID() {
