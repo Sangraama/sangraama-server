@@ -51,7 +51,7 @@ public class ServerStarter implements javax.servlet.ServletContextListener {
                 Float.parseFloat(prop.getProperty("subtileheight")));
         this.updateEngine = new Thread(UpdateEngine.INSTANCE);
         this.updateEngine.start();
-        
+      //  System.out.println("AAAAAAAAAAA");
         this.gameEngine = new Thread(GameEngine.INSTANCE);
         this.gameEngine.start();
 //        this.collisionManager = new Thread(CollisionManager.INSTANCE);

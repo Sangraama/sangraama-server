@@ -77,6 +77,8 @@ public enum GameEngine implements Runnable {
                 pushUpdate();
             }
         });
+       Body bodyList= world.getBodyList();
+      System.out.println("bodyX="+bodyList.getPosition().x+"bodyY="+bodyList.getPosition().y); 
         timer.start();
 
         /*
@@ -91,12 +93,13 @@ public enum GameEngine implements Runnable {
     /* Load static map objects into game engine and apply object physics using JBox2D */
     public void init() {
 
-        GameMap g = GameMap.getMap();
-        g.generate(); // generate the static objects into game engine, using any tile editor module.
-        PhysicsAPI physicsAPI = new PhysicsAPI();
-        physicsAPI.applyPhysics(g.getStaticObjects(), world);// apply physics to the static objects,
-                                                             // and add them to the game world.
-        System.out.println("Static Game Objects added to the game world!!");
+        
+    	GameMap gameMap=GameMap.getMap();
+		gameMap.generate();	//generate the static objects into game engine, using any tile editor module.
+		PhysicsAPI physicsAPI=new PhysicsAPI(); 
+		physicsAPI.applyPhysics(gameMap.getStaticObjects(), world);// apply physics to the static objects, and add them to the game world.
+		System.out.println("Static Game Objects added to the game world!!");
+
     }
 
     public void updateGameWorld() {
@@ -116,6 +119,8 @@ public enum GameEngine implements Runnable {
             Body newPlayerBody = world.createBody(newPlayer.getBodyDef());
             newPlayerBody.createFixture(newPlayer.getFixtureDef());
             newPlayer.setBody(newPlayerBody);
+            //PhysicsAPI physicsAPI=new PhysicsAPI(); 
+            //physicsAPI.applyPhysics(newPlayer, world);
             this.playerList.add(newPlayer);
             System.out.println(TAG + "Added new player :" + newPlayer.getUserID());
             // Send size of the tile
