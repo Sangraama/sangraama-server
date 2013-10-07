@@ -3,10 +3,16 @@ package org.sangraama.gameLogic;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
+import org.jbox2d.collision.shapes.ChainShape;
 import org.sangraama.asserts.map.GameMap;
 import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
@@ -64,6 +70,7 @@ public enum GameEngine implements Runnable {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 updateGameWorld();
+               
                 world.step(Constants.timeStep, Constants.velocityIterations,
                         Constants.positionIterations);
                 // updateCollisions();
@@ -155,7 +162,7 @@ public enum GameEngine implements Runnable {
 
     public void removeBullet(Player player) {
         float w = player.getScreenWidth();
-        float h = player.getScreenHeight() - 40;
+        float h = player.getScreenHeight();
         float x = player.getBody().getPosition().x;
         float y = player.getBody().getPosition().y;
         float minX = x - x % w;

@@ -98,6 +98,7 @@ public abstract class Player extends AbsPlayer {
 
     public void applyUpdate() {
         this.body.setLinearVelocity(this.getV());
+        this.body.setAngularVelocity(0.0f);
         this.body.setTransform(this.body.getPosition(), this.angle);
         // System.out.println(TAG + " angle velocity : " + this.body.getAngularVelocity());
         // this.body.setAngularVelocity(this.angle);
@@ -293,7 +294,7 @@ public abstract class Player extends AbsPlayer {
     public void setAngle(float a) {
         this.angle = a % 360;
         // this.angle %= 360;
-        System.out.println(TAG + " set angle " + this.angle);
+        
     }
 
     public List<Bullet> getNewBulletList() {
