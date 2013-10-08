@@ -165,7 +165,7 @@ public abstract class Player extends AbsPlayer {
      */
     public void reqInterestIn(float x, float y) {
         if (!isInsideServerSubTile(x, y)) {
-            PlayerPassHandler.INSTANCE.setPassConnection(this);
+            PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }
 
@@ -202,7 +202,7 @@ public abstract class Player extends AbsPlayer {
             System.out.println(TAG + " waiting for remove");
         }
     }
-    
+
     /**
      * Send update server connection Address and other details to Client to fulfill the AOI
      * 
@@ -307,15 +307,15 @@ public abstract class Player extends AbsPlayer {
         // Issue: if client send x value greater than 1
         this.v.set(x * 200, y * 200);
         System.out.println(TAG + " set V :" + this.v.x + ":" + this.v.y);
-        
+
         // To fixed the problem of unable to stop after begin to rotate when hit by something
-        //this.body.setAngularVelocity(this.angle);
+        // this.body.setAngularVelocity(this.angle);
     }
 
     public void setAngle(float a) {
         this.angle = a % 360;
         // this.angle %= 360;
-        
+
     }
 
     public List<Bullet> getNewBulletList() {
