@@ -154,6 +154,22 @@ public class DummyPlayer extends AbsPlayer {
             System.out.println(TAG + " waiting for remove");
         }
     }
+    
+    // Need refactoring
+    public void sendConnectionInfo(ClientTransferReq transferReq) {
+        if (super.conDummy != null) {
+            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+            transferReqList.add(transferReq);
+            conPlayer.sendNewConnection(transferReqList);
+        } else if (super.isPlayer == 2) {
+            this.gameEngine.addToRemoveDummyQueue(this);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conDummy
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
+        }
+    }
 
     /**
      * Send details about the size of the tile on current server

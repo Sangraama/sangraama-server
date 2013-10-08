@@ -202,6 +202,27 @@ public abstract class Player extends AbsPlayer {
             System.out.println(TAG + " waiting for remove");
         }
     }
+    
+    /**
+     * Send update server connection Address and other details to Client to fulfill the AOI
+     * 
+     * @param transferReq
+     *            Object of Client transferring protocol
+     */
+    public void sendConnectionInfo(ClientTransferReq transferReq) {
+        if (super.conPlayer != null) {
+            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+            transferReqList.add(transferReq);
+            conPlayer.sendNewConnection(transferReqList);
+        } else if (super.isPlayer == 1) {
+            this.gameEngine.addToRemovePlayerQueue(this);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conPlayer
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
+        }
+    }
 
     /**
      * Send details about the size of the tile on current server

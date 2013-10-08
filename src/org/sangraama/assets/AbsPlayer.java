@@ -39,7 +39,7 @@ public abstract class AbsPlayer {
     WebSocketConnection conDummy;
 
     volatile boolean isUpdate = false;
-    short isPlayer = 2;
+    short isPlayer = 2; // if player type is 1: primary connection player 2: dummy player (to get updates)
 
     // Player Dynamic Parameters
     float x, y, screenWidth, screenHeight;
@@ -165,6 +165,8 @@ public abstract class AbsPlayer {
     }
 
     public abstract void sendNewConnection(ClientTransferReq transferReq);
+    
+    public abstract void sendConnectionInfo(ClientTransferReq transferReq);
 
     /**
      * Send details about the size of the tile on current server
