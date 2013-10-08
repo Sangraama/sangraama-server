@@ -78,7 +78,7 @@ public enum GameEngine implements Runnable {
             }
         });
        Body bodyList= world.getBodyList();
-      System.out.println("bodyX="+bodyList.getPosition().x+"bodyY="+bodyList.getPosition().y); 
+       // System.out.println("bodyX="+bodyList.getPosition().x+"bodyY="+bodyList.getPosition().y); 
         timer.start();
 
         /*
@@ -109,6 +109,7 @@ public enum GameEngine implements Runnable {
             this.playerList.remove(rmPlayer);
             this.world.destroyBody(rmPlayer.getBody());
             System.out.println(TAG + "Removed player :" + rmPlayer.getUserID());
+            rmPlayer = null; // free the memory
         }
         this.removePlayerQueue.clear();
 
