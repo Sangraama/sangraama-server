@@ -50,10 +50,12 @@ public class Bullet {
         circle.m_radius = 4f;
         FixtureDef fd = new FixtureDef();
         fd.shape = circle;
+        fd.density = 0.5f;
+        // fd.shape = circle;
         fd.friction = 0.2f;
         fd.restitution = 0.5f;
-        fd.filter.groupIndex = -8;
         fd.userData = this;
+        fd.filter.groupIndex = 2;
         return fd;
     }
 

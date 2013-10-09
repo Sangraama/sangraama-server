@@ -29,7 +29,9 @@ public abstract class Player extends AbsPlayer {
     Body body;
 
     // Player Dynamic Parameters
-    float angle;
+    float angle;// actual angle
+    float oldAngle;// actual angle
+    float angularVelocity;
     float v_x, v_y;
     float health;
     float score;
@@ -84,7 +86,7 @@ public abstract class Player extends AbsPlayer {
         }
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
-        this.angle = this.body.getAngle();
+        this.oldAngle = this.body.getAngle();
         // Check whether player is inside the tile or not
         /*
          * Gave this responsibility to client if (!this.isInsideMap(this.x, this.y)) {
@@ -102,9 +104,13 @@ public abstract class Player extends AbsPlayer {
 
     public void applyUpdate() {
         this.body.setLinearVelocity(this.getV());
-        this.body.setTransform(this.body.getPosition(), this.angle);
+        this.body.setAngularVelocity(0.0f);
+        if (this.angularVelocity == 0) {
+            this.body.setTransform(this.body.getPosition(), this.angle);
+        } else {
+            this.body.setTransform(this.body.getPosition(), this.oldAngle + this.angularVelocity);
+        }
         // System.out.println(TAG + " angle velocity : " + this.body.getAngularVelocity());
-        // this.body.setAngularVelocity(this.angle);
     }
 
     /**
@@ -168,7 +174,7 @@ public abstract class Player extends AbsPlayer {
      */
     public void reqInterestIn(float x, float y) {
         if (!isInsideServerSubTile(x, y)) {
-            PlayerPassHandler.INSTANCE.setPassConnection(this);
+            PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }
 
@@ -192,6 +198,27 @@ public abstract class Player extends AbsPlayer {
      *            Object of Client transferring protocol
      */
     public void sendNewConnection(ClientTransferReq transferReq) {
+        if (super.conPlayer != null) {
+            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+            transferReqList.add(transferReq);
+            conPlayer.sendNewConnection(transferReqList);
+        } else if (super.isPlayer == 1) {
+            this.gameEngine.addToRemovePlayerQueue(this);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conPlayer
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
+        }
+    }
+
+    /**
+     * Send update server connection Address and other details to Client to fulfill the AOI
+     * 
+     * @param transferReq
+     *            Object of Client transferring protocol
+     */
+    public void sendConnectionInfo(ClientTransferReq transferReq) {
         if (super.conPlayer != null) {
             ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
             transferReqList.add(transferReq);
@@ -294,10 +321,15 @@ public abstract class Player extends AbsPlayer {
         // this.body.setAngularVelocity(this.angle);
     }
 
-    public void setAngle(float a) {
-        this.angle = a % 360;
-        // this.angle %= 360;
-        System.out.println(TAG + " set angle " + this.angle);
+    public void setAngle(float a, float da) {
+        // this.angle = a % 360;
+        this.angle = a;
+        System.out.println(TAG + " set angle : " + a + " > " + this.angle);
+    }
+
+    public void setAngularVelocity(float da) {
+        this.angularVelocity = da;
+        System.out.println(TAG + " set angular velocity : " + da + " > " + this.angularVelocity);
     }
 
     public List<Bullet> getNewBulletList() {

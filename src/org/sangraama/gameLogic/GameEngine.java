@@ -3,10 +3,16 @@ package org.sangraama.gameLogic;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
+import org.jbox2d.collision.shapes.ChainShape;
 import org.sangraama.asserts.map.GameMap;
 import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
@@ -70,12 +76,14 @@ public enum GameEngine implements Runnable {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 updateGameWorld();
+               
                 world.step(Constants.timeStep, Constants.velocityIterations,
                         Constants.positionIterations);
                 pushUpdate();
             }
         });
-        timer.start();
+      timer.start();
+
 
         /*
          * while (this.isRun) { try { Thread.sleep(Constants.simulatingDelay); updateGameWorld();
@@ -88,7 +96,6 @@ public enum GameEngine implements Runnable {
 
     /* Load static map objects into game engine and apply object physics using JBox2D */
     public void init() {
-
         GameMap g = GameMap.getMap();
         g.generate(); // generate the static objects into game engine, using any tile editor module.
         PhysicsAPI physicsAPI = new PhysicsAPI();
@@ -98,6 +105,7 @@ public enum GameEngine implements Runnable {
         this.sangraamaCollisionDet = new CollisionDetector();
         world.setContactListener(sangraamaCollisionDet);
         addWalls();
+
     }
 
     public void updateGameWorld() {
@@ -107,6 +115,7 @@ public enum GameEngine implements Runnable {
             this.playerList.remove(rmPlayer);
             this.world.destroyBody(rmPlayer.getBody());
             System.out.println(TAG + "Removed player :" + rmPlayer.getUserID());
+            rmPlayer = null; // free the memory
         }
         this.removePlayerQueue.clear();
 
@@ -117,6 +126,8 @@ public enum GameEngine implements Runnable {
             Body newPlayerBody = world.createBody(newPlayer.getBodyDef());
             newPlayerBody.createFixture(newPlayer.getFixtureDef());
             newPlayer.setBody(newPlayerBody);
+            //PhysicsAPI physicsAPI=new PhysicsAPI(); 
+            //physicsAPI.applyPhysics(newPlayer, world);
             this.playerList.add(newPlayer);
             System.out.println(TAG + "Added new player :" + newPlayer.getUserID());
             // Send size of the tile
@@ -156,7 +167,7 @@ public enum GameEngine implements Runnable {
 
     public void removeBullet(Player player) {
         float w = player.getScreenWidth();
-        float h = player.getScreenHeight() - 40;
+        float h = player.getScreenHeight();
         float x = player.getBody().getPosition().x;
         float y = player.getBody().getPosition().y;
         float minX = x - x % w;

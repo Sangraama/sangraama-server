@@ -8,7 +8,7 @@ public class StaticObject {
 	private int y;
 	private int width;
 	private int height;
-	private List<Points> coordinates= new ArrayList<Points>();
+	private List<Points> coordinates= new ArrayList<>();
 	private String name;
 	private String type;
 	public String getType() {
