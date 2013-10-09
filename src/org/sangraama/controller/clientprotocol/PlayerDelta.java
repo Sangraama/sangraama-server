@@ -16,7 +16,7 @@ public class PlayerDelta {
         this.dy = dy;
         this.da = da;
         this.userID = userID;
-        this.bulletDeltaList = new ArrayList<BulletDelta>();
+        this.bulletDeltaList = new ArrayList<>();
         this.health = health;
         this.score = score;
     }

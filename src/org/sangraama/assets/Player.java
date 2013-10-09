@@ -25,12 +25,13 @@ public abstract class Player extends AbsPlayer {
     // Local Debug or logs
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "player : ";
-    private static Random generator = new Random();
+    static Random generator = new Random();
     Body body;
 
     // Player Dynamic Parameters
     float angle;// actual angle
     float oldAngle;// actual angle
+    float shoot; // when shooting this variable will be 1 and otherwise 0
     float angularVelocity;
     float v_x, v_y;
     float health;
@@ -110,7 +111,7 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.body.setTransform(this.body.getPosition(), this.oldAngle + this.angularVelocity);
         }
-        // System.out.println(TAG + " angle velocity : " + this.body.getAngularVelocity());
+        shoot();
     }
 
     /**
@@ -252,9 +253,14 @@ public abstract class Player extends AbsPlayer {
         super.conPlayer.sendTileSizeInfo(new TileInfo(this.userID));
     }
 
-    public void shoot(float s) {
+    public void setShoot(float s) {
+        this.shoot = s;
+        shoot();
+    }
+
+    public void shoot() {
         float r = 50;
-        if (s == 1) {
+        if (this.shoot == 1) {
             float x = this.body.getPosition().x;
             float y = this.body.getPosition().y;
             if (0 <= this.angle && this.angle <= 90) {
@@ -321,7 +327,7 @@ public abstract class Player extends AbsPlayer {
         // this.body.setAngularVelocity(this.angle);
     }
 
-    public void setAngle(float a, float da) {
+    public void setAngle(float a) {
         // this.angle = a % 360;
         this.angle = a;
         System.out.println(TAG + " set angle : " + a + " > " + this.angle);

@@ -3,16 +3,9 @@ package org.sangraama.gameLogic;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
-
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
-import org.jbox2d.dynamics.contacts.Contact;
-import org.jbox2d.collision.shapes.ChainShape;
 import org.sangraama.asserts.map.GameMap;
 import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
@@ -22,7 +15,6 @@ import org.sangraama.assets.Wall;
 import org.sangraama.common.Constants;
 import org.sangraama.util.BoundaryCreator;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
@@ -52,13 +44,13 @@ public enum GameEngine implements Runnable {
     GameEngine() {
         System.out.println(TAG + "Init GameEngine...");
         this.world = new World(new Vec2(0.0f, 0.0f));
-        this.playerList = new ArrayList<Player>();
-        this.dummyList = new ArrayList<DummyPlayer>();
-        this.newPlayerQueue = new ArrayList<Player>();
-        this.newDummyQueue = new ArrayList<DummyPlayer>();
-        this.removePlayerQueue = new ArrayList<Player>();
-        this.removeDummyQueue = new ArrayList<DummyPlayer>();
-        this.wallList = new ArrayList<Wall>();
+        this.playerList = new ArrayList<>();
+        this.dummyList = new ArrayList<>();
+        this.newPlayerQueue = new ArrayList<>();
+        this.newDummyQueue = new ArrayList<>();
+        this.removePlayerQueue = new ArrayList<>();
+        this.removeDummyQueue = new ArrayList<>();
+        this.wallList = new ArrayList<>();
         this.updateEngine = UpdateEngine.INSTANCE;
     }
 
