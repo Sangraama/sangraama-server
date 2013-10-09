@@ -108,7 +108,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),event.getW(),event.getH(), this));
                 System.out.println(TAG + T + " Add new Player " + event.toString());
                 this.player.setV(event.getV_x(), event.getV_y());
-                this.player.setAngle(event.getA(), event.getDa());
+                this.player.setAngle(event.getA());
                 // this.player.shoot(clientEvent.getS());
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
                         + event.getV_y() + " when creating player");
@@ -146,9 +146,9 @@ public class WebSocketConnection extends MessageInbound {
         switch (Integer.parseInt(event.getType())) {
             case 1: // setting user event request
                 this.player.setV(event.getV_x(), event.getV_y());
-                this.player.setAngle(event.getA(), event.getDa());
+                this.player.setAngle(event.getA());
                 this.player.setAngularVelocity(event.getDa());
-                this.player.shoot(event.getS());
+                this.player.setShoot(event.getS());
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
                         + event.getV_y());
                 break;
@@ -164,8 +164,8 @@ public class WebSocketConnection extends MessageInbound {
                 break;
             case 4: // Reset settings and make dummy player
                 this.player.setV(event.getV_x(), event.getV_y());
-                this.player.setAngle(event.getA(), event.getDa());
-                this.player.shoot(event.getS());
+                this.player.setAngle(event.getA());
+                this.player.setShoot(event.getS());
                 System.out.println(TAG + T + " RESET user events " + event.getV_x() + " : "
                         + event.getV_y());
                 //to be add w and h
@@ -188,7 +188,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),0,0, this));
                 System.out.println(TAG + T + " changed to Player " + event.getUserID());
                 this.player.setV(event.getV_x(), event.getV_y());
-                this.player.setAngle(event.getA(), event.getDa());
+                this.player.setAngle(event.getA());
                 // this.player.shoot(clientEvent.getS());
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
                         + event.getV_y() + " when creating player");
