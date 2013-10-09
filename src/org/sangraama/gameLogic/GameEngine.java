@@ -12,7 +12,10 @@ import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
+import org.sangraama.assets.Wall;
 import org.sangraama.common.Constants;
+import org.sangraama.util.BoundaryCreator;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
@@ -37,6 +40,7 @@ public enum GameEngine implements Runnable {
     private List<Player> removePlayerQueue;
     private List<DummyPlayer> removeDummyQueue;
     private CollisionDetector sangraamaCollisionDet;
+    private List<Wall> wallList;
 
     // this method only access via class
     GameEngine() {
@@ -48,6 +52,7 @@ public enum GameEngine implements Runnable {
         this.newDummyQueue = new ArrayList<DummyPlayer>();
         this.removePlayerQueue = new ArrayList<Player>();
         this.removeDummyQueue = new ArrayList<DummyPlayer>();
+        this.wallList = new ArrayList<Wall>();
         this.updateEngine = UpdateEngine.INSTANCE;
     }
 
@@ -92,6 +97,7 @@ public enum GameEngine implements Runnable {
         System.out.println("Static Game Objects added to the game world!!");
         this.sangraamaCollisionDet = new CollisionDetector();
         world.setContactListener(sangraamaCollisionDet);
+        addWalls();
     }
 
     public void updateGameWorld() {
@@ -206,5 +212,12 @@ public enum GameEngine implements Runnable {
     public List<Player> getPlayerList() {
         return playerList;
     }
-
+    
+    private void addWalls(){
+        BoundaryCreator wallGen = new BoundaryCreator();
+        wallList = wallGen.calculateWallBoundary();
+        for(Wall wall : wallList){
+            this.world.createBody(wall.getBodyDef()).createFixture(wall.getFixtureDef());
+        }
+    }
 }

@@ -41,6 +41,11 @@ public class PlayerDelta {
         return bulletDeltaList;
     }
 
+    public float getHealth(){
+        return health;
+    }
     
-    
+    public float getScore(){
+        return score;
+    }
 }
