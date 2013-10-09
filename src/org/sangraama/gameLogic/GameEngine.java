@@ -77,9 +77,8 @@ public enum GameEngine implements Runnable {
                 pushUpdate();
             }
         });
-       Body bodyList= world.getBodyList();
-       // System.out.println("bodyX="+bodyList.getPosition().x+"bodyY="+bodyList.getPosition().y); 
-        timer.start();
+      timer.start();
+
 
         /*
          * while (this.isRun) { try { Thread.sleep(Constants.simulatingDelay); updateGameWorld();

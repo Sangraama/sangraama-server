@@ -9,7 +9,7 @@ import org.sangraama.asserts.map.tileeditor.TileLoader;
 public class MapAPI {
     private int mapHeight;
     private int mapWidth;
-    private List<StaticObject> staticObjects = new ArrayList<StaticObject>();
+    private List<StaticObject> staticObjects = new ArrayList<>();
 
     public void getMapDetails() {
         TileLoader tileLoader = new TileLoader();
