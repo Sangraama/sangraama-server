@@ -76,9 +76,15 @@ public enum CollisionManager implements Runnable {
                 processBulletShipCollition(ship, bullet);
             }
         }
-       /* else if(){
-        	
-        }*/
+        else if(("island".equals(collision.getFixtureA().getUserData()) && collision.getFixtureB().getUserData().getClass() == Ship.class)||("island".equals(collision.getFixtureB().getUserData()) && collision.getFixtureA().getUserData().getClass() == Ship.class)){
+            Player ship;
+            if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
+                ship = (Player) collision.getFixtureA().getUserData();
+            } else {
+                ship = (Player) collision.getFixtureB().getUserData();
+            }
+            reduceShipHealth(ship.getUserID(), (float) -0.5);
+        }
     }
 
     private void processShipsCollision(Ship... ships) {

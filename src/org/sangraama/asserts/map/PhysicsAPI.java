@@ -49,6 +49,7 @@ public class PhysicsAPI {
             polyline.createFixtureDef(vertices, vertices.length);
 
             this.fixtureDef = polyline.getFixtureDef();
+            this.fixtureDef.userData = "island";
 
            // System.out.println("XXXXXXXXXX" + staticObject.getX());
            // System.out.println("YYYYYYYYYYYYYYY" + staticObject.getY());
