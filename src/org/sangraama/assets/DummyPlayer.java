@@ -123,7 +123,7 @@ public class DummyPlayer extends AbsPlayer {
      */
     public void reqInterestIn(float x, float y) {
         if (!isInsideServerSubTile(x, y)) {
-            PlayerPassHandler.INSTANCE.setPassConnection(this);
+            PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }
 
@@ -154,7 +154,7 @@ public class DummyPlayer extends AbsPlayer {
             System.out.println(TAG + " waiting for remove");
         }
     }
-    
+
     // Need refactoring
     public void sendConnectionInfo(ClientTransferReq transferReq) {
         if (super.conDummy != null) {

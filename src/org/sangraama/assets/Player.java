@@ -29,7 +29,9 @@ public abstract class Player extends AbsPlayer {
     Body body;
 
     // Player Dynamic Parameters
-    float angle;
+    float angle;// actual angle
+    float oldAngle;// actual angle
+    float angularVelocity;
     float v_x, v_y;
     Vec2 v = new Vec2(0f, 0f);
     PlayerDelta delta;
@@ -80,7 +82,7 @@ public abstract class Player extends AbsPlayer {
         }
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
-        this.angle = this.body.getAngle();
+        this.oldAngle = this.body.getAngle();
         // Check whether player is inside the tile or not
         /*
          * Gave this responsibility to client if (!this.isInsideMap(this.x, this.y)) {
@@ -99,9 +101,12 @@ public abstract class Player extends AbsPlayer {
     public void applyUpdate() {
         this.body.setLinearVelocity(this.getV());
         this.body.setAngularVelocity(0.0f);
-        this.body.setTransform(this.body.getPosition(), this.angle);
+        if (this.angularVelocity == 0) {
+            this.body.setTransform(this.body.getPosition(), this.angle);
+        } else {
+            this.body.setTransform(this.body.getPosition(), this.oldAngle + this.angularVelocity);
+        }
         // System.out.println(TAG + " angle velocity : " + this.body.getAngularVelocity());
-        // this.body.setAngularVelocity(this.angle);
     }
 
     /**
@@ -312,10 +317,15 @@ public abstract class Player extends AbsPlayer {
         // this.body.setAngularVelocity(this.angle);
     }
 
-    public void setAngle(float a) {
-        this.angle = a % 360;
-        // this.angle %= 360;
+    public void setAngle(float a, float da) {
+        // this.angle = a % 360;
+        this.angle = a;
+        System.out.println(TAG + " set angle : " + a + " > " + this.angle);
+    }
 
+    public void setAngularVelocity(float da) {
+        this.angularVelocity = da;
+        System.out.println(TAG + " set angular velocity : " + da + " > " + this.angularVelocity);
     }
 
     public List<Bullet> getNewBulletList() {

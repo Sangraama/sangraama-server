@@ -11,7 +11,8 @@ public class ClientEvent {
     private float h;
     private float v_x;
     private float v_y;
-    private float v_a;
+    private float a; //actual angle
+    private float da; //delta angle
     private float s;
     private float aoi_w;
     private float aoi_h;
@@ -42,9 +43,7 @@ public class ClientEvent {
         return v_y;
     }
 
-    public float getV_a() {
-        return v_a;
-    }
+    
 
     public float getS() {
         return s;
@@ -74,12 +73,22 @@ public class ClientEvent {
         return h;
     }
 
+    public float getA() {
+        return a;
+    }
+
+    public float getDa() {
+        return da;
+    }
+
     @Override
     public String toString() {
         return "ClientEvent [type=" + type + ", userID=" + userID + ", x=" + x + ", y=" + y
-                + ", w=" + w + ", h=" + h + ", v_x=" + v_x + ", v_y=" + v_y + ", v_a=" + v_a
-                + ", s=" + s + ", aoi_w=" + aoi_w + ", aoi_h=" + aoi_h + ", info=" + info
+                + ", w=" + w + ", h=" + h + ", v_x=" + v_x + ", v_y=" + v_y + ", a=" + a + ", da="
+                + da + ", s=" + s + ", aoi_w=" + aoi_w + ", aoi_h=" + aoi_h + ", info=" + info
                 + ", signedInfo=" + Arrays.toString(signedInfo) + "]";
     }
+
+    
 
 }

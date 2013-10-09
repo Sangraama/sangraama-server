@@ -16,8 +16,6 @@ import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.thrift.assets.TPlayer;
 import org.sangraama.thrift.client.ThriftClient;
 
-import sun.net.www.content.text.plain;
-
 public enum PlayerPassHandler {
     INSTANCE;
     private static final String TAG = "PlayerPassHandler :";
