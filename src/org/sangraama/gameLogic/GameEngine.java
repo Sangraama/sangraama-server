@@ -220,6 +220,7 @@ public enum GameEngine implements Runnable {
         BoundaryCreator wallGen = new BoundaryCreator();
         wallList = wallGen.calculateWallBoundary();
         for(Wall wall : wallList){
+            System.out.println("Adding wall "+wall.getFixtureDef().userData);
             this.world.createBody(wall.getBodyDef()).createFixture(wall.getFixtureDef());
         }
     }

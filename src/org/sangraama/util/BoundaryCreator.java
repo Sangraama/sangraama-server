@@ -38,12 +38,19 @@ public class BoundaryCreator {
     }
 
     private void generateWalls() {
-        if (mapOriX == 0) {
-            wallList.add(new Wall(mapOriX,mapOriY,mapWidth,1));
+        if(mapOriX == 0 || mapOriY == 0){
+            if (mapOriX == 0 && mapOriY == 0) {
+                wallList.add(new Wall(mapOriX,mapOriY,mapWidth,1));
+                wallList.add(new Wall(mapOriX,mapOriY,1,mapHeight));
+            }
+            else if(mapOriX == 0){
+                wallList.add(new Wall(0,mapOriY,mapWidth,1));
+            }
+            else if(mapOriY == 0){
+                wallList.add(new Wall(mapOriX,0,mapWidth,1));
+            }
         }
-        if (mapOriY == 0) {
-            wallList.add(new Wall(mapOriX,mapOriY,1,mapHeight));
-        }
+        
         if(mapOriX == (worldWidth-mapWidth)){
             wallList.add(new Wall(mapOriX+mapWidth,mapOriY,1,mapHeight));
         }
