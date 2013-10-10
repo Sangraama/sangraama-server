@@ -46,7 +46,7 @@ public abstract class AbsPlayer {
     float x, y; // Player current location
 
     // Area of Interest
-    float screenWidth = 100.0f, screenHeight = 100.0f;
+    float screenWidth = 200.0f, screenHeight = 200.0f;
     float halfWidth = screenWidth / 2;
     float halfHieght = screenHeight / 2;
 

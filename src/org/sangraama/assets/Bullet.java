@@ -15,7 +15,7 @@ public class Bullet {
 
     private float x, y;
     private Vec2 velocity;
-    private int v_rate = 100;
+    private int v_rate = 300;
     private Body body;
     private BulletDelta bulletDelta;
     private long id;
@@ -48,13 +48,13 @@ public class Bullet {
 
     public FixtureDef getFixtureDef() {
         CircleShape circle = new CircleShape();
-        circle.m_radius = 4f;
+        circle.m_radius = 1.0f;
         FixtureDef fd = new FixtureDef();
         fd.shape = circle;
-        fd.density = 0.5f;
+        fd.density = 0.1f;
         // fd.shape = circle;
-        fd.friction = 0.2f;
-        fd.restitution = 0.5f;
+        //fd.friction = 0.2f;
+        //fd.restitution = 0.5f;
         fd.filter.groupIndex = 2;
         return fd;
     }
