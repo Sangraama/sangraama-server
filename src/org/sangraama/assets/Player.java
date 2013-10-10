@@ -31,11 +31,19 @@ public abstract class Player extends AbsPlayer {
     // Player Dynamic Parameters
     float angle;// actual angle
     float oldAngle;// actual angle
+
     float shoot; // when shooting this variable will be 1 and otherwise 0
-    float angularVelocity;
+
     float v_x, v_y;
     float health;
     float score;
+
+    int a_rate = 2;
+    float angularVelocity;
+
+    /* Player moving parameters */
+    // Player speed factor
+    int v_rate = 200;
     Vec2 v = new Vec2(0f, 0f);
     PlayerDelta delta;
 
@@ -319,22 +327,18 @@ public abstract class Player extends AbsPlayer {
     }
 
     public void setV(float x, float y) {
-        // Issue: if client send x value greater than 1
-        this.v.set(x * 200, y * 200);
+        // Fixed: if client send x value greater than 1
+        this.v.set(x % 2 * v_rate, y % 2 * v_rate);
         System.out.println(TAG + " set V :" + this.v.x + ":" + this.v.y);
-
-        // To fixed the problem of unable to stop after begin to rotate when hit by something
-        // this.body.setAngularVelocity(this.angle);
     }
 
     public void setAngle(float a) {
-        // this.angle = a % 360;
         this.angle = a;
         System.out.println(TAG + " set angle : " + a + " > " + this.angle);
     }
 
     public void setAngularVelocity(float da) {
-        this.angularVelocity = da;
+        this.angularVelocity = da % 2 * a_rate;
         System.out.println(TAG + " set angular velocity : " + da + " > " + this.angularVelocity);
     }
 
@@ -361,10 +365,9 @@ public abstract class Player extends AbsPlayer {
     public void setHealth(float healthChange) {
         if ((this.health + healthChange) > 0) {
             this.health += healthChange;
-        }
-        else{
+        } else {
             this.health = 0;
-        } 
+        }
     }
 
     public float getHealth() {
@@ -373,23 +376,21 @@ public abstract class Player extends AbsPlayer {
         else
             return this.health;
     }
-    
-    public float getScore(){
-        if(this.score>0){
+
+    public float getScore() {
+        if (this.score > 0) {
             return this.score;
-        }
-        else{
+        } else {
             return 0;
         }
     }
-    
-    public void setScore(float scoreChange){
+
+    public void setScore(float scoreChange) {
         if ((this.score + scoreChange) > 0) {
             this.score += scoreChange;
-        }
-        else{
+        } else {
             this.score = 0;
-        } 
+        }
     }
 
 }

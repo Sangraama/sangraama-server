@@ -14,7 +14,9 @@ public class Bullet {
     private long playerId;
 
     private float originX, originY;
+    private float x, y;
     private Vec2 velocity;
+    private int v_rate = 300;
     private Body body;
     private BulletDelta bulletDelta;
     private long id;
@@ -24,12 +26,14 @@ public class Bullet {
         this.playerId = playerId;
         this.originX = x;
         this.originY = y;
-        this.velocity = new Vec2(10f, 10f);
+        this.x = x;
+        this.y = y;
+        this.velocity = new Vec2(1.0f * v_rate, 1.0f * v_rate);
+
     }
 
     public void setBody(Body bulletBody) {
         this.body = bulletBody;
-
     }
 
     public Body getBody() {
@@ -38,8 +42,8 @@ public class Bullet {
 
     public BodyDef getBodyDef() {
         BodyDef bd = new BodyDef();
-        bd.position.set(this.originX, this.originY);
-        bd.type = BodyType.KINEMATIC;
+        bd.position.set(this.x, this.y);
+        bd.type = BodyType.DYNAMIC;
         bd.bullet = true;
         // bd.fixedRotation = true;
         return bd;
@@ -47,14 +51,14 @@ public class Bullet {
 
     public FixtureDef getFixtureDef() {
         CircleShape circle = new CircleShape();
-        circle.m_radius = 4f;
+        circle.m_radius = 1.0f;
         FixtureDef fd = new FixtureDef();
         fd.shape = circle;
-        fd.density = 0.5f;
+        fd.density = 0.1f;
         // fd.shape = circle;
-        fd.friction = 0.2f;
-        fd.restitution = 0.5f;
         fd.userData = this;
+        // fd.friction = 0.2f;
+        fd.restitution = 0.5f;
         fd.filter.groupIndex = 2;
         return fd;
     }
