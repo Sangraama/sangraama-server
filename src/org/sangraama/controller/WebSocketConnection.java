@@ -136,7 +136,7 @@ public class WebSocketConnection extends MessageInbound {
                 // to be add w and h
                 this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
                         0, 0, this));
-                this.dPlayer.setAOI(event.getAoi_w(), event.getAoi_h());
+                this.dPlayer.setAOI(event.getW(), event.getH());
                 System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
                 break;
 
@@ -163,7 +163,7 @@ public class WebSocketConnection extends MessageInbound {
                 break;
             // set AOI of the player
             case 3:
-                this.player.setAOI(event.getAoi_w(), event.getAoi_h());
+                this.player.setAOI(event.getW(), event.getH());
                 System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
                 break;
             case 4: // Reset settings and make dummy player
@@ -175,7 +175,7 @@ public class WebSocketConnection extends MessageInbound {
                 // to be add w and h
                 this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
                         0, 0, this));
-                this.dPlayer.setAOI(event.getAoi_w(), event.getAoi_h());
+                this.dPlayer.setAOI(event.getW(), event.getH());
                 this.player = null;
                 break;
 
@@ -206,7 +206,7 @@ public class WebSocketConnection extends MessageInbound {
                 break;
             // set AOI of the player
             case 3:
-                this.dPlayer.setAOI(event.getAoi_w(), event.getAoi_h());
+                this.dPlayer.setAOI(event.getW(), event.getH());
                 System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
                 break;
 

@@ -7,15 +7,13 @@ public class ClientEvent {
     private long userID;
     private float x;
     private float y;
-    private float w;
-    private float h;
+    private float w; // Area of Interest width
+    private float h; // Area of Interest height
     private float v_x;
     private float v_y;
-    private float a; //actual angle
-    private float da; //delta angle
+    private float a; // actual angle
+    private float da; // delta angle
     private float s;
-    private float aoi_w;
-    private float aoi_h;
     private String info;
     private byte[] signedInfo;
 
@@ -43,32 +41,30 @@ public class ClientEvent {
         return v_y;
     }
 
-    
-
     public float getS() {
         return s;
-    }
-    
-    public float getAoi_w() {
-        return aoi_w;
-    }
-
-    public float getAoi_h() {
-        return aoi_h;
     }
 
     public String getInfo() {
         return info;
     }
-    
+
     public byte[] getSignedInfo() {
         return signedInfo;
     }
 
+    /**
+     * Get Area of interest width
+     * @return AOI width
+     */
     public float getW() {
         return w;
     }
 
+    /**
+     * Get Area of interest height
+     * @return AOI height
+     */
     public float getH() {
         return h;
     }
@@ -85,10 +81,8 @@ public class ClientEvent {
     public String toString() {
         return "ClientEvent [type=" + type + ", userID=" + userID + ", x=" + x + ", y=" + y
                 + ", w=" + w + ", h=" + h + ", v_x=" + v_x + ", v_y=" + v_y + ", a=" + a + ", da="
-                + da + ", s=" + s + ", aoi_w=" + aoi_w + ", aoi_h=" + aoi_h + ", info=" + info
-                + ", signedInfo=" + Arrays.toString(signedInfo) + "]";
+                + da + ", s=" + s + ", info=" + info + ", signedInfo="
+                + Arrays.toString(signedInfo) + "]";
     }
-
-    
 
 }

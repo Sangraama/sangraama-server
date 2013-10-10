@@ -80,8 +80,12 @@ public abstract class AbsPlayer {
         this.userID = userID;
         this.x = x;
         this.y = y;
-        this.screenWidth = w;
-        this.screenHeight = h;
+        this.screenWidth = w; // / Constants.scale; not enable scaling
+        this.screenHeight = h; // / Constants.scale;
+        this.halfWidth = screenWidth / 2;
+        this.halfHieght = screenHeight / 2;
+        // System.out.println(TAG + "AOI w:"+screenWidth+" h:"+screenHeight+" = half w:"+halfWidth+" h:"+halfHieght);
+        
         this.sangraamaMap = SangraamaMap.INSTANCE;
         /*
          * Note: this should replace by sangraama map method. Player shouldn't responsible for
