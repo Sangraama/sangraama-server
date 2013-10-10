@@ -43,11 +43,12 @@ public abstract class AbsPlayer {
                         // updates)
 
     // Player Dynamic Parameters
-    float x, y, screenWidth, screenHeight;
+    float x, y; // Player current location
 
     // Area of Interest
-    float halfWidth = 10f;
-    float halfHieght = 1000f;
+    float screenWidth = 100.0f, screenHeight = 100.0f;
+    float halfWidth = screenWidth / 2;
+    float halfHieght = screenHeight / 2;
 
     // player current sub-tile information
     float currentSubTileOriginX;
@@ -201,6 +202,8 @@ public abstract class AbsPlayer {
     }
 
     public void setAOI(float width, float height) {
+        this.screenWidth = width;
+        this.screenHeight = height;
         this.halfWidth = width / 2;
         this.halfHieght = height / 2;
     }

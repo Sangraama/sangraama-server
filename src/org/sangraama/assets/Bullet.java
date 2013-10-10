@@ -15,6 +15,7 @@ public class Bullet {
 
     private float x, y;
     private Vec2 velocity;
+    private int v_rate = 100;
     private Body body;
     private BulletDelta bulletDelta;
     private long id;
@@ -24,12 +25,12 @@ public class Bullet {
         this.playerId = playerId;
         this.x = x;
         this.y = y;
-        this.velocity = new Vec2(10f, 10f);
+        this.velocity = new Vec2(1.0f * v_rate, 1.0f * v_rate);
     }
 
     public void setBody(Body bulletBody) {
         this.body = bulletBody;
-       
+
     }
 
     public Body getBody() {
@@ -39,9 +40,9 @@ public class Bullet {
     public BodyDef getBodyDef() {
         BodyDef bd = new BodyDef();
         bd.position.set(this.x, this.y);
-        bd.type = BodyType.KINEMATIC;
+        bd.type = BodyType.DYNAMIC;
         bd.bullet = true;
-        //bd.fixedRotation = true;
+        // bd.fixedRotation = true;
         return bd;
     }
 
@@ -62,18 +63,17 @@ public class Bullet {
         return velocity;
     }
 
-    
     public long getId() {
         return id;
     }
-    
-    public long getPlayerId(){
-    	return this.playerId;
+
+    public long getPlayerId() {
+        return this.playerId;
     }
 
     public BulletDelta getBulletDelta(int type) {
         bulletDelta = new BulletDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.playerId,this.id,type);
+                this.body.getAngle(), this.playerId, this.id, type);
         return bulletDelta;
     }
 

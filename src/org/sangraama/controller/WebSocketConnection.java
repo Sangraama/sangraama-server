@@ -70,7 +70,7 @@ public class WebSocketConnection extends MessageInbound {
     @Override
     protected void onClose(int status) {
         // log.info("Connection closed");
-        
+
         if (this.player != null) {
             this.player.removeWebSocketConnection();
         }
@@ -93,10 +93,13 @@ public class WebSocketConnection extends MessageInbound {
         ClientEvent event = gson.fromJson(user, ClientEvent.class);
 
         if (this.player != null) {
+            /* Call when "the player" is already connected and added to the server world map */
             this.playerEvents(event);
         } else if (this.dPlayer != null) {
+            /* Call when "a Dummy Player" is already created and sending updates to the client */
             this.dummyPlayerEvents(event);
         } else {
+            /* Call when a player is not created */
             this.newPlayerEvent(event);
         }
     }
@@ -105,10 +108,11 @@ public class WebSocketConnection extends MessageInbound {
         String T = " newPlayerEvent ";
         switch (Integer.parseInt(event.getType())) {
             case 1:// create new player & set the connection
-                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),event.getW(),event.getH(), this));
+                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),
+                        event.getW(), event.getH(), this));
                 System.out.println(TAG + T + " Add new Player " + event.toString());
                 this.player.setV(event.getV_x(), event.getV_y());
-                this.player.setAngle(event.getA(), event.getDa());
+                this.player.setAngle(event.getA());
                 // this.player.shoot(clientEvent.getS());
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
                         + event.getV_y() + " when creating player");
@@ -120,18 +124,18 @@ public class WebSocketConnection extends MessageInbound {
                 boolean msgVerification = VerifyMsg.INSTANCE.verifyMessage(info, signedInfo);
                 if (msgVerification) {
                     playerInfo = gson.fromJson(info, TransferInfo.class);
-                    //to be add w and h
+                    // to be add w and h
                     this.player = new Ship(event.getUserID(), playerInfo.getPositionX(),
-                            playerInfo.getPositionY(),0,0, this);
+                            playerInfo.getPositionY(), 0, 0, this);
                     System.out
                             .println(TAG + T + "Adding player from another server to GameEngine.");
                 }
                 break;
             // Create a dummy player and set AOI of the player
             case 3:
-                //to be add w and h
-                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),0,0,
-                        this));
+                // to be add w and h
+                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
+                        0, 0, this));
                 this.dPlayer.setAOI(event.getAoi_w(), event.getAoi_h());
                 System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
                 break;
@@ -146,7 +150,7 @@ public class WebSocketConnection extends MessageInbound {
         switch (Integer.parseInt(event.getType())) {
             case 1: // setting user event request
                 this.player.setV(event.getV_x(), event.getV_y());
-                this.player.setAngle(event.getA(), event.getDa());
+                this.player.setAngle(event.getA());
                 this.player.setAngularVelocity(event.getDa());
                 this.player.shoot(event.getS());
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
@@ -164,13 +168,13 @@ public class WebSocketConnection extends MessageInbound {
                 break;
             case 4: // Reset settings and make dummy player
                 this.player.setV(event.getV_x(), event.getV_y());
-                this.player.setAngle(event.getA(), event.getDa());
+                this.player.setAngle(event.getA());
                 this.player.shoot(event.getS());
                 System.out.println(TAG + T + " RESET user events " + event.getV_x() + " : "
                         + event.getV_y());
-                //to be add w and h
-                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),0,0,
-                        this));
+                // to be add w and h
+                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
+                        0, 0, this));
                 this.dPlayer.setAOI(event.getAoi_w(), event.getAoi_h());
                 this.player = null;
                 break;
@@ -184,11 +188,11 @@ public class WebSocketConnection extends MessageInbound {
         String T = " dummyPlayerEvent ";
         switch (Integer.parseInt(event.getType())) {
             case 1: // create new player and pass the connection
-                //to be add w and h
-                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),0,0, this));
+                // to be add w and h
+                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(), 0, 0, this));
                 System.out.println(TAG + T + " changed to Player " + event.getUserID());
                 this.player.setV(event.getV_x(), event.getV_y());
-                this.player.setAngle(event.getA(), event.getDa());
+                this.player.setAngle(event.getA());
                 // this.player.shoot(clientEvent.getS());
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
                         + event.getV_y() + " when creating player");
@@ -239,7 +243,7 @@ public class WebSocketConnection extends MessageInbound {
     public void sendNewConnection(ArrayList<ClientTransferReq> transferReq) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
-            //System.out.println(TAG + " new con details " + gson.toJson(transferReq));
+            // System.out.println(TAG + " new con details " + gson.toJson(transferReq));
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send new connnection information");
             log.error(TAG, e);
@@ -255,7 +259,7 @@ public class WebSocketConnection extends MessageInbound {
     public void sendTileSizeInfo(ArrayList<TileInfo> tilesInfo) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tilesInfo)));
-            //System.out.println(TAG + " send size of tile " + gson.toJson(tilesInfo));
+            // System.out.println(TAG + " send size of tile " + gson.toJson(tilesInfo));
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send tile size information");
             log.error(TAG, e);
