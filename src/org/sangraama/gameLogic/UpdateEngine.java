@@ -9,9 +9,11 @@ import java.util.Map;
 
 import javax.swing.Timer;
 
+import org.sangraama.assets.Bullet;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
 import org.sangraama.common.Constants;
+import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.BulletDelta;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
@@ -25,14 +27,16 @@ public enum UpdateEngine implements Runnable {
     private volatile boolean isUpdate = false;
 
     private List<Player> playerList; // don't modify;read only
+    private List<Bullet> bulletList;
     /* Should be atomic operation. */
     private volatile List<Player> waitingPlayerList;
     private Map<Long, PlayerDelta> playerDelta;
 
     UpdateEngine() {
         System.out.println(TAG + "Init Update Engine ...");
-        this.playerList = new ArrayList<Player>();
-        this.waitingPlayerList = new ArrayList<Player>();
+        this.playerList = new ArrayList<>();
+        this.bulletList = new ArrayList<>();
+        this.waitingPlayerList = new ArrayList<>();
         // this.locations = new float[100][3];
     }
 
@@ -48,6 +52,10 @@ public enum UpdateEngine implements Runnable {
          */
         this.waitingPlayerList = playerList;
         this.isUpdate = true;
+    }
+
+    public void setBulletList(List<Bullet> bulletList) {
+        this.bulletList = bulletList;
     }
 
     @Override
@@ -101,8 +109,8 @@ public enum UpdateEngine implements Runnable {
      * @param player
      * @return ArrayList<PlayerDelta>
      */
-    private List<PlayerDelta> getAreaOfInterest(Player p) {
-        List<PlayerDelta> delta = new ArrayList<>();
+    private List<AbsDelta> getAreaOfInterest(Player p) {
+        List<AbsDelta> delta = new ArrayList<>();
         // Add players own details
         // delta.add(this.playerDelta.get(p.getUserID()));
 
@@ -122,19 +130,17 @@ public enum UpdateEngine implements Runnable {
                         && player.getX() <= p.getMidX() + p.getAOIWidth()
                         && p.getMidY() - p.getAOIHeight() <= player.getY()
                         && player.getY() <= p.getMidY() + p.getAOIHeight()) {
-                    PlayerDelta playerDelta = this.playerDelta.get(player.getUserID());
-                    List<BulletDelta> bulletDeltas = new ArrayList<>();
-                    for (BulletDelta bulletDelta : playerDelta.getBulletDeltaList()) {
-                        if (p.getMidX() - p.getAOIWidth() <= bulletDelta.getDx()
-                                && bulletDelta.getDx() <= p.getMidX() + p.getAOIWidth()
-                                && p.getMidY() - p.getAOIHeight() <= bulletDelta.getDy()
-                                && bulletDelta.getDy() <= p.getMidY() + p.getAOIHeight()) {
-                            bulletDeltas.add(bulletDelta);
-                        }
-                    }
-                    playerDelta.setBulletDeltaList(bulletDeltas);
-                    delta.add(playerDelta);
+                    delta.add(this.playerDelta.get(player.getUserID()));
                 }
+            }
+        }
+        for (Bullet bullet : bulletList) {
+            BulletDelta bulletDelta = bullet.getBulletDelta();
+            if (p.getMidX() - p.getAOIWidth() <= bulletDelta.getDx()
+                    && bulletDelta.getDx() <= p.getMidX() + p.getAOIWidth()
+                    && p.getMidY() - p.getAOIHeight() <= bulletDelta.getDy()
+                    && bulletDelta.getDy() <= p.getMidY() + p.getAOIHeight()) {
+                delta.add(bulletDelta);
             }
         }
         return delta;

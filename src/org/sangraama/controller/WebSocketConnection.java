@@ -11,6 +11,7 @@ import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
+import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
@@ -221,11 +222,11 @@ public class WebSocketConnection extends MessageInbound {
      * @param playerDeltaList
      *            delta updates of players who are located inside AOI
      */
-    public void sendUpdate(List<PlayerDelta> playerDeltaList) {
+    public void sendUpdate(List<AbsDelta> playerDeltaList) {
         try {
             String convertedString = gson.toJson(playerDeltaList);
             getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));
-
+            System.out.println("$$$$$$$" + convertedString);
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send update ");
             e.printStackTrace();

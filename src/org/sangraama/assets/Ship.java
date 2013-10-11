@@ -58,8 +58,9 @@ public class Ship extends Player {
                 y = y - rY;
             }
             long id = (long) (generator.nextInt(10000));
-            Bullet bullet = new Bullet(id, this.userID, x, y);
-            this.newBulletList.add(bullet);
+            Bullet bullet = new Bullet(id, this.userID, x, y, this.body.getPosition().x,
+                    this.body.getPosition().y, this.getScreenWidth(), this.getScreenHeight());
+            this.gameEngine.addToBulletQueue(bullet);
             System.out.println(TAG + ": Added a new bullet");
         }
     }

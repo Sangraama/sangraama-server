@@ -6,6 +6,7 @@ import java.util.Random;
 
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
+import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
@@ -96,7 +97,7 @@ public abstract class AbsPlayer {
      */
     public abstract void removeWebSocketConnection();
 
-    public abstract void sendUpdate(List<PlayerDelta> deltaList);
+    public abstract void sendUpdate(List<AbsDelta> deltaList);
 
     /**
      * Check whether player is inside current tile

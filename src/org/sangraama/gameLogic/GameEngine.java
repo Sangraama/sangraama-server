@@ -30,12 +30,15 @@ public enum GameEngine implements Runnable {
     private UpdateEngine updateEngine;
     // list for send updates
     private List<Player> playerList;
+    private List<Bullet> bulletList;
     private List<DummyPlayer> dummyList;
     // list of newly adding players
     private List<Player> newPlayerQueue;
+    private List<Bullet> newBulletQueue;
     private List<DummyPlayer> newDummyQueue;
     // list of removing players
     private List<Player> removePlayerQueue;
+    private List<Bullet> removeBulletQueue;
     private List<DummyPlayer> removeDummyQueue;
     private CollisionDetector sangraamaCollisionDet;
     private List<Wall> wallList;
@@ -45,10 +48,13 @@ public enum GameEngine implements Runnable {
         System.out.println(TAG + "Init GameEngine...");
         this.world = new World(new Vec2(0.0f, 0.0f));
         this.playerList = new ArrayList<>();
+        this.bulletList = new ArrayList<>();
         this.dummyList = new ArrayList<>();
         this.newPlayerQueue = new ArrayList<>();
+        this.newBulletQueue = new ArrayList<>();
         this.newDummyQueue = new ArrayList<>();
         this.removePlayerQueue = new ArrayList<>();
+        this.removeBulletQueue = new ArrayList<>();
         this.removeDummyQueue = new ArrayList<>();
         this.wallList = new ArrayList<>();
         this.updateEngine = UpdateEngine.INSTANCE;
@@ -68,14 +74,13 @@ public enum GameEngine implements Runnable {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 updateGameWorld();
-               
+
                 world.step(Constants.timeStep, Constants.velocityIterations,
                         Constants.positionIterations);
                 pushUpdate();
             }
         });
-      timer.start();
-
+        timer.start();
 
         /*
          * while (this.isRun) { try { Thread.sleep(Constants.simulatingDelay); updateGameWorld();
@@ -101,6 +106,42 @@ public enum GameEngine implements Runnable {
     }
 
     public void updateGameWorld() {
+        performPlayerUpdates();
+        performBulletUpdates();
+
+    }
+
+    private void performBulletUpdates() {
+        for (Bullet rmvBullet : removeBulletQueue) {
+            System.out.println(TAG + "Removing bullet");
+            this.bulletList.remove(rmvBullet);
+            this.world.destroyBody(rmvBullet.getBody());
+            System.out.println(TAG + "Removed bullet :" + rmvBullet.getId());
+        }
+        this.removeBulletQueue.clear();
+
+        // Add new bullet to the world
+
+        for (Bullet newBullet : newBulletQueue) {
+            System.out.println(TAG + "Adding new bullets");
+            Body newBulletBody = world.createBody(newBullet.getBodyDef());
+            newBulletBody.createFixture(newBullet.getFixtureDef());
+            newBullet.setBody(newBulletBody);
+            Vec2 velocity = new Vec2(newBulletBody.getPosition().x - newBullet.getOriginX(),
+                    newBulletBody.getPosition().y - newBullet.getOriginY());
+            newBulletBody.setLinearVelocity(velocity);
+            this.bulletList.add(newBullet);
+            System.out.println(TAG + "Added new bullet :" + newBullet.getId());
+        }
+        this.newBulletQueue.clear();
+
+        for (Bullet bullet : bulletList) {
+            removeBulletByPosition(bullet);
+        }
+
+    }
+
+    private void performPlayerUpdates() {
         // Remove existing players from the game world
         for (Player rmPlayer : removePlayerQueue) {
             System.out.println(TAG + "Removing players");
@@ -118,82 +159,53 @@ public enum GameEngine implements Runnable {
             Body newPlayerBody = world.createBody(newPlayer.getBodyDef());
             newPlayerBody.createFixture(newPlayer.getFixtureDef());
             newPlayer.setBody(newPlayerBody);
-            //PhysicsAPI physicsAPI=new PhysicsAPI(); 
-            //physicsAPI.applyPhysics(newPlayer, world);
+            // PhysicsAPI physicsAPI=new PhysicsAPI();
+            // physicsAPI.applyPhysics(newPlayer, world);
             this.playerList.add(newPlayer);
             System.out.println(TAG + "Added new player :" + newPlayer.getUserID());
             // Send size of the tile
             newPlayer.sendTileSizeInfo();
         }
         this.newPlayerQueue.clear();
-
-        for (Player ship : playerList) {
-            ship.applyUpdate();
-            peformBulletUpdates(ship);
-            removeBullet(ship);
+        for (Player player : playerList) {
+            player.applyUpdate();
         }
+
     }
 
-    /**
-     * update game world with new bullets
-     * 
-     * @param ship
-     *            player who belongs the bullets
-     * 
-     */
-    private void peformBulletUpdates(Player ship) {
-        for (Bullet newBullet : ship.getNewBulletList()) {
-            System.out.println(TAG + "Adding new bullet");
-            Body newBulletBody = world.createBody(newBullet.getBodyDef());
-            newBulletBody.setTransform(newBulletBody.getPosition(), ship.getAngle());
-            newBulletBody.createFixture(newBullet.getFixtureDef());
-            newBullet.setBody(newBulletBody);
-            Vec2 velocity = new Vec2(newBulletBody.getPosition().x - ship.getX(),
-                    newBulletBody.getPosition().y - ship.getY());
-            newBulletBody.setLinearVelocity(velocity);
-            ship.getBulletList().add(newBullet);
-
-        }
-        ship.getNewBulletList().clear();
-    }
-
-    public void removeBullet(Player player) {
-        float w = player.getScreenWidth();
-        float h = player.getScreenHeight();
-        float x = player.getBody().getPosition().x;
-        float y = player.getBody().getPosition().y;
+    public void removeBulletByPosition(Bullet bullet) {
+        float w = bullet.getScreenWidth();
+        float h = bullet.getScreenHeight();
+        float x = bullet.getOriginX();
+        float y = bullet.getOriginY();
         float minX = x - x % w;
         float maxX = minX + w;
         float minY = y - y % h;
         float maxY = minY + h;
-        List<Bullet> rmvList = new ArrayList<>();
-        for (Bullet bullet : player.getBulletList()) {
-            float bulletX = bullet.getBody().getPosition().x;
-            float bulletY = bullet.getBody().getPosition().y;
-            if (bulletX < minX || bulletX > maxX || bulletY < minY || bulletY > maxY) {
-                world.destroyBody(bullet.getBody());
-                rmvList.add(bullet);
-                System.out.println(TAG + "Bullet removed..");
-            }
+        float bulletX = bullet.getBody().getPosition().x;
+        float bulletY = bullet.getBody().getPosition().y;
+        float bulletRange = (h * 30) / 100;
+        float currentRange = (float) Math.sqrt(Math.pow((bulletX - x), 2)
+                + Math.pow((bulletY - y), 2));
+        if (bulletX < minX || bulletX > maxX || bulletY < minY || bulletY > maxY
+                || currentRange >= bulletRange) {
+            world.destroyBody(bullet.getBody());
+            removeBulletQueue.add(bullet);
         }
-        player.getBulletList().removeAll(rmvList);
-        player.setRemovedBulletList(rmvList);
     }
-    
-    public void removeBullet(Bullet bullet){
-        List<Bullet> rmvList = new ArrayList<>();
+
+    public void removeBullet(Bullet bullet) {
         world.destroyBody(bullet.getBody());
-        rmvList.add(bullet);
-        for(Player player : playerList){
-            if(player.getUserID()==bullet.getPlayerId()){
-                player.getBulletList().removeAll(rmvList);
-                player.setRemovedBulletList(rmvList);
+        for (Player player : playerList) {
+            if (player.getUserID() == bullet.getPlayerId()) {
+                removeBulletQueue.add(bullet);
             }
         }
     }
 
     public void pushUpdate() {
         this.updateEngine.setWaitingPlayerList(playerList);
+        this.updateEngine.setBulletList(bulletList);
     }
 
     public synchronized void addToPlayerQueue(Player ship) {
@@ -215,13 +227,18 @@ public enum GameEngine implements Runnable {
     public List<Player> getPlayerList() {
         return playerList;
     }
-    
-    private void addWalls(){
+
+    private void addWalls() {
         BoundaryCreator wallGen = new BoundaryCreator();
         wallList = wallGen.calculateWallBoundary();
-        for(Wall wall : wallList){
-            System.out.println("Adding wall "+wall.getFixtureDef().userData);
+        for (Wall wall : wallList) {
+            System.out.println("Adding wall " + wall.getFixtureDef().userData);
             this.world.createBody(wall.getBodyDef()).createFixture(wall.getFixtureDef());
         }
+    }
+
+    public void addToBulletQueue(Bullet bullet) {
+        this.newBulletQueue.add(bullet);
+
     }
 }

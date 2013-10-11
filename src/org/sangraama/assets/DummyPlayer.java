@@ -6,6 +6,7 @@ import java.util.List;
 import org.sangraama.controller.DummyWebScocketConnection;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
+import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
@@ -127,7 +128,7 @@ public class DummyPlayer extends AbsPlayer {
         }
     }
 
-    public void sendUpdate(List<PlayerDelta> deltaList) {
+    public void sendUpdate(List<AbsDelta> deltaList) {
         if (super.conDummy != null) {
             conPlayer.sendUpdate(deltaList);
         } else if (super.isPlayer == 2) {

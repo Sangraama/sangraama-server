@@ -7,6 +7,7 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.controller.clientprotocol.BulletDelta;
+import org.sangraama.gameLogic.GameEngine;
 
 public class Bullet {
 
@@ -20,12 +21,16 @@ public class Bullet {
     private Body body;
     private BulletDelta bulletDelta;
     private long id;
+    float screenWidth, screenHeight;
 
-    public Bullet(long id, long playerId, float x, float y) {
+    public Bullet(long id, long playerId, float x, float y, float originX, float originY, float w,
+            float h) {
         this.id = id;
         this.playerId = playerId;
-        this.originX = x;
-        this.originY = y;
+        this.originX = originX;
+        this.originY = originY;
+        this.screenHeight = h;
+        this.screenWidth = w;
         this.x = x;
         this.y = y;
         this.velocity = new Vec2(1.0f * v_rate, 1.0f * v_rate);
@@ -83,9 +88,17 @@ public class Bullet {
         return originY;
     }
 
-    public BulletDelta getBulletDelta(int type) {
+    public float getScreenWidth() {
+        return screenWidth;
+    }
+
+    public float getScreenHeight() {
+        return screenHeight;
+    }
+
+    public BulletDelta getBulletDelta() {
         bulletDelta = new BulletDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.playerId, this.id, type);
+                this.body.getAngle(), this.playerId, this.id);
         return bulletDelta;
     }
 
