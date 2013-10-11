@@ -47,6 +47,9 @@ public abstract class Player extends AbsPlayer {
     Vec2 v = new Vec2(0f, 0f);
     PlayerDelta delta;
 
+    private float subTileEdgeX = 0.0f; // Store value of subTileOriginX + subtileWidth
+    private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subtileHeight
+
     // bullets
     List<Bullet> newBulletList;
     List<Bullet> bulletList;
@@ -56,6 +59,12 @@ public abstract class Player extends AbsPlayer {
         super(userID);
         super.isPlayer = 1;
         System.out.println(TAG + " player added to queue");
+        /* Set sub tile edge values without method */
+        this.subTileEdgeX = (x - (x % sangraamaMap.getSubTileWidth()))
+                + sangraamaMap.getSubTileWidth();
+        this.subTileEdgeY = (y - (y % sangraamaMap.getSubTileHeight()))
+                + sangraamaMap.getSubTileHeight();
+
         this.gameEngine.addToPlayerQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
@@ -65,6 +74,12 @@ public abstract class Player extends AbsPlayer {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
         super.conPlayer = con;
+        /* Set sub tile edge values without method */
+        this.subTileEdgeX = (x - (x % sangraamaMap.getSubTileWidth()))
+                + sangraamaMap.getSubTileWidth();
+        this.subTileEdgeY = (y - (y % sangraamaMap.getSubTileHeight()))
+                + sangraamaMap.getSubTileHeight();
+
         this.gameEngine.addToPlayerQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
@@ -135,11 +150,12 @@ public abstract class Player extends AbsPlayer {
      */
     private boolean isInsideMap(float x, float y) {
         // System.out.println(TAG + "is inside "+x+":"+y);
-        if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()) {
+        if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
+                && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
             return true;
         } else {
-            System.out.println(TAG + "Outside of map : " + sangraamaMap.getMapWidth() + ":"
-                    + sangraamaMap.getMapHeight());
+            System.out.println(TAG + "Outside of map : " + sangraamaMap.getEdgeX() + ":"
+                    + sangraamaMap.getEdgeY());
             return false;
         }
     }
@@ -155,6 +171,7 @@ public abstract class Player extends AbsPlayer {
      */
     protected boolean isInsideServerSubTile(float x, float y) {
         boolean insideServerSubTile = true;
+        // Note : Inefficient code. Is it necessary to calculate at each iteration.
         float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
         // System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
@@ -170,6 +187,26 @@ public abstract class Player extends AbsPlayer {
         }
 
         return insideServerSubTile;
+    }
+
+    // Need to check before use
+    protected boolean isInsideServerSubTiles(float x, float y) {
+        if (currentSubTileOriginX <= x && x <= this.subTileEdgeX && currentSubTileOriginY <= y
+                && y <= this.subTileEdgeY) { // true if player is in current sub tile
+            return true;
+        } else { // execute when player isn't in the current sub tile
+            // Assign new sub tile origin coordinates
+            currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+            currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+            this.setSubtileEgdeValues(); // update edge values
+            // check whether players coordinates are in current map
+            if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
+                System.out.println(TAG + "player is not inside a subtile of "
+                        + sangraamaMap.getHost());
+                return false;
+            }
+            return true;
+        }
     }
 
     /**
@@ -312,6 +349,19 @@ public abstract class Player extends AbsPlayer {
 
     public abstract FixtureDef getFixtureDef();
 
+    /**
+     * Getters and Setters
+     */
+
+    private void setSubtileEgdeValues() {
+        this.subTileEdgeX = currentSubTileOriginX + sangraamaMap.getSubTileWidth();
+        this.subTileEdgeY = currentSubTileOriginY + sangraamaMap.getSubTileHeight();
+    }
+
+    /**
+     * 
+     * @param body
+     */
     public void setBody(Body body) {
         this.body = body;
     }

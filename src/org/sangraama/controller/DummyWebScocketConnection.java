@@ -78,10 +78,7 @@ public class DummyWebScocketConnection extends MessageInbound {
                 case 1: // setting user event request
                     /* not applicable for dummy */
                     break;
-                case 2: // requesting for interesting area
-                    this.dummyPlayer.reqInterestIn(clientEvent.getX(), clientEvent.getY());
-                    System.out.println(TAG + "player interesting in x:" + clientEvent.getX()
-                            + " & y:" + clientEvent.getY());
+                case 2: // Only allowed to requesting for interesting area form player
                     break;
                 case 3: // Request to move the dummy player
                     this.dummyPlayer.setX(clientEvent.getX());

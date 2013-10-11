@@ -204,10 +204,7 @@ public class WebSocketConnection extends MessageInbound {
                 // Unset dummy player
                 this.dPlayer = null;
                 break;
-            case 2: // requesting for interesting area
-                this.dPlayer.reqInterestIn(event.getX(), event.getY());
-                System.out.println(TAG + T + "player interesting in x:" + event.getX() + " & y:"
-                        + event.getY());
+            case 2: // Only allowed to requesting for interesting area form player
                 break;
             // set AOI of the player
             case 3:

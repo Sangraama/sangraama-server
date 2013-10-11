@@ -3,8 +3,10 @@ package org.sangraama.assets;
 public enum SangraamaMap {
     INSTANCE;
 
-    private float originX = 0f;
-    private float originY = 0f;
+    private float originX = 0.0f;
+    private float originY = 0.0f;
+    private float edgeX = 0.0f; // Store value of originX + mapWidth
+    private float edgeY = 0.0f; // Store value of originY + mapHeight
     private float mapWidth;
     private float mapHeight;
     private float subTileWidth;
@@ -22,6 +24,8 @@ public enum SangraamaMap {
         this.mapWidth = width;
         this.mapHeight = height;
         this.host = host;
+        this.edgeX = originX + width;
+        this.edgeY = originY + height;
     }
 
     public void setSubTileProperties(float width, float height) {
@@ -45,6 +49,14 @@ public enum SangraamaMap {
         return originY;
     }
 
+    public float getEdgeX() {
+        return this.edgeX;
+    }
+
+    public float getEdgeY() {
+        return this.edgeY;
+    }
+
     public float getSubTileWidth() {
         return subTileWidth;
     }
@@ -52,7 +64,7 @@ public enum SangraamaMap {
     public float getSubTileHeight() {
         return subTileHeight;
     }
-    
+
     public String getHost() {
         return host;
     }
