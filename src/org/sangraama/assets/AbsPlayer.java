@@ -17,6 +17,8 @@ import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.sangraama.controller.clientprotocol.SendProtocol;
+import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
@@ -111,11 +113,18 @@ public abstract class AbsPlayer {
      */
     public abstract void removeWebSocketConnection();
 
-    public abstract void sendUpdate(List<PlayerDelta> deltaList);
+    public abstract void sendUpdate(List<SendProtocol> deltaList);
 
     public abstract void sendNewConnection(ClientTransferReq transferReq);
 
     public abstract void sendConnectionInfo(ClientTransferReq transferReq);
+    
+    /**
+     * Player and Dummy Player should have different implementation of sync data
+     * Ex: player x ,y coordinates which dummy donesn't have
+     * @param syncData
+     */
+    public abstract void sendSyncData(List<SendProtocol> syncData);
 
     /**
      * Send details about the size of the tile on current server

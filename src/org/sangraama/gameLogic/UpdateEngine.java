@@ -14,6 +14,7 @@ import org.sangraama.assets.Ship;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.sangraama.controller.clientprotocol.SendProtocol;
 
 public enum UpdateEngine implements Runnable {
     INSTANCE;
@@ -100,8 +101,8 @@ public enum UpdateEngine implements Runnable {
      * @param player
      * @return ArrayList<PlayerDelta>
      */
-    private ArrayList<PlayerDelta> getAreaOfInterest(Player p) {
-        ArrayList<PlayerDelta> delta = new ArrayList<PlayerDelta>();
+    private List<SendProtocol> getAreaOfInterest(Player p) {
+        List<SendProtocol> delta = new ArrayList<SendProtocol>();
         // Add players own details
          delta.add(this.playerDelta.get(p.getUserID()));
 

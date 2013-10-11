@@ -9,6 +9,8 @@ import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.sangraama.controller.clientprotocol.SendProtocol;
+import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.slf4j.Logger;
@@ -62,7 +64,7 @@ public class DummyPlayer extends AbsPlayer {
         super.conDummy = null;
     }
 
-    public void sendUpdate(List<PlayerDelta> deltaList) {
+    public void sendUpdate(List<SendProtocol> deltaList) {
         if (super.conDummy != null) {
             conPlayer.sendUpdate(deltaList);
         } else if (super.isPlayer == 2) {
@@ -106,23 +108,17 @@ public class DummyPlayer extends AbsPlayer {
         }
     }
 
-    /**
-     * Send details about the size of the tile on current server
-     * 
-     * @param tiles
-     *            ArrayList of sub-tile details
-     */
-    public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
-        super.conDummy.sendTileSizeInfo(new TileInfo(this.userID, tiles));
-    }
-
-    /**
-     * Send details about the size of the tile on current server. Sub-tiles sizes may access during
-     * TileInfo Object creation
-     * 
-     */
-    public void sendTileSizeInfo() {
-        super.conDummy.sendTileSizeInfo(new TileInfo(this.userID));
+    public void sendSyncData(List<SendProtocol> syncData) {
+        if (super.conDummy != null) {
+            conPlayer.sendUpdate(syncData);
+        } else if (super.isPlayer == 2) {
+            this.gameEngine.addToRemoveDummyQueue(this);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send syncdata,coz con :" + super.conDummy
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
+        }
     }
 
     public void setX(float x) {

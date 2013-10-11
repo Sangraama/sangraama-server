@@ -14,6 +14,7 @@ import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
+import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.controller.clientprotocol.TransferInfo;
 import org.sangraama.util.VerifyMsg;
@@ -106,7 +107,7 @@ public class WebSocketConnection extends MessageInbound {
 
     private void newPlayerEvent(ClientEvent event) {
         String T = " newPlayerEvent ";
-        switch (Integer.parseInt(event.getType())) {
+        switch (event.getType()) {
             case 1:// create new player & set the connection
                 this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),
                         event.getW(), event.getH(), this));
@@ -148,7 +149,7 @@ public class WebSocketConnection extends MessageInbound {
 
     private void playerEvents(ClientEvent event) {
         String T = " playerevent ";
-        switch (Integer.parseInt(event.getType())) {
+        switch (event.getType()) {
             case 1: // setting user event request
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
@@ -190,7 +191,7 @@ public class WebSocketConnection extends MessageInbound {
 
     private void dummyPlayerEvents(ClientEvent event) {
         String T = " dummyPlayerEvent ";
-        switch (Integer.parseInt(event.getType())) {
+        switch (event.getType()) {
             case 1: // create new player and pass the connection
                 // to be add w and h
                 this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(), 0, 0, this));
@@ -225,7 +226,7 @@ public class WebSocketConnection extends MessageInbound {
      * @param playerDeltaList
      *            delta updates of players who are located inside AOI
      */
-    public void sendUpdate(List<PlayerDelta> playerDeltaList) {
+    public void sendUpdate(List<SendProtocol> playerDeltaList) {
         try {
             String convertedString = gson.toJson(playerDeltaList);
             getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));

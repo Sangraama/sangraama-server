@@ -3,7 +3,7 @@ package org.sangraama.controller.clientprotocol;
 import java.util.Arrays;
 
 public class ClientEvent {
-    private String type;
+    private int type;
     private long userID;
     private float x; // Player current x location on the map
     private float y; // Player current y location on the map
@@ -19,7 +19,7 @@ public class ClientEvent {
     private String info;
     private byte[] signedInfo;
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 

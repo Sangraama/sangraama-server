@@ -3,26 +3,20 @@ package org.sangraama.controller.clientprotocol;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerDelta {
-    private int type = 1;
+public class PlayerDelta extends SendProtocol{
     private float dx, dy, da;
-    private long userID;
     private List<BulletDelta> bulletDeltaList;
     private float health;
     private float score;
 
-    public PlayerDelta(float dx, float dy, float da, long userID, float health, float score) {
+    public PlayerDelta(long userID, float dx, float dy, float da, float health, float score) {
+        super(1, userID);
         this.dx = dx;
         this.dy = dy;
         this.da = da;
-        this.userID = userID;
         this.bulletDeltaList = new ArrayList<>();
         this.health = health;
         this.score = score;
-    }
-
-    public long getUserID() {
-        return this.userID;
     }
 
     public float getDa() {

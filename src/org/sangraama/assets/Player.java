@@ -14,6 +14,8 @@ import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.sangraama.controller.clientprotocol.SendProtocol;
+import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.slf4j.Logger;
@@ -102,8 +104,8 @@ public abstract class Player extends AbsPlayer {
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
-        this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.userID, this.health, this.score);
+        this.delta = new PlayerDelta(this.userID, this.body.getPosition().x,
+                this.body.getPosition().y, this.body.getAngle(), this.health, this.score);
         for (Bullet bullet : this.bulletList) {
             delta.getBulletDeltaList().add(bullet.getBulletDelta(1));
         }
@@ -226,7 +228,7 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
-    public void sendUpdate(List<PlayerDelta> deltaList) {
+    public void sendUpdate(List<SendProtocol> deltaList) {
         if (super.conPlayer != null) {
             conPlayer.sendUpdate(deltaList);
         } else if (super.isPlayer == 1) {
@@ -281,23 +283,17 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
-    /**
-     * Send details about the size of the tile on current server
-     * 
-     * @param tiles
-     *            ArrayList of sub-tile details
-     */
-    public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
-        super.conPlayer.sendTileSizeInfo(new TileInfo(this.userID, tiles));
-    }
-
-    /**
-     * Send details about the size of the tile on current server. Sub-tiles sizes may access during
-     * TileInfo Object creation
-     * 
-     */
-    public void sendTileSizeInfo() {
-        super.conPlayer.sendTileSizeInfo(new TileInfo(this.userID));
+    public void sendSyncData(List<SendProtocol> syncData) {
+        if (super.conPlayer != null) {
+            conPlayer.sendUpdate(syncData);
+        } else if (super.isPlayer == 1) {
+            this.gameEngine.addToRemovePlayerQueue(this);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send syncdata,coz con :" + super.conPlayer
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
+        }
     }
 
     public void setShoot(float s) {
@@ -352,6 +348,14 @@ public abstract class Player extends AbsPlayer {
     /**
      * Getters and Setters
      */
+
+    public void setVirtualPoint(float x_v, float y_v) {
+        this.x_virtual = x_v;
+        this.y_virtual = y_v;
+        List<SendProtocol> data = new ArrayList<SendProtocol>();
+        data.add(new SyncPlayer(userID, x, y, v_x, v_y, angle, screenWidth, screenHeight));
+        this.sendSyncData(data);
+    }
 
     private void setSubtileEgdeValues() {
         this.subTileEdgeX = currentSubTileOriginX + sangraamaMap.getSubTileWidth();

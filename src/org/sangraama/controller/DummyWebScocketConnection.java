@@ -74,7 +74,7 @@ public class DummyWebScocketConnection extends MessageInbound {
         ClientEvent clientEvent = gson.fromJson(user, ClientEvent.class);
 
         if (this.dummyPlayer != null) {
-            switch (Integer.parseInt(clientEvent.getType())) {
+            switch (clientEvent.getType()) {
                 case 1: // setting user event request
                     /* not applicable for dummy */
                     break;
@@ -90,12 +90,12 @@ public class DummyWebScocketConnection extends MessageInbound {
             }
 
         } else {
-            if (clientEvent.getType().equals("1")) { // create new player & set the
+            if (clientEvent.getType() == 1) { // create new player & set the
                 // connection
 //                this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), clientEvent.getX(),
 //                        clientEvent.getY(), this);
                 System.out.println(TAG + " Add new dummy Player " + clientEvent.getUserID());
-            }else if (clientEvent.getType().equals("2")) {
+            }else if (clientEvent.getType() == 2) {
                 TransferInfo playerInfo;
                 String info = clientEvent.getInfo();
                 byte[] signedInfo = clientEvent.getSignedInfo();
