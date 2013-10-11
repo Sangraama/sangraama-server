@@ -41,11 +41,15 @@ public class PlayerDelta {
         return bulletDeltaList;
     }
 
-    public float getHealth(){
+    public void setBulletDeltaList(List<BulletDelta> bulletDeltaList) {
+        this.bulletDeltaList = bulletDeltaList;
+    }
+
+    public float getHealth() {
         return health;
     }
-    
-    public float getScore(){
+
+    public float getScore() {
         return score;
     }
 }

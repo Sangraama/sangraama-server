@@ -4,14 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
-import org.sangraama.common.Constants;
-import org.sangraama.controller.DummyWebScocketConnection;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
@@ -84,8 +76,9 @@ public abstract class AbsPlayer {
         this.screenHeight = h; // / Constants.scale;
         this.halfWidth = screenWidth / 2;
         this.halfHieght = screenHeight / 2;
-        // System.out.println(TAG + "AOI w:"+screenWidth+" h:"+screenHeight+" = half w:"+halfWidth+" h:"+halfHieght);
-        
+        // System.out.println(TAG +
+        // "AOI w:"+screenWidth+" h:"+screenHeight+" = half w:"+halfWidth+" h:"+halfHieght);
+
         this.sangraamaMap = SangraamaMap.INSTANCE;
         /*
          * Note: this should replace by sangraama map method. Player shouldn't responsible for

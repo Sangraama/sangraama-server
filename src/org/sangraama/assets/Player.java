@@ -32,9 +32,7 @@ public abstract class Player extends AbsPlayer {
     float angle;// actual angle
     float oldAngle;// actual angle
 
-    float shoot; // when shooting this variable will be 1 and otherwise 0
-
-    float v_x, v_y;
+    float v_x, v_y,midX,midY;
     float health;
     float score;
 
@@ -90,9 +88,10 @@ public abstract class Player extends AbsPlayer {
         for (Bullet bullet : this.bulletList) {
             delta.getBulletDeltaList().add(bullet.getBulletDelta(1));
         }
-        for (Bullet bullet : this.removedBulletList) {
-            delta.getBulletDeltaList().add(bullet.getBulletDelta(2));
-        }
+        /*
+         * for (Bullet bullet : this.removedBulletList) {
+         * delta.getBulletDeltaList().add(bullet.getBulletDelta(2)); }
+         */
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
         this.oldAngle = this.body.getAngle();
@@ -119,7 +118,7 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.body.setTransform(this.body.getPosition(), this.oldAngle + this.angularVelocity);
         }
-        shoot();
+
     }
 
     /**
@@ -182,6 +181,8 @@ public abstract class Player extends AbsPlayer {
      *            y coordination of interest location
      */
     public void reqInterestIn(float x, float y) {
+        this.midX = x;
+        this.midY = y;
         if (!isInsideServerSubTile(x, y)) {
             PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
@@ -261,14 +262,9 @@ public abstract class Player extends AbsPlayer {
         super.conPlayer.sendTileSizeInfo(new TileInfo(this.userID));
     }
 
-    public void setShoot(float s) {
-        this.shoot = s;
-        shoot();
-    }
-
-    public void shoot() {
+    public void shoot(float s) {
         float r = 50;
-        if (this.shoot == 1) {
+        if (s == 1) {
             float x = this.body.getPosition().x;
             float y = this.body.getPosition().y;
             if (0 <= this.angle && this.angle <= 90) {
@@ -392,5 +388,15 @@ public abstract class Player extends AbsPlayer {
             this.score = 0;
         }
     }
+
+    public float getMidX() {
+        return midX;
+    }
+
+    public float getMidY() {
+        return midY;
+    }
+    
+    
 
 }

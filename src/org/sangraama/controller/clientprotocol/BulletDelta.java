@@ -2,14 +2,14 @@ package org.sangraama.controller.clientprotocol;
 
 public class BulletDelta {
     private int type = 1;
-    private float dx, dy, a;
+    private float dx, dy, da;
     private long playerID;
     private long id;
 
     public BulletDelta(float dx, float dy, float a, long playerID, long id, int type) {
         this.dx = dx;
         this.dy = dy;
-        this.a = a;
+        this.da = a;
         this.playerID = playerID;
         this.id = id;
         this.type = type;
@@ -32,8 +32,8 @@ public class BulletDelta {
         return dy;
     }
 
-    public float getA() {
-        return a;
+    public float getDa() {
+        return da;
     }
 
     public long getPlayerID() {

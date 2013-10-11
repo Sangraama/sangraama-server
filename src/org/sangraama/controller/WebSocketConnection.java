@@ -152,7 +152,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
                 this.player.setAngularVelocity(event.getDa());
-                this.player.setShoot(event.getS());
+                this.player.shoot(event.getS());
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
                         + event.getV_y());
                 break;
@@ -169,7 +169,7 @@ public class WebSocketConnection extends MessageInbound {
             case 4: // Reset settings and make dummy player
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
-                this.player.setShoot(event.getS());
+                this.player.shoot(event.getS());
                 System.out.println(TAG + T + " RESET user events " + event.getV_x() + " : "
                         + event.getV_y());
                 // to be add w and h

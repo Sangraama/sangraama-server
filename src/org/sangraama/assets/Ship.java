@@ -24,10 +24,9 @@ public class Ship extends Player {
         super(userID, x, y, w, h, con);
     }
 
-    public void shoot() {
-
+    public void shoot(float s) {
         float r = 50;
-        if (this.shoot == 1) {
+        if (s == 1) {
             float x = this.body.getPosition().x;
             float y = this.body.getPosition().y;
             if (0 <= this.angle && this.angle <= 90) {
