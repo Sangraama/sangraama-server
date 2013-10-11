@@ -103,15 +103,18 @@ public enum UpdateEngine implements Runnable {
     private ArrayList<PlayerDelta> getAreaOfInterest(Player p) {
         ArrayList<PlayerDelta> delta = new ArrayList<PlayerDelta>();
         // Add players own details
-        // delta.add(this.playerDelta.get(p.getUserID()));
+         delta.add(this.playerDelta.get(p.getUserID()));
 
         // going through all players and check their locations
-        // inefficient
+        // inefficient when it becomes 1000 of players
+        // Need a efficient algo and a data structure : #gihan
+        
+        // iterate through other players as well
         for (Player player : playerList) {
-            if (p.getX() - p.getAOIWidth() <= player.getX()
-                    && player.getX() <= p.getX() + p.getAOIWidth()
-                    && p.getY() - p.getAOIHeight() <= player.getY()
-                    && player.getY() <= p.getY() + p.getAOIHeight()) {
+            if (p.getXVirtualPoint() - p.getAOIWidth() <= player.getX()
+                    && player.getX() <= p.getXVirtualPoint() + p.getAOIWidth()
+                    && p.getYVirtualPoint() - p.getAOIHeight() <= player.getY()
+                    && player.getY() <= p.getYVirtualPoint() + p.getAOIHeight()) {
                 delta.add(this.playerDelta.get(player.getUserID()));
             }
         }

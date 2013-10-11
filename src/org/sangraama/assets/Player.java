@@ -25,12 +25,25 @@ public abstract class Player extends AbsPlayer {
     // Local Debug or logs
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "player : ";
-    private static Random generator = new Random();
+    static Random generator = new Random();
     Body body;
 
     // Player Dynamic Parameters
-    float angle;
+    float angle;// actual angle
+    float oldAngle;// actual angle
+
+    float shoot; // when shooting this variable will be 1 and otherwise 0
+
     float v_x, v_y;
+    float health;
+    float score;
+
+    int a_rate = 2;
+    float angularVelocity;
+
+    /* Player moving parameters */
+    // Player speed factor
+    int v_rate = 200;
     Vec2 v = new Vec2(0f, 0f);
     PlayerDelta delta;
 
@@ -55,6 +68,8 @@ public abstract class Player extends AbsPlayer {
         this.gameEngine.addToPlayerQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
+        this.health = 100;
+        this.score = 0;
     }
 
     public void removeWebSocketConnection() {
@@ -64,14 +79,16 @@ public abstract class Player extends AbsPlayer {
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
-            System.out.println(TAG + "id : " + this.userID + " x:" + x + " " + "y:" + y + " angle:"
-                    + this.body.getAngle() + "&" + this.body.getAngularVelocity());
+            System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " angle:"
+                    + this.body.getAngle() + " & " + this.body.getAngularVelocity());
+            System.out.println(TAG + "id : " + this.userID + " x_virtual:" + this.x_virtual
+                    + " y_virtual:" + this.y_virtual);
         }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
         this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.userID);
+                this.body.getAngle(), this.userID, this.health, this.score);
         for (Bullet bullet : this.bulletList) {
             delta.getBulletDeltaList().add(bullet.getBulletDelta(1));
         }
@@ -80,7 +97,7 @@ public abstract class Player extends AbsPlayer {
         }
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
-        this.angle = this.body.getAngle();
+        this.oldAngle = this.body.getAngle();
         // Check whether player is inside the tile or not
         /*
          * Gave this responsibility to client if (!this.isInsideMap(this.x, this.y)) {
@@ -98,9 +115,13 @@ public abstract class Player extends AbsPlayer {
 
     public void applyUpdate() {
         this.body.setLinearVelocity(this.getV());
-        this.body.setTransform(this.body.getPosition(), this.angle);
-        // this.body.setAngularVelocity(this.angle);
-        // System.out.println(TAG + " angle velocity : " + this.body.getAngularVelocity());
+        this.body.setAngularVelocity(0.0f);
+        if (this.angularVelocity == 0) {
+            this.body.setTransform(this.body.getPosition(), this.angle);
+        } else {
+            this.body.setTransform(this.body.getPosition(), this.oldAngle + this.angularVelocity);
+        }
+        shoot();
     }
 
     /**
@@ -164,7 +185,7 @@ public abstract class Player extends AbsPlayer {
      */
     public void reqInterestIn(float x, float y) {
         if (!isInsideServerSubTile(x, y)) {
-            PlayerPassHandler.INSTANCE.setPassConnection(this);
+            PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }
 
@@ -203,6 +224,27 @@ public abstract class Player extends AbsPlayer {
     }
 
     /**
+     * Send update server connection Address and other details to Client to fulfill the AOI
+     * 
+     * @param transferReq
+     *            Object of Client transferring protocol
+     */
+    public void sendConnectionInfo(ClientTransferReq transferReq) {
+        if (super.conPlayer != null) {
+            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+            transferReqList.add(transferReq);
+            conPlayer.sendNewConnection(transferReqList);
+        } else if (super.isPlayer == 1) {
+            this.gameEngine.addToRemovePlayerQueue(this);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conPlayer
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
+        }
+    }
+
+    /**
      * Send details about the size of the tile on current server
      * 
      * @param tiles
@@ -221,9 +263,14 @@ public abstract class Player extends AbsPlayer {
         super.conPlayer.sendTileSizeInfo(new TileInfo(this.userID));
     }
 
-    public void shoot(float s) {
+    public void setShoot(float s) {
+        this.shoot = s;
+        shoot();
+    }
+
+    public void shoot() {
         float r = 50;
-        if (s == 1) {
+        if (this.shoot == 1) {
             float x = this.body.getPosition().x;
             float y = this.body.getPosition().y;
             if (0 <= this.angle && this.angle <= 90) {
@@ -282,15 +329,19 @@ public abstract class Player extends AbsPlayer {
     }
 
     public void setV(float x, float y) {
-        // Issue: if client send x value greater than 1
-        this.v.set(x * 200, y * 200);
+        // Fixed: if client send x value greater than 1
+        this.v.set(x % 2 * v_rate, y % 2 * v_rate);
         System.out.println(TAG + " set V :" + this.v.x + ":" + this.v.y);
     }
 
     public void setAngle(float a) {
-        this.angle = a % 360;
-        // this.angle %= 360;
-        System.out.println(TAG + " set angle " + this.angle);
+        this.angle = a;
+        System.out.println(TAG + " set angle : " + a + " > " + this.angle);
+    }
+
+    public void setAngularVelocity(float da) {
+        this.angularVelocity = da % 2 * a_rate;
+        System.out.println(TAG + " set angular velocity : " + da + " > " + this.angularVelocity);
     }
 
     public List<Bullet> getNewBulletList() {
@@ -311,6 +362,37 @@ public abstract class Player extends AbsPlayer {
 
     public float getAngle() {
         return angle;
+    }
+
+    public void setHealth(float healthChange) {
+        if ((this.health + healthChange) > 0) {
+            this.health += healthChange;
+        } else {
+            this.health = 0;
+        }
+    }
+
+    public float getHealth() {
+        if (this.health < 0)
+            return 0;
+        else
+            return this.health;
+    }
+
+    public float getScore() {
+        if (this.score > 0) {
+            return this.score;
+        } else {
+            return 0;
+        }
+    }
+
+    public void setScore(float scoreChange) {
+        if ((this.score + scoreChange) > 0) {
+            this.score += scoreChange;
+        } else {
+            this.score = 0;
+        }
     }
 
 }

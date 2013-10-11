@@ -123,7 +123,7 @@ public class DummyPlayer extends AbsPlayer {
      */
     public void reqInterestIn(float x, float y) {
         if (!isInsideServerSubTile(x, y)) {
-            PlayerPassHandler.INSTANCE.setPassConnection(this);
+            PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }
 
@@ -141,6 +141,22 @@ public class DummyPlayer extends AbsPlayer {
     }
 
     public void sendNewConnection(ClientTransferReq transferReq) {
+        if (super.conDummy != null) {
+            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+            transferReqList.add(transferReq);
+            conPlayer.sendNewConnection(transferReqList);
+        } else if (super.isPlayer == 2) {
+            this.gameEngine.addToRemoveDummyQueue(this);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conDummy
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
+        }
+    }
+
+    // Need refactoring
+    public void sendConnectionInfo(ClientTransferReq transferReq) {
         if (super.conDummy != null) {
             ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
             transferReqList.add(transferReq);

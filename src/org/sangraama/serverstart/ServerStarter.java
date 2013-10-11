@@ -54,8 +54,8 @@ public class ServerStarter implements javax.servlet.ServletContextListener {
       //  System.out.println("AAAAAAAAAAA");
         this.gameEngine = new Thread(GameEngine.INSTANCE);
         this.gameEngine.start();
-//        this.collisionManager = new Thread(CollisionManager.INSTANCE);
-//        this.collisionManager.start();
+        this.collisionManager = new Thread(CollisionManager.INSTANCE);
+        this.collisionManager.start();
         TileCoordinator.INSTANCE.generateSubtiles();
         TileCoordinator.INSTANCE.printEntriesInSubtileMap();
        

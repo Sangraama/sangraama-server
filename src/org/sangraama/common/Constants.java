@@ -22,7 +22,11 @@ public final class Constants {
     //Game Client Canvas width & height
     public static final int canvasWidth=600;
     public static final int canvasHeight=600;
-    public static float TO_RADIANS = (float) (Math.PI / 180);
-    public static float FROM_RADIANS = (float) (180 / Math.PI);
+    public static final float TO_RADIANS = (float) (Math.PI / 180);
+    public static final float FROM_RADIANS = (float) (180 / Math.PI);
+    
+    // Scaling JBox2D units and client side pixels
+    public static final int scale = 32;
+    /* Ex: 32 means 1 unit in JBox2D is showing as 32 pixels in client side */
     
 }

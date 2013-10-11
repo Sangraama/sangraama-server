@@ -43,7 +43,6 @@ public class PhysicsAPI {
 			vertices[i].set(staticObject.getCoordinates().get(i).getX(), staticObject.getCoordinates().get(i).getY());
 			
 		}
-
 		polyline.createFixtureDef(vertices, vertices.length);
 		
 		this.fixtureDef=polyline.getFixtureDef();

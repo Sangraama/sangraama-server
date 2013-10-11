@@ -13,8 +13,10 @@ public class Bullet {
     private String TAG = "Bullet : ";
     private long playerId;
 
+    private float originX, originY;
     private float x, y;
     private Vec2 velocity;
+    private int v_rate = 300;
     private Body body;
     private BulletDelta bulletDelta;
     private long id;
@@ -22,14 +24,16 @@ public class Bullet {
     public Bullet(long id, long playerId, float x, float y) {
         this.id = id;
         this.playerId = playerId;
+        this.originX = x;
+        this.originY = y;
         this.x = x;
         this.y = y;
-        this.velocity = new Vec2(10f, 10f);
+        this.velocity = new Vec2(1.0f * v_rate, 1.0f * v_rate);
+
     }
 
     public void setBody(Body bulletBody) {
         this.body = bulletBody;
-       
     }
 
     public Body getBody() {
@@ -39,20 +43,23 @@ public class Bullet {
     public BodyDef getBodyDef() {
         BodyDef bd = new BodyDef();
         bd.position.set(this.x, this.y);
-        bd.type = BodyType.KINEMATIC;
+        bd.type = BodyType.DYNAMIC;
         bd.bullet = true;
-        //bd.fixedRotation = true;
+        // bd.fixedRotation = true;
         return bd;
     }
 
     public FixtureDef getFixtureDef() {
         CircleShape circle = new CircleShape();
-        circle.m_radius = 4f;
+        circle.m_radius = 1.0f;
         FixtureDef fd = new FixtureDef();
         fd.shape = circle;
-        fd.friction = 0.2f;
+        fd.density = 0.1f;
+        // fd.shape = circle;
+        fd.userData = this;
+        // fd.friction = 0.2f;
         fd.restitution = 0.5f;
-        fd.filter.groupIndex = -8;
+        fd.filter.groupIndex = 2;
         return fd;
     }
 
@@ -60,18 +67,25 @@ public class Bullet {
         return velocity;
     }
 
-    
     public long getId() {
         return id;
     }
-    
-    public long getPlayerId(){
-    	return this.playerId;
+
+    public long getPlayerId() {
+        return this.playerId;
+    }
+
+    public float getOriginX() {
+        return originX;
+    }
+
+    public float getOriginY() {
+        return originY;
     }
 
     public BulletDelta getBulletDelta(int type) {
         bulletDelta = new BulletDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.playerId,this.id,type);
+                this.body.getAngle(), this.playerId, this.id, type);
         return bulletDelta;
     }
 

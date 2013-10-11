@@ -6,14 +6,15 @@ import java.util.List;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
-import org.jbox2d.dynamics.contacts.Contact;
 import org.sangraama.asserts.map.GameMap;
 import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
+import org.sangraama.assets.Wall;
 import org.sangraama.common.Constants;
-import java.awt.event.ActionEvent;
+import org.sangraama.util.BoundaryCreator;
+
 import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
@@ -36,17 +37,20 @@ public enum GameEngine implements Runnable {
     // list of removing players
     private List<Player> removePlayerQueue;
     private List<DummyPlayer> removeDummyQueue;
+    private CollisionDetector sangraamaCollisionDet;
+    private List<Wall> wallList;
 
     // this method only access via class
     GameEngine() {
         System.out.println(TAG + "Init GameEngine...");
         this.world = new World(new Vec2(0.0f, 0.0f));
-        this.playerList = new ArrayList<Player>();
-        this.dummyList = new ArrayList<DummyPlayer>();
-        this.newPlayerQueue = new ArrayList<Player>();
-        this.newDummyQueue = new ArrayList<DummyPlayer>();
-        this.removePlayerQueue = new ArrayList<Player>();
-        this.removeDummyQueue = new ArrayList<DummyPlayer>();
+        this.playerList = new ArrayList<>();
+        this.dummyList = new ArrayList<>();
+        this.newPlayerQueue = new ArrayList<>();
+        this.newDummyQueue = new ArrayList<>();
+        this.removePlayerQueue = new ArrayList<>();
+        this.removeDummyQueue = new ArrayList<>();
+        this.wallList = new ArrayList<>();
         this.updateEngine = UpdateEngine.INSTANCE;
     }
 
@@ -64,15 +68,14 @@ public enum GameEngine implements Runnable {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 updateGameWorld();
+               
                 world.step(Constants.timeStep, Constants.velocityIterations,
                         Constants.positionIterations);
-                // updateCollisions();
                 pushUpdate();
             }
         });
-       Body bodyList= world.getBodyList();
-      System.out.println("bodyX="+bodyList.getPosition().x+"bodyY="+bodyList.getPosition().y); 
-        timer.start();
+      timer.start();
+
 
         /*
          * while (this.isRun) { try { Thread.sleep(Constants.simulatingDelay); updateGameWorld();
@@ -85,13 +88,15 @@ public enum GameEngine implements Runnable {
 
     /* Load static map objects into game engine and apply object physics using JBox2D */
     public void init() {
-
-        
-    	GameMap gameMap=GameMap.getMap();
-		gameMap.generate();	//generate the static objects into game engine, using any tile editor module.
-		PhysicsAPI physicsAPI=new PhysicsAPI(); 
-		physicsAPI.applyPhysics(gameMap.getStaticObjects(), world);// apply physics to the static objects, and add them to the game world.
-		System.out.println("Static Game Objects added to the game world!!");
+        GameMap g = GameMap.getMap();
+        g.generate(); // generate the static objects into game engine, using any tile editor module.
+        PhysicsAPI physicsAPI = new PhysicsAPI();
+        physicsAPI.applyPhysics(g.getStaticObjects(), world);// apply physics to the static objects,
+                                                             // and add them to the game world.
+        System.out.println("Static Game Objects added to the game world!!");
+        this.sangraamaCollisionDet = new CollisionDetector();
+        world.setContactListener(sangraamaCollisionDet);
+        addWalls();
 
     }
 
@@ -102,6 +107,7 @@ public enum GameEngine implements Runnable {
             this.playerList.remove(rmPlayer);
             this.world.destroyBody(rmPlayer.getBody());
             System.out.println(TAG + "Removed player :" + rmPlayer.getUserID());
+            rmPlayer = null; // free the memory
         }
         this.removePlayerQueue.clear();
 
@@ -125,13 +131,6 @@ public enum GameEngine implements Runnable {
             ship.applyUpdate();
             peformBulletUpdates(ship);
             removeBullet(ship);
-        }
-    }
-
-    public void updateCollisions() {
-        Contact collisions = this.world.getContactList();
-        if (collisions != null) {
-            CollisionManager.INSTANCE.setCollisionList(collisions);
         }
     }
 
@@ -160,7 +159,7 @@ public enum GameEngine implements Runnable {
 
     public void removeBullet(Player player) {
         float w = player.getScreenWidth();
-        float h = player.getScreenHeight() - 40;
+        float h = player.getScreenHeight();
         float x = player.getBody().getPosition().x;
         float y = player.getBody().getPosition().y;
         float minX = x - x % w;
@@ -179,6 +178,18 @@ public enum GameEngine implements Runnable {
         }
         player.getBulletList().removeAll(rmvList);
         player.setRemovedBulletList(rmvList);
+    }
+    
+    public void removeBullet(Bullet bullet){
+        List<Bullet> rmvList = new ArrayList<>();
+        world.destroyBody(bullet.getBody());
+        rmvList.add(bullet);
+        for(Player player : playerList){
+            if(player.getUserID()==bullet.getPlayerId()){
+                player.getBulletList().removeAll(rmvList);
+                player.setRemovedBulletList(rmvList);
+            }
+        }
     }
 
     public void pushUpdate() {
@@ -201,4 +212,16 @@ public enum GameEngine implements Runnable {
         this.removeDummyQueue.add(player);
     }
 
+    public List<Player> getPlayerList() {
+        return playerList;
+    }
+    
+    private void addWalls(){
+        BoundaryCreator wallGen = new BoundaryCreator();
+        wallList = wallGen.calculateWallBoundary();
+        for(Wall wall : wallList){
+            System.out.println("Adding wall "+wall.getFixtureDef().userData);
+            this.world.createBody(wall.getBodyDef()).createFixture(wall.getFixtureDef());
+        }
+    }
 }

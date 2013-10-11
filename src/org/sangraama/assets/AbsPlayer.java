@@ -39,14 +39,24 @@ public abstract class AbsPlayer {
     WebSocketConnection conDummy;
 
     volatile boolean isUpdate = false;
-    short isPlayer = 2;
+    short isPlayer = 2; // if player type is 1: primary connection player 2: dummy player (to get
+                        // updates)
 
     // Player Dynamic Parameters
-    float x, y, screenWidth, screenHeight;
+    float x, y; // Player current location
+    /*
+     * Virtual point: Create a virtual point in server side. Then server will send updates to client
+     * side around that point (not around player). This concept is using to create concept of
+     * virtual sliding window (instead having a center view).
+     * 
+     * @Author: gihan karunarathne
+     */
+    float x_virtual, y_virtual;
 
     // Area of Interest
-    float halfWidth = 10f;
-    float halfHieght = 1000f;
+    float screenWidth = 200.0f, screenHeight = 200.0f;
+    float halfWidth = screenWidth / 2;
+    float halfHieght = screenHeight / 2;
 
     // player current sub-tile information
     float currentSubTileOriginX;
@@ -78,8 +88,13 @@ public abstract class AbsPlayer {
         this.userID = userID;
         this.x = x;
         this.y = y;
-        this.screenWidth = w;
-        this.screenHeight = h;
+        this.screenWidth = w; // / Constants.scale; not enable scaling
+        this.screenHeight = h; // / Constants.scale;
+        this.halfWidth = screenWidth / 2;
+        this.halfHieght = screenHeight / 2;
+        // System.out.println(TAG +
+        // "AOI w:"+screenWidth+" h:"+screenHeight+" = half w:"+halfWidth+" h:"+halfHieght);
+
         this.sangraamaMap = SangraamaMap.INSTANCE;
         /*
          * Note: this should replace by sangraama map method. Player shouldn't responsible for
@@ -160,11 +175,13 @@ public abstract class AbsPlayer {
      */
     public void reqInterestIn(float x, float y) {
         if (!isInsideServerSubTile(x, y)) {
-            PlayerPassHandler.INSTANCE.setPassConnection(this);
+            PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }
 
     public abstract void sendNewConnection(ClientTransferReq transferReq);
+
+    public abstract void sendConnectionInfo(ClientTransferReq transferReq);
 
     /**
      * Send details about the size of the tile on current server
@@ -192,12 +209,27 @@ public abstract class AbsPlayer {
     public float getY() {
         return this.y;
     }
+    
+    public void setVirtualPoint(float x_v, float y_v){
+        this.x_virtual = x_v;
+        this.y_virtual = y_v;
+    }
+    
+    public float getXVirtualPoint(){
+        return this.x_virtual;
+    }
+    
+    public float getYVirtualPoint(){
+        return this.y_virtual;
+    }
 
     public long getUserID() {
         return this.userID;
     }
 
     public void setAOI(float width, float height) {
+        this.screenWidth = width;
+        this.screenHeight = height;
         this.halfWidth = width / 2;
         this.halfHieght = height / 2;
     }
@@ -214,16 +246,8 @@ public abstract class AbsPlayer {
         return screenWidth;
     }
 
-    public void setScreenWidth(float screenWidth) {
-        this.screenWidth = screenWidth;
-    }
-
     public float getScreenHeight() {
         return screenHeight;
-    }
-
-    public void setScreenHeight(float screenHeight) {
-        this.screenHeight = screenHeight;
     }
 
 }
