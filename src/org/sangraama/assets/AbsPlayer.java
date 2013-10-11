@@ -44,6 +44,14 @@ public abstract class AbsPlayer {
 
     // Player Dynamic Parameters
     float x, y; // Player current location
+    /*
+     * Virtual point: Create a virtual point in server side. Then server will send updates to client
+     * side around that point (not around player). This concept is using to create concept of
+     * virtual sliding window (instead having a center view).
+     * 
+     * @Author: gihan karunarathne
+     */
+    float x_virtual, y_virtual;
 
     // Area of Interest
     float screenWidth = 200.0f, screenHeight = 200.0f;
@@ -84,8 +92,9 @@ public abstract class AbsPlayer {
         this.screenHeight = h; // / Constants.scale;
         this.halfWidth = screenWidth / 2;
         this.halfHieght = screenHeight / 2;
-        // System.out.println(TAG + "AOI w:"+screenWidth+" h:"+screenHeight+" = half w:"+halfWidth+" h:"+halfHieght);
-        
+        // System.out.println(TAG +
+        // "AOI w:"+screenWidth+" h:"+screenHeight+" = half w:"+halfWidth+" h:"+halfHieght);
+
         this.sangraamaMap = SangraamaMap.INSTANCE;
         /*
          * Note: this should replace by sangraama map method. Player shouldn't responsible for
@@ -200,6 +209,19 @@ public abstract class AbsPlayer {
     public float getY() {
         return this.y;
     }
+    
+    public void setVirtualPoint(float x_v, float y_v){
+        this.x_virtual = x_v;
+        this.y_virtual = y_v;
+    }
+    
+    public float getXVirtualPoint(){
+        return this.x_virtual;
+    }
+    
+    public float getYVirtualPoint(){
+        return this.y_virtual;
+    }
 
     public long getUserID() {
         return this.userID;
@@ -224,16 +246,8 @@ public abstract class AbsPlayer {
         return screenWidth;
     }
 
-    public void setScreenWidth(float screenWidth) {
-        this.screenWidth = screenWidth;
-    }
-
     public float getScreenHeight() {
         return screenHeight;
-    }
-
-    public void setScreenHeight(float screenHeight) {
-        this.screenHeight = screenHeight;
     }
 
 }

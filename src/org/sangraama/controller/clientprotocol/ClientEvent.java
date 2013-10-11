@@ -5,12 +5,14 @@ import java.util.Arrays;
 public class ClientEvent {
     private String type;
     private long userID;
-    private float x;
-    private float y;
+    private float x; // Player current x location on the map
+    private float y; // Player current y location on the map
+    private float x_v; // Virtual point's x coordination
+    private float y_v; // Virtual point's y coordination
     private float w; // Area of Interest width
     private float h; // Area of Interest height
-    private float v_x;
-    private float v_y;
+    private float v_x; // Player's velocity on x direction
+    private float v_y; // Player's velocity on y direction
     private float a; // actual angle
     private float da; // delta angle
     private float s;
@@ -31,6 +33,14 @@ public class ClientEvent {
 
     public float getY() {
         return y;
+    }
+    
+    public float getX_v(){
+        return x_v;
+    }
+    
+    public float getY_v(){
+        return y_v;
     }
 
     public float getV_x() {
@@ -77,6 +87,7 @@ public class ClientEvent {
         return da;
     }
 
+    // Update as necessary before using
     @Override
     public String toString() {
         return "ClientEvent [type=" + type + ", userID=" + userID + ", x=" + x + ", y=" + y

@@ -110,6 +110,7 @@ public class WebSocketConnection extends MessageInbound {
             case 1:// create new player & set the connection
                 this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),
                         event.getW(), event.getH(), this));
+                this.player.setVirtualPoint(event.getX_v(), event.getY_v());
                 System.out.println(TAG + T + " Add new Player " + event.toString());
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
@@ -175,10 +176,13 @@ public class WebSocketConnection extends MessageInbound {
                 // to be add w and h
                 this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
                         0, 0, this));
-                this.dPlayer.setAOI(event.getW(), event.getH());
+                this.player.setAOI(event.getW(), event.getH());
+                this.player.setVirtualPoint(event.getX_v(), event.getY_v());
                 this.player = null;
                 break;
-
+            case 5: // Set Virtual point as the center of AOI in order to get updates
+                this.player.setVirtualPoint(event.getX_v(), event.getY_v());
+                break;
             default:
                 break;
         }
@@ -193,6 +197,7 @@ public class WebSocketConnection extends MessageInbound {
                 System.out.println(TAG + T + " changed to Player " + event.getUserID());
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
+                this.player.setVirtualPoint(event.getX_v(), event.getY_v());
                 // this.player.shoot(clientEvent.getS());
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
                         + event.getV_y() + " when creating player");
@@ -209,7 +214,9 @@ public class WebSocketConnection extends MessageInbound {
                 this.dPlayer.setAOI(event.getW(), event.getH());
                 System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
                 break;
-
+            case 5: // Set Virtual point as the center of AOI in order to get updates
+                this.dPlayer.setVirtualPoint(event.getX_v(), event.getY_v());
+                break;
             default:
                 break;
         }
