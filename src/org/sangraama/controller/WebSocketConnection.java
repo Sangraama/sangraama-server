@@ -226,7 +226,6 @@ public class WebSocketConnection extends MessageInbound {
         try {
             String convertedString = gson.toJson(playerDeltaList);
             getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));
-            System.out.println("$$$$$$$" + convertedString);
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send update ");
             e.printStackTrace();
