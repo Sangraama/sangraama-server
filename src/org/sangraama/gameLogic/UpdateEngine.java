@@ -117,12 +117,15 @@ public enum UpdateEngine implements Runnable {
         // Need a efficient algo and a data structure : #gihan
 
         // iterate through other players as well
+        delta.add(p.getPlayerDelta());
         for (Player player : playerList) {
             if (p.getXVirtualPoint() - p.getAOIWidth() <= player.getX()
                     && player.getX() <= p.getXVirtualPoint() + p.getAOIWidth()
                     && p.getYVirtualPoint() - p.getAOIHeight() <= player.getY()
                     && player.getY() <= p.getYVirtualPoint() + p.getAOIHeight()) {
-                delta.add(this.playerDelta.get(player.getUserID()));
+                if (player.getUserID() != p.getUserID()) {
+                    delta.add(this.playerDelta.get(player.getUserID()));
+                }
             }
         }
         for (Bullet bullet : bulletList) {
