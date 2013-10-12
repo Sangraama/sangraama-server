@@ -11,10 +11,11 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
+import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
-import org.sangraama.controller.clientprotocol.SendProtocol;
+import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
@@ -34,9 +35,7 @@ public abstract class Player extends AbsPlayer {
     float angle;// actual angle
     float oldAngle;// actual angle
 
-    float shoot; // when shooting this variable will be 1 and otherwise 0
-
-    float v_x, v_y;
+    float v_x, v_y, midX, midY;
     float health;
     float score;
 
@@ -52,11 +51,6 @@ public abstract class Player extends AbsPlayer {
     private float subTileEdgeX = 0.0f; // Store value of subTileOriginX + subtileWidth
     private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subtileHeight
 
-    // bullets
-    List<Bullet> newBulletList;
-    List<Bullet> bulletList;
-    List<Bullet> removedBulletList;
-
     public Player(long userID, WebSocketConnection con) {
         super(userID);
         super.isPlayer = 1;
@@ -68,8 +62,6 @@ public abstract class Player extends AbsPlayer {
                 + sangraamaMap.getSubTileHeight();
 
         this.gameEngine.addToPlayerQueue(this);
-        this.newBulletList = new ArrayList<Bullet>();
-        this.bulletList = new ArrayList<Bullet>();
     }
 
     public Player(long userID, float x, float y, float w, float h, WebSocketConnection con) {
@@ -83,8 +75,6 @@ public abstract class Player extends AbsPlayer {
                 + sangraamaMap.getSubTileHeight();
 
         this.gameEngine.addToPlayerQueue(this);
-        this.newBulletList = new ArrayList<Bullet>();
-        this.bulletList = new ArrayList<Bullet>();
         this.health = 100;
         this.score = 0;
     }
@@ -104,14 +94,12 @@ public abstract class Player extends AbsPlayer {
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
-        this.delta = new PlayerDelta(this.userID, this.body.getPosition().x,
-                this.body.getPosition().y, this.body.getAngle(), this.health, this.score);
-        for (Bullet bullet : this.bulletList) {
-            delta.getBulletDeltaList().add(bullet.getBulletDelta(1));
-        }
-        for (Bullet bullet : this.removedBulletList) {
-            delta.getBulletDeltaList().add(bullet.getBulletDelta(2));
-        }
+        this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
+                this.body.getAngle(), this.userID, this.health, this.score);
+        /*
+         * for (Bullet bullet : this.removedBulletList) {
+         * delta.getBulletDeltaList().add(bullet.getBulletDelta(2)); }
+         */
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
         this.oldAngle = this.body.getAngle();
@@ -138,7 +126,7 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.body.setTransform(this.body.getPosition(), this.oldAngle + this.angularVelocity);
         }
-        shoot();
+
     }
 
     /**
@@ -223,12 +211,14 @@ public abstract class Player extends AbsPlayer {
      *            y coordination of interest location
      */
     public void reqInterestIn(float x, float y) {
+        this.midX = x;
+        this.midY = y;
         if (!isInsideServerSubTile(x, y)) {
             PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }
 
-    public void sendUpdate(List<SendProtocol> deltaList) {
+    public void sendUpdate(List<AbsDelta> deltaList) {
         if (super.conPlayer != null) {
             conPlayer.sendUpdate(deltaList);
         } else if (super.isPlayer == 1) {
@@ -283,7 +273,7 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
-    public void sendSyncData(List<SendProtocol> syncData) {
+    public void sendSyncData(List<AbsDelta> syncData) {
         if (super.conPlayer != null) {
             conPlayer.sendUpdate(syncData);
         } else if (super.isPlayer == 1) {
@@ -296,14 +286,9 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
-    public void setShoot(float s) {
-        this.shoot = s;
-        shoot();
-    }
-
-    public void shoot() {
+    public void shoot(float s) {
         float r = 50;
-        if (this.shoot == 1) {
+        if (s == 1) {
             float x = this.body.getPosition().x;
             float y = this.body.getPosition().y;
             if (0 <= this.angle && this.angle <= 90) {
@@ -335,8 +320,9 @@ public abstract class Player extends AbsPlayer {
                 y = y - rY;
             }
             long id = (long) (generator.nextInt(10000));
-            Bullet bullet = new Bullet(id, this.userID, x, y);
-            this.newBulletList.add(bullet);
+            Bullet bullet = new Bullet(id, this.userID, x, y, this.body.getPosition().x,
+                    this.body.getPosition().y, this.getScreenWidth(), this.getScreenHeight());
+            this.gameEngine.addToBulletQueue(bullet);
             System.out.println(TAG + ": Added a new bullet");
         }
     }
@@ -352,7 +338,7 @@ public abstract class Player extends AbsPlayer {
     public void setVirtualPoint(float x_v, float y_v) {
         this.x_virtual = x_v;
         this.y_virtual = y_v;
-        List<SendProtocol> data = new ArrayList<SendProtocol>();
+        List<AbsDelta> data = new ArrayList<AbsDelta>();
         data.add(new SyncPlayer(userID, x, y, v_x, v_y, angle, screenWidth, screenHeight));
         this.sendSyncData(data);
     }
@@ -398,22 +384,6 @@ public abstract class Player extends AbsPlayer {
         System.out.println(TAG + " set angular velocity : " + da + " > " + this.angularVelocity);
     }
 
-    public List<Bullet> getNewBulletList() {
-        return newBulletList;
-    }
-
-    public List<Bullet> getBulletList() {
-        return bulletList;
-    }
-
-    public List<Bullet> getRemovedBulletList() {
-        return removedBulletList;
-    }
-
-    public void setRemovedBulletList(List<Bullet> removedBulletList) {
-        this.removedBulletList = removedBulletList;
-    }
-
     public float getAngle() {
         return angle;
     }
@@ -447,6 +417,14 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.score = 0;
         }
+    }
+
+    public float getMidX() {
+        return midX;
+    }
+
+    public float getMidY() {
+        return midY;
     }
 
 }

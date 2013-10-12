@@ -75,8 +75,10 @@ public enum CollisionManager implements Runnable {
                 Bullet bullet = (Bullet) collision.getFixtureA().getUserData();
                 processBulletShipCollition(ship, bullet);
             }
-        }
-        else if(("island".equals(collision.getFixtureA().getUserData()) && collision.getFixtureB().getUserData().getClass() == Ship.class)||("island".equals(collision.getFixtureB().getUserData()) && collision.getFixtureA().getUserData().getClass() == Ship.class)){
+        } else if (("island".equals(collision.getFixtureA().getUserData()) && collision
+                .getFixtureB().getUserData().getClass() == Ship.class)
+                || ("island".equals(collision.getFixtureB().getUserData()) && collision
+                        .getFixtureA().getUserData().getClass() == Ship.class)) {
             Player ship;
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
                 ship = (Player) collision.getFixtureA().getUserData();
@@ -84,6 +86,28 @@ public enum CollisionManager implements Runnable {
                 ship = (Player) collision.getFixtureB().getUserData();
             }
             reduceShipHealth(ship.getUserID(), (float) -0.5);
+        } else if (("island".equals(collision.getFixtureA().getUserData()) && collision
+                .getFixtureB().getUserData().getClass() == Bullet.class)
+                || ("island".equals(collision.getFixtureB().getUserData()) && collision
+                        .getFixtureA().getUserData().getClass() == Bullet.class)) {
+            Bullet bullet;
+            if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
+                bullet = (Bullet) collision.getFixtureA().getUserData();
+            } else {
+                bullet = (Bullet) collision.getFixtureB().getUserData();
+            }
+            gameEngine.removeBullet(bullet);
+        } else if (("wall".equals(collision.getFixtureA().getUserData()) && collision.getFixtureB()
+                .getUserData().getClass() == Bullet.class)
+                || ("wall".equals(collision.getFixtureB().getUserData()) && collision.getFixtureA()
+                        .getUserData().getClass() == Bullet.class)) {
+            Bullet bullet;
+            if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
+                bullet = (Bullet) collision.getFixtureA().getUserData();
+            } else {
+                bullet = (Bullet) collision.getFixtureB().getUserData();
+            }
+            gameEngine.removeBullet(bullet);
         }
     }
 
@@ -103,7 +127,7 @@ public enum CollisionManager implements Runnable {
                 break;
             }
         }
-        
+
     }
 
     private void reduceShipHealth(float userID, float valChange) {

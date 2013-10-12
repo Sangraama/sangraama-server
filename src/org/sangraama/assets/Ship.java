@@ -24,10 +24,9 @@ public class Ship extends Player {
         super(userID, x, y, w, h, con);
     }
 
-    public void shoot() {
-
+    public void shoot(float s) {
         float r = 50;
-        if (this.shoot == 1) {
+        if (s == 1) {
             float x = this.body.getPosition().x;
             float y = this.body.getPosition().y;
             if (0 <= this.angle && this.angle <= 90) {
@@ -59,8 +58,9 @@ public class Ship extends Player {
                 y = y - rY;
             }
             long id = (long) (generator.nextInt(10000));
-            Bullet bullet = new Bullet(id, this.userID, x, y);
-            this.newBulletList.add(bullet);
+            Bullet bullet = new Bullet(id, this.userID, x, y, this.body.getPosition().x,
+                    this.body.getPosition().y, this.getScreenWidth(), this.getScreenHeight());
+            this.gameEngine.addToBulletQueue(bullet);
             System.out.println(TAG + ": Added a new bullet");
         }
     }

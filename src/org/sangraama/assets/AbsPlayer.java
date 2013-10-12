@@ -4,20 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
-import org.sangraama.common.Constants;
-import org.sangraama.controller.DummyWebScocketConnection;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
+import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
-import org.sangraama.controller.clientprotocol.SendProtocol;
+import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
@@ -49,8 +42,7 @@ public abstract class AbsPlayer {
     /*
      * Virtual point: Create a virtual point in server side. Then server will send updates to client
      * side around that point (not around player). This concept is using to create concept of
-     * virtual sliding window (instead having a center view).
-     * #gihan
+     * virtual sliding window (instead having a center view). #gihan
      */
     float x_virtual, y_virtual;
 
@@ -113,18 +105,84 @@ public abstract class AbsPlayer {
      */
     public abstract void removeWebSocketConnection();
 
-    public abstract void sendUpdate(List<SendProtocol> deltaList);
+    public abstract void sendUpdate(List<AbsDelta> deltaList);
+
+    /**
+     * Check whether player is inside current tile
+     * 
+     * @param x
+     *            Player's current x coordination
+     * @param y
+     *            Player's current y coordination
+     * @return if inside tile return true, else false
+     */
+    private boolean isInsideMap(float x, float y) {
+        // System.out.println(TAG + "is inside "+x+":"+y);
+        if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()) {
+            return true;
+        } else {
+            System.out.println(TAG + "Outside of map : " + sangraamaMap.getMapWidth() + ":"
+                    + sangraamaMap.getMapHeight());
+            return false;
+        }
+    }
+
+    /**
+     * Check whether player is inside current sub-tile
+     * 
+     * @param x
+     *            Player's current x coordination
+     * @param y
+     *            Player's current y coordination
+     * @return if inside sub-tile return true, else false
+     */
+    private boolean isInsideServerSubTile(float x, float y) {
+        boolean insideServerSubTile = true;
+        float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
+        float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
+        // System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
+        // + subTileOriX + ":" + subTileOriY);
+        if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
+            currentSubTileOriginX = subTileOriX;
+            currentSubTileOriginY = subTileOriY;
+            if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
+                insideServerSubTile = false;
+                System.out.println(TAG + "player is not inside a subtile of "
+                        + sangraamaMap.getHost());
+            }
+        }
+
+        return insideServerSubTile;
+    }
+
+    /**
+     * Request for client's Area of Interest around player. When player wants to fulfill it's Area
+     * of Interest, it will ask for the updates of that area. This method checked in following
+     * sequence, 1) check on own sub-tile 2) check whether location is inside current 3) check for
+     * the server which own that location and send connection tag
+     * 
+     * @param x
+     *            x coordination of interest location
+     * @param y
+     *            y coordination of interest location
+     */
+    public void reqInterestIn(float x, float y) {
+        if (!isInsideServerSubTile(x, y)) {
+            PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
+        }
+    }
 
     public abstract void sendNewConnection(ClientTransferReq transferReq);
 
     public abstract void sendConnectionInfo(ClientTransferReq transferReq);
-    
+
     /**
-     * Player and Dummy Player should have different implementation of sync data
-     * Ex: player x ,y coordinates which dummy donesn't have
+     * Player and Dummy Player should have different implementation of sync data Ex: player x ,y
+     * coordinates which dummy donesn't have
+     * 
      * @param syncData
      */
-    public abstract void sendSyncData(List<SendProtocol> syncData);
+    public abstract void sendSyncData(List<AbsDelta> syncData);
 
     /**
      * Send details about the size of the tile on current server
@@ -152,17 +210,17 @@ public abstract class AbsPlayer {
     public float getY() {
         return this.y;
     }
-    
-    public void setVirtualPoint(float x_v, float y_v){
+
+    public void setVirtualPoint(float x_v, float y_v) {
         this.x_virtual = x_v;
         this.y_virtual = y_v;
     }
-    
-    public float getXVirtualPoint(){
+
+    public float getXVirtualPoint() {
         return this.x_virtual;
     }
-    
-    public float getYVirtualPoint(){
+
+    public float getYVirtualPoint() {
         return this.y_virtual;
     }
 

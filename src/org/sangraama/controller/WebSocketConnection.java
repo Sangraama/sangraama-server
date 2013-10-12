@@ -11,10 +11,11 @@ import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
+import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
-import org.sangraama.controller.clientprotocol.SendProtocol;
+import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.controller.clientprotocol.TransferInfo;
 import org.sangraama.util.VerifyMsg;
@@ -154,7 +155,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
                 this.player.setAngularVelocity(event.getDa());
-                this.player.setShoot(event.getS());
+                this.player.shoot(event.getS());
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
                         + event.getV_y());
                 break;
@@ -171,7 +172,7 @@ public class WebSocketConnection extends MessageInbound {
             case 4: // Reset settings and make dummy player
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
-                this.player.setShoot(event.getS());
+                this.player.shoot(event.getS());
                 System.out.println(TAG + T + " RESET user events " + event.getV_x() + " : "
                         + event.getV_y());
                 // to be add w and h
@@ -226,11 +227,10 @@ public class WebSocketConnection extends MessageInbound {
      * @param playerDeltaList
      *            delta updates of players who are located inside AOI
      */
-    public void sendUpdate(List<SendProtocol> playerDeltaList) {
+    public void sendUpdate(List<AbsDelta> playerDeltaList) {
         try {
             String convertedString = gson.toJson(playerDeltaList);
             getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));
-
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send update ");
             e.printStackTrace();

@@ -33,7 +33,7 @@ public class Wall {
         wallShape.setAsBox(width, height);
         wallFixture = new FixtureDef();
         wallFixture.shape = wallShape;
-        wallFixture.userData = this.x+":"+this.y+":"+this.width+":"+this.height;
+        wallFixture.userData = "wall";
         return wallFixture;
     }
 }
