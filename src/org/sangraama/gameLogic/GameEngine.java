@@ -178,7 +178,7 @@ public enum GameEngine implements Runnable {
         float y = bullet.getOriginY();
         float bulletX = bullet.getBody().getPosition().x;
         float bulletY = bullet.getBody().getPosition().y;
-        float bulletRange = 100;
+        float bulletRange = 300;
         float currentRange = (float) Math.sqrt(Math.pow((bulletX - x), 2)
                 + Math.pow((bulletY - y), 2));
         if (currentRange >= bulletRange) {

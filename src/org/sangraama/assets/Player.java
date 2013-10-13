@@ -85,12 +85,12 @@ public abstract class Player extends AbsPlayer {
 
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
-        if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
+        /*if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
             System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " angle:"
                     + this.body.getAngle() + " & " + this.body.getAngularVelocity());
             System.out.println(TAG + "id : " + this.userID + " x_virtual:" + this.x_virtual
                     + " y_virtual:" + this.y_virtual);
-        }
+        }*/
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
@@ -340,7 +340,7 @@ public abstract class Player extends AbsPlayer {
         this.y_virtual = y_v;
         List<AbsDelta> data = new ArrayList<>();
         data.add(new SyncPlayer(userID, x, y, v_x, v_y, angle, screenWidth, screenHeight));
-        System.out.println("ZZZZZz" + x_v + "^^" + y_v);
+        System.out.println(TAG + "Virtual point x" + x_v + " y" + y_v);
         this.sendSyncData(data);
     }
 

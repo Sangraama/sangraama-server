@@ -3,16 +3,10 @@ package org.sangraama.assets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sangraama.controller.DummyWebScocketConnection;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
-import org.sangraama.controller.clientprotocol.PlayerDelta;
-import org.sangraama.controller.clientprotocol.SangraamaTile;
-import org.sangraama.controller.clientprotocol.SendProtocol;
-import org.sangraama.controller.clientprotocol.SyncPlayer;
-import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
