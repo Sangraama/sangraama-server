@@ -12,7 +12,6 @@ import javax.swing.Timer;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.Player;
 import org.sangraama.common.Constants;
-import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.BulletDelta;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;

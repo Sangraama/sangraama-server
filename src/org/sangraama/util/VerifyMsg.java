@@ -1,6 +1,5 @@
 package org.sangraama.util;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.PublicKey;
@@ -18,7 +17,7 @@ public enum VerifyMsg {
         try {
 
             InputStream keyfis = this.getClass().getResourceAsStream("/PublicKey.txt");
-            //FileInputStream keyfis = new FileInputStream("src/PublicKey.txt");
+            // FileInputStream keyfis = new FileInputStream("src/PublicKey.txt");
             byte[] encKey = new byte[keyfis.available()];
             keyfis.read(encKey);
             keyfis.close();

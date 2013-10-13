@@ -9,8 +9,6 @@ import java.util.List;
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.assets.DummyPlayer;
-import org.sangraama.assets.Player;
-import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
@@ -32,7 +30,7 @@ public class DummyWebScocketConnection extends MessageInbound {
     private DummyPlayer dummyPlayer;
     private Gson gson;
 
-    public DummyWebScocketConnection(){
+    public DummyWebScocketConnection() {
         this.gson = new Gson();
     }
 
@@ -92,18 +90,19 @@ public class DummyWebScocketConnection extends MessageInbound {
         } else {
             if (clientEvent.getType() == 1) { // create new player & set the
                 // connection
-//                this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), clientEvent.getX(),
-//                        clientEvent.getY(), this);
+                // this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), clientEvent.getX(),
+                // clientEvent.getY(), this);
                 System.out.println(TAG + " Add new dummy Player " + clientEvent.getUserID());
-            }else if (clientEvent.getType() == 2) {
+            } else if (clientEvent.getType() == 2) {
                 TransferInfo playerInfo;
                 String info = clientEvent.getInfo();
                 byte[] signedInfo = clientEvent.getSignedInfo();
                 boolean msgVerification = VerifyMsg.INSTANCE.verifyMessage(info, signedInfo);
-                if(msgVerification){
+                if (msgVerification) {
                     playerInfo = gson.fromJson(info, TransferInfo.class);
-//                    this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), playerInfo.getPositionX(),
-//                            playerInfo.getPositionY(), this);
+                    // this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(),
+                    // playerInfo.getPositionX(),
+                    // playerInfo.getPositionY(), this);
                     System.out.println(TAG + "Adding player from another server to GameEngine.");
                 }
             }
