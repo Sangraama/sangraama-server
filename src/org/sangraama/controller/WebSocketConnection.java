@@ -14,8 +14,6 @@ import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
-import org.sangraama.controller.clientprotocol.PlayerDelta;
-import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.controller.clientprotocol.TransferInfo;
 import org.sangraama.util.VerifyMsg;

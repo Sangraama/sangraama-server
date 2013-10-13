@@ -1,13 +1,7 @@
 package org.sangraama.controller.clientprotocol;
 
-public class AbsDelta {
-    int type = 1;
+public class AbsDelta extends SendProtocol {
     float dx, dy, da;
-    long userID;
-
-    public int getType() {
-        return type;
-    }
 
     public float getDx() {
         return dx;
@@ -19,10 +13,6 @@ public class AbsDelta {
 
     public float getDa() {
         return da;
-    }
-
-    public long getUserId() {
-        return userID;
     }
 
 }

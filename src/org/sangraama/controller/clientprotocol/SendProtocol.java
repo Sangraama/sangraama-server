@@ -1,19 +1,15 @@
 package org.sangraama.controller.clientprotocol;
 
-public abstract class SendProtocol {
-    private int type;
-    private long userID;
-
-    public SendProtocol(int type, long userID) {
-        this.type = type;
-        this.userID = userID;
-    }
+public class SendProtocol {
+    int type = 1;
+    long userID;
 
     public int getType() {
-        return this.type;
+        return type;
     }
 
-    public long getUserID() {
-        return this.userID;
+    public long getUserId() {
+        return userID;
     }
+
 }
