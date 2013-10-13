@@ -338,8 +338,9 @@ public abstract class Player extends AbsPlayer {
     public void setVirtualPoint(float x_v, float y_v) {
         this.x_virtual = x_v;
         this.y_virtual = y_v;
-        List<AbsDelta> data = new ArrayList<AbsDelta>();
+        List<AbsDelta> data = new ArrayList<>();
         data.add(new SyncPlayer(userID, x, y, v_x, v_y, angle, screenWidth, screenHeight));
+        System.out.println("ZZZZZz" + x_v + "^^" + y_v);
         this.sendSyncData(data);
     }
 
