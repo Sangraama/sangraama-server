@@ -14,6 +14,7 @@ import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
+import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.controller.clientprotocol.TransferInfo;
 import org.sangraama.util.VerifyMsg;
@@ -225,7 +226,7 @@ public class WebSocketConnection extends MessageInbound {
      * @param playerDeltaList
      *            delta updates of players who are located inside AOI
      */
-    public void sendUpdate(List<AbsDelta> playerDeltaList) {
+    public void sendUpdate(List<SendProtocol> playerDeltaList) {
         try {
             String convertedString = gson.toJson(playerDeltaList);
             getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));

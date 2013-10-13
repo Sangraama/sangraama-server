@@ -1,6 +1,6 @@
 package org.sangraama.controller.clientprotocol;
 
-public class SyncPlayer extends AbsDelta {
+public class SyncPlayer extends SendProtocol {
     private float x, y, v_x, v_y, a, w, h;
 
     /**
@@ -18,8 +18,7 @@ public class SyncPlayer extends AbsDelta {
      * @param h
      */
     public SyncPlayer(long userID, float x, float y, float v_x, float v_y, float a, float w, float h) {
-        this.type = 10;
-        this.userID = userID;
+        super(10, userID);
         this.x = x;
         this.y = y;
         this.v_x = v_x;
@@ -40,8 +39,7 @@ public class SyncPlayer extends AbsDelta {
      * @param h
      */
     public SyncPlayer(long userID, float v_x, float v_y, float a, float w, float h) {
-        this.type = 10;
-        this.userID = userID;
+        super(10, userID);
         this.v_x = v_x;
         this.v_y = v_y;
         this.a = a;

@@ -7,6 +7,7 @@ import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
+import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,7 +125,7 @@ public class DummyPlayer extends AbsPlayer {
         }
     }
 
-    public void sendUpdate(List<AbsDelta> deltaList) {
+    public void sendUpdate(List<SendProtocol> deltaList) {
         if (super.conDummy != null) {
             conPlayer.sendUpdate(deltaList);
         } else if (super.isPlayer == 2) {
@@ -168,7 +169,7 @@ public class DummyPlayer extends AbsPlayer {
         }
     }
 
-    public void sendSyncData(List<AbsDelta> syncData) {
+    public void sendSyncData(List<SendProtocol> syncData) {
         if (super.conDummy != null) {
             conPlayer.sendUpdate(syncData);
         } else if (super.isPlayer == 2) {

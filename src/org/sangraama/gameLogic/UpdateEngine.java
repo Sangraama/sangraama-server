@@ -16,6 +16,7 @@ import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.BulletDelta;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.sangraama.controller.clientprotocol.SendProtocol;
 
 public enum UpdateEngine implements Runnable {
     INSTANCE;
@@ -108,8 +109,8 @@ public enum UpdateEngine implements Runnable {
      * @param player
      * @return ArrayList<PlayerDelta>
      */
-    private List<AbsDelta> getAreaOfInterest(Player p) {
-        List<AbsDelta> delta = new ArrayList<>();
+    private List<SendProtocol> getAreaOfInterest(Player p) {
+        List<SendProtocol> delta = new ArrayList<>();
 
         delta.add(p.getPlayerDelta());
         for (Player player : playerList) {

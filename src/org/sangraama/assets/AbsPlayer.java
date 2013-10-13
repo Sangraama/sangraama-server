@@ -9,6 +9,7 @@ import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
@@ -102,7 +103,7 @@ public abstract class AbsPlayer {
      */
     public abstract void removeWebSocketConnection();
 
-    public abstract void sendUpdate(List<AbsDelta> deltaList);
+    public abstract void sendUpdate(List<SendProtocol> deltaList);
 
     /**
      * Check whether player is inside current tile
@@ -179,7 +180,7 @@ public abstract class AbsPlayer {
      * 
      * @param syncData
      */
-    public abstract void sendSyncData(List<AbsDelta> syncData);
+    public abstract void sendSyncData(List<SendProtocol> syncData);
 
     /**
      * Send details about the size of the tile on current server

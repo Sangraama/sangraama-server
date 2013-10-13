@@ -49,10 +49,18 @@ public enum SangraamaMap {
         return originY;
     }
 
+    /**
+     * Get value of originX + mapWidth
+     * @return float (originX + mapWidth)
+     */
     public float getEdgeX() {
         return this.edgeX;
     }
 
+    /**
+     * Get value of originY + mapWidth
+     * @return float (originY + mapHeight)
+     */
     public float getEdgeY() {
         return this.edgeY;
     }

@@ -16,6 +16,7 @@ import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
 import org.sangraama.controller.clientprotocol.AbsDelta;
+import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
@@ -85,12 +86,13 @@ public abstract class Player extends AbsPlayer {
 
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
-        /*if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
-            System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " angle:"
-                    + this.body.getAngle() + " & " + this.body.getAngularVelocity());
-            System.out.println(TAG + "id : " + this.userID + " x_virtual:" + this.x_virtual
-                    + " y_virtual:" + this.y_virtual);
-        }*/
+        /*
+         * if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) !=
+         * 0) { System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " angle:" +
+         * this.body.getAngle() + " & " + this.body.getAngularVelocity()); System.out.println(TAG +
+         * "id : " + this.userID + " x_virtual:" + this.x_virtual + " y_virtual:" + this.y_virtual);
+         * }
+         */
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
@@ -218,7 +220,7 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
-    public void sendUpdate(List<AbsDelta> deltaList) {
+    public void sendUpdate(List<SendProtocol> deltaList) {
         if (super.conPlayer != null) {
             conPlayer.sendUpdate(deltaList);
         } else if (super.isPlayer == 1) {
@@ -273,7 +275,7 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
-    public void sendSyncData(List<AbsDelta> syncData) {
+    public void sendSyncData(List<SendProtocol> syncData) {
         if (super.conPlayer != null) {
             conPlayer.sendUpdate(syncData);
         } else if (super.isPlayer == 1) {
@@ -336,9 +338,15 @@ public abstract class Player extends AbsPlayer {
      */
 
     public void setVirtualPoint(float x_v, float y_v) {
+        /*
+         * Validate data before set virtual point. Idea: Virtual point can't go beyond edges of Full
+         * map (the map which divide into sub tiles) with having half of the size of AOI. Then
+         * possible virtual point setting will validate by server side. #gihan
+         */
         this.x_virtual = x_v;
         this.y_virtual = y_v;
-        List<AbsDelta> data = new ArrayList<>();
+
+        List<SendProtocol> data = new ArrayList<SendProtocol>();
         data.add(new SyncPlayer(userID, x, y, v_x, v_y, angle, screenWidth, screenHeight));
         System.out.println(TAG + "Virtual point x" + x_v + " y" + y_v);
         this.sendSyncData(data);

@@ -1,18 +1,20 @@
 package org.sangraama.controller.clientprotocol;
 
-public class AbsDelta extends SendProtocol {
+public abstract class AbsDelta extends SendProtocol {
     float dx, dy, da;
-
-    public float getDx() {
-        return dx;
+    
+    public AbsDelta(int type, long userID, float dx, float dy, float da){
+        super(type, userID);
+        this.dx = dx;
+        this.dy = dy;
+        this.da = da;
     }
-
-    public float getDy() {
-        return dy;
+    
+    public float getDx(){
+        return this.dx;
     }
-
-    public float getDa() {
-        return da;
+    
+    public float getDy(){
+        return this.dy;
     }
-
 }
