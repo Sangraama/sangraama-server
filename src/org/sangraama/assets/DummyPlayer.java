@@ -8,6 +8,7 @@ import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.SendProtocol;
+import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,6 +181,24 @@ public class DummyPlayer extends AbsPlayer {
         } else {
             System.out.println(TAG + " waiting for remove");
         }
+    }
+
+    /* Getter Setter methis */
+
+    public void setVirtualPoint(float x_v, float y_v) {
+        /*
+         * Validate data before set virtual point. Idea: Virtual point can't go beyond edges of Full
+         * map (the map which divide into sub tiles) with having half of the size of AOI. Then
+         * possible virtual point setting will validate by server side. #gihan
+         */
+        this.x_virtual = x_v;
+        this.y_virtual = y_v;
+
+        List<SendProtocol> data = new ArrayList<SendProtocol>();
+        // Send updates which are related/interest to dummy player
+        data.add(new SyncPlayer(userID, x_v, y_v, screenWidth, screenHeight));
+        System.out.println(TAG + "Virtual point x" + x_v + " y" + y_v);
+        this.sendSyncData(data);
     }
 
     public void setX(float x) {

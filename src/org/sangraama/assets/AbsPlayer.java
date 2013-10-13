@@ -209,10 +209,7 @@ public abstract class AbsPlayer {
         return this.y;
     }
 
-    public void setVirtualPoint(float x_v, float y_v) {
-        this.x_virtual = x_v;
-        this.y_virtual = y_v;
-    }
+    public abstract void setVirtualPoint(float x_v, float y_v);
 
     public float getXVirtualPoint() {
         return this.x_virtual;

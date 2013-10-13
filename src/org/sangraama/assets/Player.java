@@ -347,8 +347,8 @@ public abstract class Player extends AbsPlayer {
         this.y_virtual = y_v;
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
-        data.add(new SyncPlayer(userID, x, y, v_x, v_y, angle, screenWidth, screenHeight));
-        System.out.println(TAG + "Virtual point x" + x_v + " y" + y_v);
+        data.add(new SyncPlayer(userID, x, y, x_v, y_v, angle, screenWidth, screenHeight));
+        System.out.println(TAG + "Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
     }
 

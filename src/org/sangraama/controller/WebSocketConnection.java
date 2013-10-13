@@ -92,17 +92,26 @@ public class WebSocketConnection extends MessageInbound {
     protected void onTextMessage(CharBuffer charBuffer) throws IOException {
         String user = charBuffer.toString();
         ClientEvent event = gson.fromJson(user, ClientEvent.class);
-
-        if (this.player != null) {
-            /* Call when "the player" is already connected and added to the server world map */
+        
+        // Avoid checking whether player is created every time access it.
+        try {
             this.playerEvents(event);
-        } else if (this.dPlayer != null) {
-            /* Call when "a Dummy Player" is already created and sending updates to the client */
-            this.dummyPlayerEvents(event);
-        } else {
-            /* Call when a player is not created */
+        } catch (Exception e) {
             this.newPlayerEvent(event);
+            //System.out.print(TAG + "Player not found ");
+            //e.printStackTrace();
         }
+
+//        if (this.player != null) {
+//            /* Call when "the player" is already connected and added to the server world map */
+//            this.playerEvents(event);
+//        } else if (this.dPlayer != null) {
+//            /* Call when "a Dummy Player" is already created and sending updates to the client */
+//            this.dummyPlayerEvents(event);
+//        } else {
+//            /* Call when a player is not created */
+//            this.newPlayerEvent(event);
+//        }
     }
 
     private void newPlayerEvent(ClientEvent event) {
