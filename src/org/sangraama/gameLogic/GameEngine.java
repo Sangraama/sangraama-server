@@ -174,21 +174,14 @@ public enum GameEngine implements Runnable {
     }
 
     public void removeBulletByPosition(Bullet bullet) {
-        float w = bullet.getScreenWidth();
-        float h = bullet.getScreenHeight();
         float x = bullet.getOriginX();
         float y = bullet.getOriginY();
-        float minX = x - x % w;
-        float maxX = minX + w;
-        float minY = y - y % h;
-        float maxY = minY + h;
         float bulletX = bullet.getBody().getPosition().x;
         float bulletY = bullet.getBody().getPosition().y;
-        float bulletRange = (h * 30) / 100;
+        float bulletRange = 100;
         float currentRange = (float) Math.sqrt(Math.pow((bulletX - x), 2)
                 + Math.pow((bulletY - y), 2));
-        if (bulletX < minX || bulletX > maxX || bulletY < minY || bulletY > maxY
-                || currentRange >= bulletRange) {
+        if (currentRange >= bulletRange) {
             world.destroyBody(bullet.getBody());
             removeBulletQueue.add(bullet);
         }

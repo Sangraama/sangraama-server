@@ -113,10 +113,6 @@ public enum UpdateEngine implements Runnable {
     private List<AbsDelta> getAreaOfInterest(Player p) {
         List<AbsDelta> delta = new ArrayList<>();
 
-        // inefficient when it becomes 1000 of players
-        // Need a efficient algo and a data structure : #gihan
-
-        // iterate through other players as well
         delta.add(p.getPlayerDelta());
         for (Player player : playerList) {
             if (p.getXVirtualPoint() - p.getAOIWidth() <= player.getX()
@@ -129,27 +125,15 @@ public enum UpdateEngine implements Runnable {
             }
         }
         for (Bullet bullet : bulletList) {
-            delta.add(bullet.getBulletDelta());
+            BulletDelta bulletDelta = bullet.getBulletDelta();
+            if (p.getXVirtualPoint() - p.getAOIWidth() <= bulletDelta.getDx()
+                    && bulletDelta.getDx() <= p.getXVirtualPoint() + p.getAOIWidth()
+                    && p.getYVirtualPoint() - p.getAOIHeight() <= bulletDelta.getDy()
+                    && bulletDelta.getDy() <= p.getYVirtualPoint() + p.getAOIHeight()) {
+                delta.add(bullet.getBulletDelta());
+            }
         }
-        // inefficient
 
-        /*
-         * for (Player player : playerList) { if (p.getX() - p.getAOIWidth() <= player.getX() &&
-         * player.getX() <= p.getX() + p.getAOIWidth() && p.getY() - p.getAOIHeight() <=
-         * player.getY() && player.getY() <= p.getY() + p.getAOIHeight()) {
-         * delta.add(this.playerDelta.get(player.getUserID())); } }
-         */
-        /*
-         * delta.add(this.playerDelta.get(p.getUserID())); for (Player player : playerList) { if
-         * (player.getUserID() != p.getUserID()) { if (p.getMidX() - p.getAOIWidth() <=
-         * player.getX() && player.getX() <= p.getMidX() + p.getAOIWidth() && p.getMidY() -
-         * p.getAOIHeight() <= player.getY() && player.getY() <= p.getMidY() + p.getAOIHeight()) {
-         * delta.add(this.playerDelta.get(player.getUserID())); } } } for (Bullet bullet :
-         * bulletList) { BulletDelta bulletDelta = bullet.getBulletDelta(); if (p.getMidX() -
-         * p.getAOIWidth() <= bulletDelta.getDx() && bulletDelta.getDx() <= p.getMidX() +
-         * p.getAOIWidth() && p.getMidY() - p.getAOIHeight() <= bulletDelta.getDy() &&
-         * bulletDelta.getDy() <= p.getMidY() + p.getAOIHeight()) { delta.add(bulletDelta); } }
-         */
         return delta;
     }
 
