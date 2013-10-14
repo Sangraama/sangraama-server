@@ -14,6 +14,8 @@ import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.AbsDelta;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
+import org.sangraama.controller.clientprotocol.DefeatMsg;
+import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.controller.clientprotocol.TransferInfo;
@@ -291,6 +293,16 @@ public class WebSocketConnection extends MessageInbound {
         this.sendTileSizeInfo(tilesInfo);
     }
 
+    public void sendPlayerDefeatMsg(Player player){
+        try {
+            DefeatMsg defeatMsg = new DefeatMsg(6, player.getUserID(), 100, 100, player.getScore());
+            getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(defeatMsg)));
+        } catch (IOException e) {
+            System.out.println(TAG + " Unable to send player defeat message.");
+            log.error(TAG, e);
+        }
+    }
+    
     /**
      * Close the WebSocket connection of the player
      * 

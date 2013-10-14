@@ -398,6 +398,9 @@ public abstract class Player extends AbsPlayer {
             this.health += healthChange;
         } else {
             this.health = 0;
+            this.setScore(-200);
+            super.conPlayer.sendPlayerDefeatMsg(this);
+            gameEngine.addToRemovePlayerQueue(this);
         }
     }
 
