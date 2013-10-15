@@ -45,6 +45,11 @@ public abstract class AbsPlayer {
      * virtual sliding window (instead having a center view). #gihan
      */
     float x_virtual, y_virtual;
+    
+    /*
+     * To check whether virtual point is setting inside the total map
+     */
+    float totOrgX , totOrgY, totEdgeX, totEdgeY; // Total map origin x,y and total map edge x,y
 
     // Area of Interest
     float screenWidth = 200.0f, screenHeight = 200.0f;
@@ -125,6 +130,13 @@ public abstract class AbsPlayer {
                     + sangraamaMap.getMapHeight());
             return false;
         }
+    }
+    
+    protected boolean isInsideTotalMap(float x, float y){
+        if(totOrgX <= x && x <= totEdgeX && totOrgY <= y && y <= totEdgeY){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -246,6 +258,11 @@ public abstract class AbsPlayer {
         this.screenHeight = height;
         this.halfWidth = width / 2;
         this.halfHieght = height / 2;
+        // Set point which virtual point can holds
+        this.totOrgX = this.halfWidth;
+        this.totOrgY = this.halfHieght;
+        this.totEdgeX = SangraamaMap.INSTANCE.getMaxWidth() - this.halfWidth;
+        this.totEdgeY = SangraamaMap.INSTANCE.getMaxHeight() - this.halfHieght;
     }
 
     public float getAOIWidth() {

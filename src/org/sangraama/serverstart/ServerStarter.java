@@ -43,7 +43,9 @@ public class ServerStarter implements ServletContextListener {
                 Float.parseFloat(prop.getProperty("mapwidth")),
                 Float.parseFloat(prop.getProperty("mapheight")), prop.getProperty("host") + ":"
                         + prop.getProperty("port") + "/" + prop.getProperty("dir")
-                        + "/sangraama/player");
+                        + "/sangraama/player", Float.parseFloat(prop.getProperty("maxlength")),
+                Float.parseFloat(prop.getProperty("maxheight")));
+
         System.out.println(prop.getProperty("host") + ":" + prop.getProperty("port") + "/"
                 + prop.getProperty("dir") + "/sangraama/player");
         SangraamaMap.INSTANCE.setSubTileProperties(

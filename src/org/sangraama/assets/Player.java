@@ -61,7 +61,8 @@ public abstract class Player extends AbsPlayer {
         this.gameEngine.addToPlayerQueue(this);
     }
 
-    public Player(long userID, float x, float y, float w, float h, float health, float score, WebSocketConnection con) {
+    public Player(long userID, float x, float y, float w, float h, float health, float score,
+            WebSocketConnection con) {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
         super.conPlayer = con;
@@ -91,8 +92,8 @@ public abstract class Player extends AbsPlayer {
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
-//        System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " health:" +
-//                this.getHealth() + " Score:"+this.getScore());
+        // System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " health:" +
+        // this.getHealth() + " Score:"+this.getScore());
         this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
                 this.body.getAngle(), this.userID, this.health, this.score);
         /*
@@ -342,6 +343,21 @@ public abstract class Player extends AbsPlayer {
          */
         this.x_virtual = x_v;
         this.y_virtual = y_v;
+
+        if (isInsideTotalMap(x_v, y_v)) { // If not in permitted area check by server
+            if (x_v < totOrgX) {
+                this.x_virtual = totOrgX;
+            }
+            if (y_v < totOrgY) {
+                this.y_virtual = totOrgY;
+            }
+            if (totEdgeX < x_v) {
+                this.x_virtual = totEdgeX;
+            }
+            if (totEdgeY < y_v) {
+                this.y_virtual = totEdgeY;
+            }
+        }
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
         data.add(new SyncPlayer(userID, x, y, x_v, y_v, angle, screenWidth, screenHeight));
