@@ -121,7 +121,7 @@ public class WebSocketConnection extends MessageInbound {
         switch (event.getType()) {
             case 1:// create new player & set the connection
                 this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),
-                        event.getW(), event.getH(), this));
+                        event.getW(), event.getH(), 100, 0, this));
                 this.player.setVirtualPoint(event.getX_v(), event.getY_v());
                 System.out.println(TAG + T + " Add new Player " + event.toString());
                 this.player.setV(event.getV_x(), event.getV_y());
@@ -139,7 +139,7 @@ public class WebSocketConnection extends MessageInbound {
                     playerInfo = gson.fromJson(info, TransferInfo.class);
                     // to be add w and h
                     this.player = new Ship(event.getUserID(), playerInfo.getPositionX(),
-                            playerInfo.getPositionY(), 0, 0, this);
+                            playerInfo.getPositionY(), 0, 0, playerInfo.getHealth(), playerInfo.getScore(), this);
                     System.out
                             .println(TAG + T + "Adding player from another server to GameEngine.");
                 }
@@ -205,7 +205,7 @@ public class WebSocketConnection extends MessageInbound {
         switch (event.getType()) {
             case 1: // create new player and pass the connection
                 // to be add w and h
-                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(), 0, 0, this));
+                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(), 0, 0, 0, 0, this));
                 System.out.println(TAG + T + " changed to Player " + event.getUserID());
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());

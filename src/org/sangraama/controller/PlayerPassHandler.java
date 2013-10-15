@@ -130,10 +130,10 @@ public enum PlayerPassHandler {
          * " Sending new connection information. server URL:" + serverLoc.getServerURL() +
          * " serverPort:" + serverLoc.getServerPort()); }
          */
-
+        
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(ship.getX(), ship.getY());
         ClientTransferReq transferReq = new ClientTransferReq(2, ship.getUserID(), ship.getX(),
-                ship.getY(), newHost);
+                ship.getY(), ship.getHealth(), ship.getScore(), newHost);
         ship.sendNewConnection(transferReq);
     }
 
@@ -150,7 +150,7 @@ public enum PlayerPassHandler {
         System.out.println(TAG + " new update server url " + updateHost + " for x:" + ship.getX()
                 + " y:" + ship.getY());
         ClientTransferReq transferReq = new ClientTransferReq(3, ship.getUserID(), ship.getX(),
-                ship.getY(), updateHost);
+                ship.getY(), ship.getHealth(), ship.getScore(), updateHost);
         ship.sendConnectionInfo(transferReq);
     }
 

@@ -37,6 +37,8 @@ public abstract class AbsPlayer {
 
     // Player Dynamic Parameters
     float x, y; // Player current location
+    float health;
+    float score;
     /*
      * Virtual point: Create a virtual point in server side. Then server will send updates to client
      * side around that point (not around player). This concept is using to create concept of
@@ -244,6 +246,14 @@ public abstract class AbsPlayer {
 
     public float getScreenHeight() {
         return screenHeight;
+    }
+    
+    public float getScore(){
+        return score;
+    }
+    
+    public float getHealth(){
+        return health;
     }
 
 }

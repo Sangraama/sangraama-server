@@ -61,7 +61,7 @@ public abstract class Player extends AbsPlayer {
         this.gameEngine.addToPlayerQueue(this);
     }
 
-    public Player(long userID, float x, float y, float w, float h, WebSocketConnection con) {
+    public Player(long userID, float x, float y, float w, float h, float health, float score, WebSocketConnection con) {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
         super.conPlayer = con;
@@ -70,10 +70,9 @@ public abstract class Player extends AbsPlayer {
                 + sangraamaMap.getSubTileWidth();
         this.subTileEdgeY = (y - (y % sangraamaMap.getSubTileHeight()))
                 + sangraamaMap.getSubTileHeight();
-
+        this.health = health;
+        this.score = score;
         this.gameEngine.addToPlayerQueue(this);
-        this.health = 100;
-        this.score = 0;
     }
 
     public void removeWebSocketConnection() {
@@ -92,6 +91,8 @@ public abstract class Player extends AbsPlayer {
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
+//        System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " health:" +
+//                this.getHealth() + " Score:"+this.getScore());
         this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
                 this.body.getAngle(), this.userID, this.health, this.score);
         /*

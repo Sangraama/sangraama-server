@@ -14,10 +14,10 @@ public class ClientTransferReq {
     private String info;
     private byte[] signedInfo;
 
-    public ClientTransferReq(int type, long userID, float x, float y, String newHost) {
+    public ClientTransferReq(int type, long userID, float x, float y, float health, float score, String newHost) {
         this.type = type;
         this.userID = userID;
-        ClientTransferInfo clientInfo = new ClientTransferInfo(x, y, newHost);
+        ClientTransferInfo clientInfo = new ClientTransferInfo(x, y, health, score, newHost);
         Gson gson = new Gson();
         info = gson.toJson(clientInfo);
         signedInfo = SignMsg.INSTANCE.signMessage(info);
@@ -26,11 +26,15 @@ public class ClientTransferReq {
     private class ClientTransferInfo {
         private float positionX;
         private float positionY;
+        private float health;
+        private float score;
         private String url = "";
 
-        public ClientTransferInfo(float x, float y, String newHost) {
+        public ClientTransferInfo(float x, float y, float health, float score, String newHost) {
             this.positionX = x;
             this.positionY = y;
+            this.health = health;
+            this.score = score;
             this.url = newHost;
         }
     }

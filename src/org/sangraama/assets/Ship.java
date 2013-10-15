@@ -20,8 +20,8 @@ public class Ship extends Player {
         super(userID, con);
     }
 
-    public Ship(long userID, float x, float y, float w, float h, WebSocketConnection con) {
-        super(userID, x, y, w, h, con);
+    public Ship(long userID, float x, float y, float w, float h, float health, float score, WebSocketConnection con) {
+        super(userID, x, y, w, h, health, score, con);
     }
 
     public void shoot(float s) {
