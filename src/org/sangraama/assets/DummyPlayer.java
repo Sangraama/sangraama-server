@@ -201,6 +201,29 @@ public class DummyPlayer extends AbsPlayer {
         this.sendSyncData(data);
     }
 
+    /**
+     * Setter methods which are not relevant to dummy player (but inherits)
+     */
+
+    public void setV(float x, float y) {
+        /* Don't implement. Not relevant to dummy player */
+    }
+
+    public void setAngle(float angle) {
+        /* Don't implement. Not relevant to dummy player */
+    }
+
+    public void setAngularVelocity(float da) {
+        /* Don't implement. Not relevant to dummy player */
+    }
+
+    public void shoot(float s) {
+        /* Don't implement. Not relevant to dummy player */
+    }
+
+    /*
+     * Getter and setter methods
+     */
     public void setX(float x) {
         if (x > 0) {
             this.x = x;

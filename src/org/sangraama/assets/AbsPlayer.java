@@ -202,6 +202,22 @@ public abstract class AbsPlayer {
     public void sendTileSizeInfo() {
         this.conPlayer.sendTileSizeInfo(new TileInfo(this.userID));
     }
+    
+    /**
+     * Abstract setter methods. Implementation will depends on whether it is a
+     * instance of player or dummy player
+     */
+    public abstract void setV(float x, float y);
+    
+    public abstract void setAngle(float angle);
+    
+    public abstract void setAngularVelocity(float da);
+    
+    public abstract void shoot(float s);
+    
+    /**
+     * Getter and Setters
+     */
 
     public float getX() {
         return x;
