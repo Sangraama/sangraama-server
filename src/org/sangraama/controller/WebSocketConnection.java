@@ -53,12 +53,12 @@ public class WebSocketConnection extends MessageInbound {
         System.out.println(TAG + " created a PLAYER conection...");
     }
 
-    public void setDummyPlayer(DummyPlayer dPlayer) {
+    public void setDummyPlayer(DummyPlayer dummyPlayer) {
         if (this.player != null) {
             this.player.removeWebSocketConnection();
             this.player = null;
         }
-        this.player = player;
+        this.player = dummyPlayer;
         System.out.println(TAG + " created a DUMMY PLAYER conection...");
     }
 
@@ -120,7 +120,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),
                         event.getW(), event.getH(), 100, 0, this));
                 this.player.setAngle(event.getA());
-                System.out.println(TAG + T + " Add new Player " + event.toString());
+                System.out.println(TAG + T + " add new Player " + event.toString());
                 /*
                  * AOI and Virtual point will add to the player after creation of it
                  * NOTE: These player details should retrieved via a encrypted message.
@@ -130,9 +130,6 @@ public class WebSocketConnection extends MessageInbound {
                  * AOI point. Then current primary server will send a encrypted message which is
                  * can use to create a dummy player 
                  */
-
-                System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
-                        + event.getV_y() + " when creating player");
                 break;
 
             case 2: /*
@@ -156,7 +153,7 @@ public class WebSocketConnection extends MessageInbound {
             case 3: // Create a dummy player and set AOI of the player
                 this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
                         0, 0, this));
-                System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
+                System.out.println(TAG + T + " add new dummy player: " + event.getUserID());
                 break;
 
             default:
@@ -194,11 +191,11 @@ public class WebSocketConnection extends MessageInbound {
                 this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
                         0, 0, this));
                 this.player.setAOI(event.getW(), event.getH());
-                this.player.setVirtualPoint(event.getX_v(), event.getY_v());
+                this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
                 this.player = null;
                 break;
             case 5: // Set Virtual point as the center of AOI in order to get updates
-                this.player.setVirtualPoint(event.getX_v(), event.getY_v());
+                this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
                 break;
             default:
                 break;
@@ -218,7 +215,7 @@ public class WebSocketConnection extends MessageInbound {
                 System.out.println(TAG + T + " changed to Player " + event.getUserID());
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
-                this.player.setVirtualPoint(event.getX_v(), event.getY_v());
+                this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
                 // this.player.shoot(clientEvent.getS());
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
                         + event.getV_y() + " when creating player");
@@ -235,7 +232,7 @@ public class WebSocketConnection extends MessageInbound {
                 break;
 
             case 105: // Set Virtual point as the center of AOI in order to get updates
-                this.player.setVirtualPoint(event.getX_v(), event.getY_v());
+                this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
                 break;
 
             default:
