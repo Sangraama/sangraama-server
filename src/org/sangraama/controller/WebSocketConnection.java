@@ -284,7 +284,7 @@ public class WebSocketConnection extends MessageInbound {
      * @param tilesInfo
      *            ArrayList of details about tile of current server
      */
-    public void sendTileSizeInfo(ArrayList<TileInfo> tilesInfo) {
+    public void sendTileSizeInfo(List<TileInfo> tilesInfo) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tilesInfo)));
             // System.out.println(TAG + " send size of tile " + gson.toJson(tilesInfo));
@@ -301,7 +301,7 @@ public class WebSocketConnection extends MessageInbound {
      *            details about tile
      */
     public void sendTileSizeInfo(TileInfo tileInfo) {
-        ArrayList<TileInfo> tilesInfo = new ArrayList<TileInfo>();
+       List<TileInfo> tilesInfo = new ArrayList<>();
         tilesInfo.add(tileInfo);
         this.sendTileSizeInfo(tilesInfo);
     }

@@ -123,6 +123,7 @@ public enum UpdateEngine implements Runnable {
             }
         }
         for (Bullet bullet : bulletList) {
+
             BulletDelta bulletDelta = bullet.getBulletDelta();
             if (p.getXVirtualPoint() - p.getAOIWidth() <= bulletDelta.getDx()
                     && bulletDelta.getDx() <= p.getXVirtualPoint() + p.getAOIWidth()
