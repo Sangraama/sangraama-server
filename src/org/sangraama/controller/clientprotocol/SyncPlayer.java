@@ -1,7 +1,7 @@
 package org.sangraama.controller.clientprotocol;
 
 public class SyncPlayer extends SendProtocol {
-    private float x, y, x_v, y_v, a, w, h;
+    private float x, y, x_vp, y_vp, a, w, h;
 
     /**
      * For player
@@ -9,20 +9,20 @@ public class SyncPlayer extends SendProtocol {
      * @param userID
      * @param x
      * @param y
-     * @param v_x
+     * @param x_vp
      *            virtual x location
-     * @param v_y
+     * @param y_vp
      *            virtual y location
      * @param a
      * @param w
      * @param h
      */
-    public SyncPlayer(long userID, float x, float y, float v_x, float v_y, float a, float w, float h) {
+    public SyncPlayer(long userID, float x, float y, float x_vp, float y_vp, float a, float w, float h) {
         super(10, userID);
         this.x = x;
         this.y = y;
-        this.x_v = v_x;
-        this.y_v = v_y;
+        this.x_vp = x_vp;
+        this.y_vp = y_vp;
         this.a = a;
         this.w = w;
         this.h = h;
@@ -32,16 +32,16 @@ public class SyncPlayer extends SendProtocol {
      * For Dummy Player
      * 
      * @param userID
-     * @param v_x
-     * @param v_y
+     * @param x_vp
+     * @param y_vp
      * @param a
      * @param w
      * @param h
      */
-    public SyncPlayer(long userID, float v_x, float v_y, float w, float h) {
+    public SyncPlayer(long userID, float x_vp, float y_vp, float w, float h) {
         super(11, userID);
-        this.x_v = v_x;
-        this.y_v = v_y;
+        this.x_vp = x_vp;
+        this.y_vp = y_vp;
         this.w = w;
         this.h = h;
     }

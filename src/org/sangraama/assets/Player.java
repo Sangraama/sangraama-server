@@ -65,7 +65,7 @@ public abstract class Player extends AbsPlayer {
             WebSocketConnection con) {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
-        super.conPlayer = con;
+        super.con = con;
         /* Set sub tile edge values without method */
         this.subTileEdgeX = (x - (x % sangraamaMap.getSubTileWidth()))
                 + sangraamaMap.getSubTileWidth();
@@ -77,18 +77,18 @@ public abstract class Player extends AbsPlayer {
     }
 
     public void removeWebSocketConnection() {
-        super.conPlayer = null;
+        super.con = null;
     }
 
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
-        /*
-         * if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) !=
-         * 0) { System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " angle:" +
-         * this.body.getAngle() + " & " + this.body.getAngularVelocity()); System.out.println(TAG +
-         * "id : " + this.userID + " x_virtual:" + this.x_virtual + " y_virtual:" + this.y_virtual);
-         * }
-         */
+
+        if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
+            System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " angle:"
+                    + this.body.getAngle() + " & " + this.body.getAngularVelocity());
+            System.out.println(TAG + "id : " + this.userID + " x_virtual:" + this.x_virtual
+                    + " y_virtual:" + this.y_virtual);
+        }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
@@ -219,12 +219,12 @@ public abstract class Player extends AbsPlayer {
     }
 
     public void sendUpdate(List<SendProtocol> deltaList) {
-        if (super.conPlayer != null) {
-            conPlayer.sendUpdate(deltaList);
+        if (super.con != null) {
+            con.sendUpdate(deltaList);
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send updates,coz con :" + super.conPlayer
+            System.out.println(TAG + "Unable to send updates,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -237,15 +237,18 @@ public abstract class Player extends AbsPlayer {
      * @param transferReq
      *            Object of Client transferring protocol
      */
-    public void sendNewConnection(ClientTransferReq transferReq) {
-        if (super.conPlayer != null) {
-            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+    public void sendPassConnectionInfo(SendProtocol transferReq) {
+        if (super.con != null) {
+            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
             transferReqList.add(transferReq);
-            conPlayer.sendNewConnection(transferReqList);
+            con.sendNewConnection(transferReqList);
+            /* Changed player type into dummy player and remove from the world */
+            this.gameEngine.addToRemovePlayerQueue(this);
+            con.setDummyPlayer(new DummyPlayer(userID, con));
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conPlayer
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -258,15 +261,15 @@ public abstract class Player extends AbsPlayer {
      * @param transferReq
      *            Object of Client transferring protocol
      */
-    public void sendConnectionInfo(ClientTransferReq transferReq) {
-        if (super.conPlayer != null) {
-            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+    public void sendUpdateConnectionInfo(SendProtocol transferReq) {
+        if (super.con != null) {
+            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
             transferReqList.add(transferReq);
-            conPlayer.sendNewConnection(transferReqList);
+            con.sendNewConnection(transferReqList);
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conPlayer
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -274,12 +277,12 @@ public abstract class Player extends AbsPlayer {
     }
 
     public void sendSyncData(List<SendProtocol> syncData) {
-        if (super.conPlayer != null) {
-            conPlayer.sendUpdate(syncData);
+        if (super.con != null) {
+            con.sendUpdate(syncData);
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send syncdata,coz con :" + super.conPlayer
+            System.out.println(TAG + "Unable to send syncdata,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -335,32 +338,32 @@ public abstract class Player extends AbsPlayer {
      * Getters and Setters
      */
 
-    public void setVirtualPoint(float x_v, float y_v) {
+    public void setVirtualPoint(float x_vp, float y_vp) {
         /*
          * Validate data before set virtual point. Idea: Virtual point can't go beyond edges of Full
          * map (the map which divide into sub tiles) with having half of the size of AOI. Then
          * possible virtual point setting will validate by server side. #gihan
          */
-        this.x_virtual = x_v;
-        this.y_virtual = y_v;
+        this.x_virtual = x_vp;
+        this.y_virtual = y_vp;
 
-        if (isInsideTotalMap(x_v, y_v)) { // If not in permitted area check by server
-            if (x_v < totOrgX) {
+        if (isInsideTotalMap(x_vp, y_vp)) { // If not in permitted area check by server
+            if (x_vp < totOrgX) {
                 this.x_virtual = totOrgX;
             }
-            if (y_v < totOrgY) {
+            if (y_vp < totOrgY) {
                 this.y_virtual = totOrgY;
             }
-            if (totEdgeX < x_v) {
+            if (totEdgeX < x_vp) {
                 this.x_virtual = totEdgeX;
             }
-            if (totEdgeY < y_v) {
+            if (totEdgeY < y_vp) {
                 this.y_virtual = totEdgeY;
             }
         }
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
-        data.add(new SyncPlayer(userID, x, y, x_v, y_v, angle, screenWidth, screenHeight));
+        data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth, screenHeight));
         System.out.println(TAG + "Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
     }
@@ -416,7 +419,7 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.health = 0;
             this.setScore(-200);
-            super.conPlayer.sendPlayerDefeatMsg(this);
+            super.con.sendPlayerDefeatMsg(this);
             gameEngine.addToRemovePlayerQueue(this);
         }
     }

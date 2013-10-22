@@ -13,19 +13,17 @@ import com.google.gson.Gson;
  * @author gihan
  * 
  */
-public class TileInfo {
+public class TileInfo  extends SendProtocol{
     /* 11 : set the size of the tile */
-    private int type = 11;
-    private long userId;
     private String tiles;
 
-    public TileInfo(long userId) {
-        this.userId = userId;
+    public TileInfo(long userID) {
+        super(11, userID);
         this.tiles = new Gson().toJson(TileCoordinator.INSTANCE.getSubTilesCoordinations());
     }
 
-    public TileInfo(long userId, ArrayList<SangraamaTile> tiles) {
-        this.userId = userId;
+    public TileInfo(long userID, ArrayList<SangraamaTile> tiles) {
+        super(11, userID);
         this.tiles = new Gson().toJson(tiles);
     }
 
