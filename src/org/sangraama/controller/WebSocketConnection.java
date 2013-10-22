@@ -45,19 +45,23 @@ public class WebSocketConnection extends MessageInbound {
      *            the instance of player which is connect to client
      */
     public void setPlayer(Ship player) {
-        if (this.player != null) {
-            this.player.removeWebSocketConnection();
+
+        if (this.player != null) { // this.player.removeWebSocketConnection(); // reuse already
+                                   // established connection
             this.player = null;
         }
+
         this.player = player;
         System.out.println(TAG + " created a PLAYER conection...");
     }
 
     public void setDummyPlayer(DummyPlayer dummyPlayer) {
-        if (this.player != null) {
-            this.player.removeWebSocketConnection();
+
+        if (this.player != null) { // this.player.removeWebSocketConnection(); // reuse already
+                                   // established connection
             this.player = null;
         }
+
         this.player = dummyPlayer;
         System.out.println(TAG + " created a DUMMY PLAYER conection...");
     }
@@ -93,9 +97,11 @@ public class WebSocketConnection extends MessageInbound {
 
         // Avoid checking whether player is created every time access it.
         try {
+            System.out.println(TAG + " player event call " + event.getType());
             this.playerEvents(event);
         } catch (Exception e) {
-            this.createNewPlayer(event);
+            System.out.println(TAG + " create new player call " + event.getType());
+            // this.createNewPlayer(event);
             // System.out.print(TAG + "Player not found ");
             // e.printStackTrace();
         }
@@ -116,26 +122,25 @@ public class WebSocketConnection extends MessageInbound {
         String T = " newPlayerEvent ";
         switch (event.getType()) {
 
-            case 1:// create new player & set the connection
+            case 30:// create new player & set the connection
                 this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),
                         event.getW(), event.getH(), 100, 0, this));
                 this.player.setAngle(event.getA());
                 System.out.println(TAG + T + " add new Player " + event.toString());
                 /*
-                 * AOI and Virtual point will add to the player after creation of it
-                 * NOTE: These player details should retrieved via a encrypted message.
-                 * To create player type: login server or current client's primary (when passing
-                 * the player) will provide the encrypted message
-                 * To create dummy player: in order to create a dummy player, client will ask for
-                 * AOI point. Then current primary server will send a encrypted message which is
-                 * can use to create a dummy player 
+                 * AOI and Virtual point will add to the player after creation of it NOTE: These
+                 * player details should retrieved via a encrypted message. To create player type:
+                 * login server or current client's primary (when passing the player) will provide
+                 * the encrypted message To create dummy player: in order to create a dummy player,
+                 * client will ask for AOI point. Then current primary server will send a encrypted
+                 * message which is can use to create a dummy player
                  */
                 break;
 
-            case 2: /*
-                     * pass player into this server (NOTE: 1 & 2 cases follows the same scenario)
-                     * Health can be retrieve via login server (pass health)
-                     */
+            case 32: /*
+                      * pass player into this server (NOTE: 1 & 2 cases follows the same scenario)
+                      * Health can be retrieve via login server (pass health)
+                      */
                 TransferInfo playerInfo;
                 String info = event.getInfo();
                 byte[] signedInfo = event.getSignedInfo();
@@ -150,7 +155,7 @@ public class WebSocketConnection extends MessageInbound {
                 }
                 break;
 
-            case 3: // Create a dummy player and set AOI of the player
+            case 31: // Create a dummy player and set AOI of the player
                 this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
                         0, 0, this));
                 System.out.println(TAG + T + " add new dummy player: " + event.getUserID());
@@ -188,14 +193,46 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.shoot(event.getS());
                 System.out.println(TAG + T + " RESET user events " + event.getV_x() + " : "
                         + event.getV_y());
-                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
-                        0, 0, this));
-                this.player.setAOI(event.getW(), event.getH());
-                this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
-                this.player = null;
                 break;
             case 5: // Set Virtual point as the center of AOI in order to get updates
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
+                break;
+
+            case 30: /*
+                      * Create a player
+                      * 
+                      * @case 1: if already the player => ignore
+                      * 
+                      * @case 2: if it's a dummy player => change it to player <include
+                      * authentication>
+                      */
+                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),
+                        event.getW(), event.getH(), 100, 0, this));
+                this.player.setV(event.getV_x(), event.getV_y());
+                this.player.setAngle(event.getA());
+                this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
+                System.out.println(TAG + T + " add new Player " + event.toString());
+                /*
+                 * AOI and Virtual point will add to the player after creation of it NOTE: These
+                 * player details should retrieved via a encrypted message. To create player type:
+                 * login server or current client's primary (when passing the player) will provide
+                 * the encrypted message To create dummy player: in order to create a dummy player,
+                 * client will ask for AOI point. Then current primary server will send a encrypted
+                 * message which is can use to create a dummy player
+                 */
+                break;
+            case 31: /*
+                      * Create a dummy player
+                      * 
+                      * @case 1: if already a dummy player => ignore
+                      * 
+                      * @case 2: if it's a player => change it to dummy player <include
+                      * authentication>
+                      */
+                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
+                        event.getW(), event.getH(), this));
+                this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
+                System.out.println(TAG + T + " add new dummy player: " + event.toString());
                 break;
             default:
                 break;
@@ -268,7 +305,7 @@ public class WebSocketConnection extends MessageInbound {
      * @param transferReq
      *            details about new connection server ArrayList<ClientTransferReq>
      */
-    public void sendNewConnection(ArrayList<ClientTransferReq> transferReq) {
+    public void sendNewConnection(ArrayList<SendProtocol> transferReq) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
             // System.out.println(TAG + " new con details " + gson.toJson(transferReq));
@@ -284,7 +321,7 @@ public class WebSocketConnection extends MessageInbound {
      * @param tilesInfo
      *            ArrayList of details about tile of current server
      */
-    public void sendTileSizeInfo(List<TileInfo> tilesInfo) {
+    public void sendTileSizeInfo(List<SendProtocol> tilesInfo) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tilesInfo)));
             // System.out.println(TAG + " send size of tile " + gson.toJson(tilesInfo));
@@ -300,8 +337,8 @@ public class WebSocketConnection extends MessageInbound {
      * @param tileInfo
      *            details about tile
      */
-    public void sendTileSizeInfo(TileInfo tileInfo) {
-       List<TileInfo> tilesInfo = new ArrayList<>();
+    public void sendTileSizeInfo(SendProtocol tileInfo) {
+        List<SendProtocol> tilesInfo = new ArrayList<SendProtocol>();
         tilesInfo.add(tileInfo);
         this.sendTileSizeInfo(tilesInfo);
     }

@@ -39,26 +39,39 @@ public class DummyPlayer extends AbsPlayer {
     public DummyPlayer(long userID, WebSocketConnection con) {
         super(userID);
         super.isPlayer = 2;
-        super.conDummy = con;
+        super.con = con;
         this.gameEngine.addToDummyQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
+        // Send tile info
+        sendTileSizeInfo();
     }
 
+    /**
+     * Create a dummy player in order to get updates to fulfill the player's AOI in client side
+     * @param userID userID of the player in server side
+     * @param x player's current location x coordinates
+     * @param y player's current location y coordinates
+     * @param w width of player's AOI
+     * @param h height of player's AOI
+     * @param con web socket Connection
+     */
     public DummyPlayer(long userID, float x, float y, float w, float h, WebSocketConnection con) {
         super(userID, x, y, w, h);
         super.isPlayer = 2;
-        super.conDummy = con;
+        super.con = con;
         this.gameEngine.addToDummyQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
+        // Send tile info
+        sendTileSizeInfo();
     }
 
     /**
      * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
      */
     public void removeWebSocketConnection() {
-        super.conDummy = null;
+        super.con = null;
     }
 
     /**
@@ -127,43 +140,32 @@ public class DummyPlayer extends AbsPlayer {
     }
 
     public void sendUpdate(List<SendProtocol> deltaList) {
-        if (super.conDummy != null) {
-            conPlayer.sendUpdate(deltaList);
+        if (super.con != null) {
+            con.sendUpdate(deltaList);
         } else if (super.isPlayer == 2) {
             this.gameEngine.addToRemoveDummyQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send updates,coz con :" + super.conDummy
+            System.out.println(TAG + "Unable to send updates,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
         }
     }
 
-    public void sendNewConnection(ClientTransferReq transferReq) {
-        if (super.conDummy != null) {
-            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
-            transferReqList.add(transferReq);
-            conPlayer.sendNewConnection(transferReqList);
-        } else if (super.isPlayer == 2) {
-            this.gameEngine.addToRemoveDummyQueue(this);
-            super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conDummy
-                    + ". Add to remove queue.");
-        } else {
-            System.out.println(TAG + " waiting for remove");
-        }
+    public void sendPassConnectionInfo(SendProtocol transferReq) {
+        /* dummy can't pass the player : no implementation */
     }
 
     // Need refactoring
-    public void sendConnectionInfo(ClientTransferReq transferReq) {
-        if (super.conDummy != null) {
-            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+    public void sendUpdateConnectionInfo(SendProtocol transferReq) {
+        if (super.con != null) {
+            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
             transferReqList.add(transferReq);
-            conPlayer.sendNewConnection(transferReqList);
+            con.sendNewConnection(transferReqList);
         } else if (super.isPlayer == 2) {
             this.gameEngine.addToRemoveDummyQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conDummy
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -171,12 +173,12 @@ public class DummyPlayer extends AbsPlayer {
     }
 
     public void sendSyncData(List<SendProtocol> syncData) {
-        if (super.conDummy != null) {
-            conPlayer.sendUpdate(syncData);
+        if (super.con != null) {
+            con.sendUpdate(syncData);
         } else if (super.isPlayer == 2) {
             this.gameEngine.addToRemoveDummyQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send syncdata,coz con :" + super.conDummy
+            System.out.println(TAG + "Unable to send syncdata,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -185,19 +187,19 @@ public class DummyPlayer extends AbsPlayer {
 
     /* Getter Setter methis */
 
-    public void setVirtualPoint(float x_v, float y_v) {
+    public void setVirtualPoint(float x_vp, float y_vp) {
         /*
          * Validate data before set virtual point. Idea: Virtual point can't go beyond edges of Full
          * map (the map which divide into sub tiles) with having half of the size of AOI. Then
          * possible virtual point setting will validate by server side. #gihan
          */
-        this.x_virtual = x_v;
-        this.y_virtual = y_v;
+        this.x_virtual = x_vp;
+        this.y_virtual = y_vp;
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
         // Send updates which are related/interest to dummy player
-        data.add(new SyncPlayer(userID, x_v, y_v, screenWidth, screenHeight));
-        System.out.println(TAG + "Virtual point x" + x_v + " y" + y_v);
+        data.add(new SyncPlayer(userID, x_virtual, y_virtual, screenWidth, screenHeight));
+        System.out.println(TAG + "Virtual point x" + x_vp + " y" + y_vp);
         this.sendSyncData(data);
     }
 

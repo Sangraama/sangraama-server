@@ -28,8 +28,7 @@ public abstract class AbsPlayer {
     GameEngine gameEngine;
     SangraamaMap sangraamaMap;
     // WebSocket Connection
-    WebSocketConnection conPlayer;
-    WebSocketConnection conDummy;
+    WebSocketConnection con;
 
     volatile boolean isUpdate = false;
     short isPlayer = 2; // if player type is 1: primary connection player 2: dummy player (to get
@@ -184,9 +183,9 @@ public abstract class AbsPlayer {
         }
     }
 
-    public abstract void sendNewConnection(ClientTransferReq transferReq);
+    public abstract void sendPassConnectionInfo(SendProtocol transferReq);
 
-    public abstract void sendConnectionInfo(ClientTransferReq transferReq);
+    public abstract void sendUpdateConnectionInfo(SendProtocol transferReq);
 
     /**
      * Player and Dummy Player should have different implementation of sync data Ex: player x ,y
@@ -203,7 +202,7 @@ public abstract class AbsPlayer {
      *            ArrayList of sub-tile details
      */
     public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
-        this.conPlayer.sendTileSizeInfo(new TileInfo(this.userID, tiles));
+        this.con.sendTileSizeInfo(new TileInfo(this.userID, tiles));
     }
 
     /**
@@ -212,7 +211,7 @@ public abstract class AbsPlayer {
      * 
      */
     public void sendTileSizeInfo() {
-        this.conPlayer.sendTileSizeInfo(new TileInfo(this.userID));
+        this.con.sendTileSizeInfo(new TileInfo(this.userID));
     }
     
     /**

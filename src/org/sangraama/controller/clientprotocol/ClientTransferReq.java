@@ -4,17 +4,16 @@ import org.sangraama.util.SignMsg;
 
 import com.google.gson.Gson;
 
-public class ClientTransferReq {
+public class ClientTransferReq extends SendProtocol{
     /**
-     * type details: 2 = Client pass to another server and sent events (change primary server) 3 =
+     * type details: 30 = Client pass to another server and sent events (change primary server) 31 =
      * Client connect to another server only for getting updates of AOI
      */
-    private int type;
-    private long userID;
     private String info;
     private byte[] signedInfo;
 
     public ClientTransferReq(int type, long userID, float x, float y, float health, float score, String newHost) {
+        super(type, userID);
         this.type = type;
         this.userID = userID;
         ClientTransferInfo clientInfo = new ClientTransferInfo(x, y, health, score, newHost);
