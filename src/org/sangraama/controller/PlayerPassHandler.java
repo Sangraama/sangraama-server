@@ -9,6 +9,7 @@ import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
 import org.sangraama.assets.SangraamaMap;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
+import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.coordination.ServerHandler;
 import org.sangraama.coordination.ServerLocation;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
@@ -130,11 +131,13 @@ public enum PlayerPassHandler {
          * " Sending new connection information. server URL:" + serverLoc.getServerURL() +
          * " serverPort:" + serverLoc.getServerPort()); }
          */
-
+        
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(ship.getX(), ship.getY());
-        ClientTransferReq transferReq = new ClientTransferReq(2, ship.getUserID(), ship.getX(),
-                ship.getY(), newHost);
-        ship.sendNewConnection(transferReq);
+        SendProtocol transferReq = new ClientTransferReq(30, ship.getUserID(), ship.getX(),
+                ship.getY(), ship.getHealth(), ship.getScore(), newHost);
+        System.out.println(TAG + " new player pass server url " + newHost + " for x:" + ship.getX()
+                + " y:" + ship.getY());
+        ship.sendPassConnectionInfo(transferReq);
     }
 
     /**
@@ -149,9 +152,9 @@ public enum PlayerPassHandler {
                 Float.parseFloat(s[0]), Float.parseFloat(s[1]));
         System.out.println(TAG + " new update server url " + updateHost + " for x:" + ship.getX()
                 + " y:" + ship.getY());
-        ClientTransferReq transferReq = new ClientTransferReq(3, ship.getUserID(), ship.getX(),
-                ship.getY(), updateHost);
-        ship.sendConnectionInfo(transferReq);
+        SendProtocol transferReq = new ClientTransferReq(31, ship.getUserID(), ship.getX(),
+                ship.getY(), ship.getHealth(), ship.getScore(), updateHost);
+        ship.sendUpdateConnectionInfo(transferReq);
     }
 
 }

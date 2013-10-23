@@ -11,10 +11,9 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
-import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
-import org.sangraama.controller.clientprotocol.SangraamaTile;
-import org.sangraama.controller.clientprotocol.TileInfo;
+import org.sangraama.controller.clientprotocol.SendProtocol;
+import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +31,7 @@ public abstract class Player extends AbsPlayer {
     float angle;// actual angle
     float oldAngle;// actual angle
 
-    float shoot; // when shooting this variable will be 1 and otherwise 0
-
-    float v_x, v_y;
+    float v_x, v_y, midX, midY;
     float health;
     float score;
 
@@ -47,54 +44,58 @@ public abstract class Player extends AbsPlayer {
     Vec2 v = new Vec2(0f, 0f);
     PlayerDelta delta;
 
-    // bullets
-    List<Bullet> newBulletList;
-    List<Bullet> bulletList;
-    List<Bullet> removedBulletList;
+    private float subTileEdgeX = 0.0f; // Store value of subTileOriginX + subtileWidth
+    private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subtileHeight
 
     public Player(long userID, WebSocketConnection con) {
         super(userID);
         super.isPlayer = 1;
         System.out.println(TAG + " player added to queue");
+        /* Set sub tile edge values without method */
+        this.subTileEdgeX = (x - (x % sangraamaMap.getSubTileWidth()))
+                + sangraamaMap.getSubTileWidth();
+        this.subTileEdgeY = (y - (y % sangraamaMap.getSubTileHeight()))
+                + sangraamaMap.getSubTileHeight();
+
         this.gameEngine.addToPlayerQueue(this);
-        this.newBulletList = new ArrayList<Bullet>();
-        this.bulletList = new ArrayList<Bullet>();
     }
 
-    public Player(long userID, float x, float y, float w, float h, WebSocketConnection con) {
+    public Player(long userID, float x, float y, float w, float h, float health, float score,
+            WebSocketConnection con) {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
-        super.conPlayer = con;
+        super.con = con;
+        /* Set sub tile edge values without method */
+        this.subTileEdgeX = (x - (x % sangraamaMap.getSubTileWidth()))
+                + sangraamaMap.getSubTileWidth();
+        this.subTileEdgeY = (y - (y % sangraamaMap.getSubTileHeight()))
+                + sangraamaMap.getSubTileHeight();
+        this.health = health;
+        this.score = score;
         this.gameEngine.addToPlayerQueue(this);
-        this.newBulletList = new ArrayList<Bullet>();
-        this.bulletList = new ArrayList<Bullet>();
-        this.health = 100;
-        this.score = 0;
-    }
-
-    public void removeWebSocketConnection() {
-        super.conPlayer = null;
     }
 
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
+
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
-            System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " angle:"
-                    + this.body.getAngle() + " & " + this.body.getAngularVelocity());
-            System.out.println(TAG + "id : " + this.userID + " x_virtual:" + this.x_virtual
+            System.out.print(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " angle:"
+                    + this.body.getAngle() + " & " + this.body.getAngularVelocity() + " ###");
+            System.out.print(TAG + "id : " + this.userID + " x_virtual:" + this.x_virtual
                     + " y_virtual:" + this.y_virtual);
+            System.out.println();
         }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
+        // System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " health:" +
+        // this.getHealth() + " Score:"+this.getScore());
         this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
                 this.body.getAngle(), this.userID, this.health, this.score);
-        for (Bullet bullet : this.bulletList) {
-            delta.getBulletDeltaList().add(bullet.getBulletDelta(1));
-        }
-        for (Bullet bullet : this.removedBulletList) {
-            delta.getBulletDeltaList().add(bullet.getBulletDelta(2));
-        }
+        /*
+         * for (Bullet bullet : this.removedBulletList) {
+         * delta.getBulletDeltaList().add(bullet.getBulletDelta(2)); }
+         */
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
         this.oldAngle = this.body.getAngle();
@@ -121,7 +122,7 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.body.setTransform(this.body.getPosition(), this.oldAngle + this.angularVelocity);
         }
-        shoot();
+
     }
 
     /**
@@ -135,11 +136,12 @@ public abstract class Player extends AbsPlayer {
      */
     private boolean isInsideMap(float x, float y) {
         // System.out.println(TAG + "is inside "+x+":"+y);
-        if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()) {
+        if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
+                && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
             return true;
         } else {
-            System.out.println(TAG + "Outside of map : " + sangraamaMap.getMapWidth() + ":"
-                    + sangraamaMap.getMapHeight());
+            System.out.println(TAG + "Outside of map : " + sangraamaMap.getEdgeX() + ":"
+                    + sangraamaMap.getEdgeY());
             return false;
         }
     }
@@ -155,6 +157,7 @@ public abstract class Player extends AbsPlayer {
      */
     protected boolean isInsideServerSubTile(float x, float y) {
         boolean insideServerSubTile = true;
+        // Note : Inefficient code. Is it necessary to calculate at each iteration.
         float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
         // System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
@@ -172,6 +175,26 @@ public abstract class Player extends AbsPlayer {
         return insideServerSubTile;
     }
 
+    // Need to check before use
+    protected boolean isInsideServerSubTiles(float x, float y) {
+        if (currentSubTileOriginX <= x && x <= this.subTileEdgeX && currentSubTileOriginY <= y
+                && y <= this.subTileEdgeY) { // true if player is in current sub tile
+            return true;
+        } else { // execute when player isn't in the current sub tile
+            // Assign new sub tile origin coordinates
+            currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+            currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+            this.setSubtileEgdeValues(); // update edge values
+            // check whether players coordinates are in current map
+            if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
+                System.out.println(TAG + "player is not inside a subtile of "
+                        + sangraamaMap.getHost());
+                return false;
+            }
+            return true;
+        }
+    }
+
     /**
      * Request for client's Area of Interest around player. When player wants to fulfill it's Area
      * of Interest, it will ask for the updates of that area. This method checked in following
@@ -184,18 +207,20 @@ public abstract class Player extends AbsPlayer {
      *            y coordination of interest location
      */
     public void reqInterestIn(float x, float y) {
+        this.midX = x;
+        this.midY = y;
         if (!isInsideServerSubTile(x, y)) {
             PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }
 
-    public void sendUpdate(List<PlayerDelta> deltaList) {
-        if (super.conPlayer != null) {
-            conPlayer.sendUpdate(deltaList);
+    public void sendUpdate(List<SendProtocol> deltaList) {
+        if (super.con != null) {
+            con.sendUpdate(deltaList);
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send updates,coz con :" + super.conPlayer
+            System.out.println(TAG + "Unable to send updates,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -208,15 +233,18 @@ public abstract class Player extends AbsPlayer {
      * @param transferReq
      *            Object of Client transferring protocol
      */
-    public void sendNewConnection(ClientTransferReq transferReq) {
-        if (super.conPlayer != null) {
-            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+    public void sendPassConnectionInfo(SendProtocol transferReq) {
+        if (super.con != null) {
+            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
             transferReqList.add(transferReq);
-            conPlayer.sendNewConnection(transferReqList);
+            con.sendNewConnection(transferReqList);
+            /* Changed player type into dummy player and remove from the world */
+            this.gameEngine.addToRemovePlayerQueue(this);
+            con.setDummyPlayer(new DummyPlayer(userID, con));
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conPlayer
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -229,48 +257,37 @@ public abstract class Player extends AbsPlayer {
      * @param transferReq
      *            Object of Client transferring protocol
      */
-    public void sendConnectionInfo(ClientTransferReq transferReq) {
-        if (super.conPlayer != null) {
-            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+    public void sendUpdateConnectionInfo(SendProtocol transferReq) {
+        if (super.con != null) {
+            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
             transferReqList.add(transferReq);
-            conPlayer.sendNewConnection(transferReqList);
+            con.sendNewConnection(transferReqList);
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conPlayer
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
         }
     }
 
-    /**
-     * Send details about the size of the tile on current server
-     * 
-     * @param tiles
-     *            ArrayList of sub-tile details
-     */
-    public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
-        super.conPlayer.sendTileSizeInfo(new TileInfo(this.userID, tiles));
+    public void sendSyncData(List<SendProtocol> syncData) {
+        if (super.con != null) {
+            con.sendUpdate(syncData);
+        } else if (super.isPlayer == 1) {
+            this.gameEngine.addToRemovePlayerQueue(this);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send syncdata,coz con :" + super.con
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
+        }
     }
 
-    /**
-     * Send details about the size of the tile on current server. Sub-tiles sizes may access during
-     * TileInfo Object creation
-     * 
-     */
-    public void sendTileSizeInfo() {
-        super.conPlayer.sendTileSizeInfo(new TileInfo(this.userID));
-    }
-
-    public void setShoot(float s) {
-        this.shoot = s;
-        shoot();
-    }
-
-    public void shoot() {
+    public void shoot(float s) {
         float r = 50;
-        if (this.shoot == 1) {
+        if (s == 1) {
             float x = this.body.getPosition().x;
             float y = this.body.getPosition().y;
             if (0 <= this.angle && this.angle <= 90) {
@@ -302,8 +319,9 @@ public abstract class Player extends AbsPlayer {
                 y = y - rY;
             }
             long id = (long) (generator.nextInt(10000));
-            Bullet bullet = new Bullet(id, this.userID, x, y);
-            this.newBulletList.add(bullet);
+            Bullet bullet = new Bullet(id, this.userID, x, y, this.body.getPosition().x,
+                    this.body.getPosition().y, this.getScreenWidth(), this.getScreenHeight());
+            this.gameEngine.addToBulletQueue(bullet);
             System.out.println(TAG + ": Added a new bullet");
         }
     }
@@ -312,6 +330,49 @@ public abstract class Player extends AbsPlayer {
 
     public abstract FixtureDef getFixtureDef();
 
+    /**
+     * Getters and Setters
+     */
+
+    public void setVirtualPoint(float x_vp, float y_vp) {
+        /*
+         * Validate data before set virtual point. Idea: Virtual point can't go beyond edges of Full
+         * map (the map which divide into sub tiles) with having half of the size of AOI. Then
+         * possible virtual point setting will validate by server side. #gihan
+         */
+        this.x_virtual = x_vp;
+        this.y_virtual = y_vp;
+
+        if (isInsideTotalMap(x_vp, y_vp)) { // If not in permitted area check by server
+            if (x_vp < totOrgX) {
+                this.x_virtual = totOrgX;
+            }
+            if (y_vp < totOrgY) {
+                this.y_virtual = totOrgY;
+            }
+            if (totEdgeX < x_vp) {
+                this.x_virtual = totEdgeX;
+            }
+            if (totEdgeY < y_vp) {
+                this.y_virtual = totEdgeY;
+            }
+        }
+
+        List<SendProtocol> data = new ArrayList<SendProtocol>();
+        data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth, screenHeight));
+        System.out.println(TAG + "Virtual point x" + x_virtual + " y" + y_virtual);
+        this.sendSyncData(data);
+    }
+
+    private void setSubtileEgdeValues() {
+        this.subTileEdgeX = currentSubTileOriginX + sangraamaMap.getSubTileWidth();
+        this.subTileEdgeY = currentSubTileOriginY + sangraamaMap.getSubTileHeight();
+    }
+
+    /**
+     * 
+     * @param body
+     */
     public void setBody(Body body) {
         this.body = body;
     }
@@ -344,22 +405,6 @@ public abstract class Player extends AbsPlayer {
         System.out.println(TAG + " set angular velocity : " + da + " > " + this.angularVelocity);
     }
 
-    public List<Bullet> getNewBulletList() {
-        return newBulletList;
-    }
-
-    public List<Bullet> getBulletList() {
-        return bulletList;
-    }
-
-    public List<Bullet> getRemovedBulletList() {
-        return removedBulletList;
-    }
-
-    public void setRemovedBulletList(List<Bullet> removedBulletList) {
-        this.removedBulletList = removedBulletList;
-    }
-
     public float getAngle() {
         return angle;
     }
@@ -369,6 +414,9 @@ public abstract class Player extends AbsPlayer {
             this.health += healthChange;
         } else {
             this.health = 0;
+            this.setScore(-200);
+            super.con.sendPlayerDefeatMsg(this);
+            gameEngine.addToRemovePlayerQueue(this);
         }
     }
 
@@ -393,6 +441,14 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.score = 0;
         }
+    }
+
+    public float getMidX() {
+        return midX;
+    }
+
+    public float getMidY() {
+        return midY;
     }
 
 }
