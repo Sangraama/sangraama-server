@@ -13,12 +13,8 @@ import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.ClientEvent;
-import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.DefeatMsg;
 import org.sangraama.controller.clientprotocol.SendProtocol;
-import org.sangraama.controller.clientprotocol.TileInfo;
-import org.sangraama.controller.clientprotocol.TransferInfo;
-import org.sangraama.util.VerifyMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +74,7 @@ public class WebSocketConnection extends MessageInbound {
 
         if (this.player != null) {
             this.player.removeWebSocketConnection();
+            this.player = null;
         }
 
         System.out.println(TAG + " Close connection");
@@ -116,54 +113,6 @@ public class WebSocketConnection extends MessageInbound {
         // /* Call when a player is not created */
         // this.newPlayerEvent(event);
         // }
-    }
-
-    private void createNewPlayer(ClientEvent event) {
-        String T = " newPlayerEvent ";
-        switch (event.getType()) {
-
-            case 30:// create new player & set the connection
-                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),
-                        event.getW(), event.getH(), 100, 0, this));
-                this.player.setAngle(event.getA());
-                System.out.println(TAG + T + " add new Player " + event.toString());
-                /*
-                 * AOI and Virtual point will add to the player after creation of it NOTE: These
-                 * player details should retrieved via a encrypted message. To create player type:
-                 * login server or current client's primary (when passing the player) will provide
-                 * the encrypted message To create dummy player: in order to create a dummy player,
-                 * client will ask for AOI point. Then current primary server will send a encrypted
-                 * message which is can use to create a dummy player
-                 */
-                break;
-
-            case 32: /*
-                      * pass player into this server (NOTE: 1 & 2 cases follows the same scenario)
-                      * Health can be retrieve via login server (pass health)
-                      */
-                TransferInfo playerInfo;
-                String info = event.getInfo();
-                byte[] signedInfo = event.getSignedInfo();
-                boolean msgVerification = VerifyMsg.INSTANCE.verifyMessage(info, signedInfo);
-                if (msgVerification) {
-                    playerInfo = gson.fromJson(info, TransferInfo.class);
-                    this.player = new Ship(event.getUserID(), playerInfo.getPositionX(),
-                            playerInfo.getPositionY(), 0, 0, playerInfo.getHealth(),
-                            playerInfo.getScore(), this);
-                    System.out
-                            .println(TAG + T + "Adding player from another server to GameEngine.");
-                }
-                break;
-
-            case 31: // Create a dummy player and set AOI of the player
-                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
-                        0, 0, this));
-                System.out.println(TAG + T + " add new dummy player: " + event.getUserID());
-                break;
-
-            default:
-                break;
-        }
     }
 
     private void playerEvents(ClientEvent event) {
@@ -234,44 +183,6 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
                 System.out.println(TAG + T + " add new dummy player: " + event.toString());
                 break;
-            default:
-                break;
-        }
-    }
-
-    /*
-     * Not in use. Just for reference. don't delete.
-     */
-    private void dummyPlayerEvents(ClientEvent event) {
-        String T = " dummyPlayerEvent ";
-        switch (event.getType()) {
-
-            case 101: // create new player and pass the connection
-                this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(), 0, 0, 0, 0,
-                        this));
-                System.out.println(TAG + T + " changed to Player " + event.getUserID());
-                this.player.setV(event.getV_x(), event.getV_y());
-                this.player.setAngle(event.getA());
-                this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
-                // this.player.shoot(clientEvent.getS());
-                System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
-                        + event.getV_y() + " when creating player");
-                // Unset dummy player
-                this.player = null;
-                break;
-
-            case 102: // Only allowed to requesting for interesting area form player
-                break;
-
-            case 103: // set AOI of the player
-                this.player.setAOI(event.getW(), event.getH());
-                System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
-                break;
-
-            case 105: // Set Virtual point as the center of AOI in order to get updates
-                this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
-                break;
-
             default:
                 break;
         }

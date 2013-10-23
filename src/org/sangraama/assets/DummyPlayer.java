@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
-import org.sangraama.controller.clientprotocol.AbsDelta;
-import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
@@ -20,17 +18,9 @@ public class DummyPlayer extends AbsPlayer {
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "DummyPlayer : ";
 
-    // Area of Interest
-    private float halfWidth = 10f;
-    private float halfHieght = 1000f;
-
     // bullets
     private List<Bullet> newBulletList;
     private List<Bullet> bulletList;
-
-    // player current sub-tile information
-    float currentSubTileOriginX;
-    float currentSubTileOriginY;
 
     public boolean isUpdate() {
         return this.isUpdate;
@@ -49,12 +39,19 @@ public class DummyPlayer extends AbsPlayer {
 
     /**
      * Create a dummy player in order to get updates to fulfill the player's AOI in client side
-     * @param userID userID of the player in server side
-     * @param x player's current location x coordinates
-     * @param y player's current location y coordinates
-     * @param w width of player's AOI
-     * @param h height of player's AOI
-     * @param con web socket Connection
+     * 
+     * @param userID
+     *            userID of the player in server side
+     * @param x
+     *            player's current location x coordinates
+     * @param y
+     *            player's current location y coordinates
+     * @param w
+     *            width of player's AOI
+     * @param h
+     *            height of player's AOI
+     * @param con
+     *            web socket Connection
      */
     public DummyPlayer(long userID, float x, float y, float w, float h, WebSocketConnection con) {
         super(userID, x, y, w, h);
@@ -68,14 +65,7 @@ public class DummyPlayer extends AbsPlayer {
     }
 
     /**
-     * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
-     */
-    public void removeWebSocketConnection() {
-        super.con = null;
-    }
-
-    /**
-     * Check whether player is inside current tile
+     * Check whether given location is inside current tile (map of current server)
      * 
      * @param x
      *            Player's current x coordination
@@ -85,7 +75,8 @@ public class DummyPlayer extends AbsPlayer {
      */
     private boolean isInsideMap(float x, float y) {
         // System.out.println(TAG + "is inside "+x+":"+y);
-        if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()) {
+        if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
+                && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
             return true;
         } else {
             System.out.println(TAG + "Outside of map : " + sangraamaMap.getMapWidth() + ":"
@@ -196,11 +187,29 @@ public class DummyPlayer extends AbsPlayer {
         this.x_virtual = x_vp;
         this.y_virtual = y_vp;
 
-        List<SendProtocol> data = new ArrayList<SendProtocol>();
-        // Send updates which are related/interest to dummy player
-        data.add(new SyncPlayer(userID, x_virtual, y_virtual, screenWidth, screenHeight));
-        System.out.println(TAG + "Virtual point x" + x_vp + " y" + y_vp);
-        this.sendSyncData(data);
+        /**
+         * Check whether AOI is inside the map or not
+         */
+        if (isInsideMap(x_vp - halfWidth, y_vp - halfHieght)
+                || isInsideMap(x_vp + halfWidth, y_vp - halfHieght)
+                || isInsideMap(x_vp - halfWidth, y_vp + halfHieght)
+                || isInsideMap(x_vp + halfWidth, y_vp + halfHieght)) {
+            // one of point is located in server, set virtual point
+
+            List<SendProtocol> data = new ArrayList<SendProtocol>();
+            // Send updates which are related/interest to dummy player
+            data.add(new SyncPlayer(userID, x_virtual, y_virtual, screenWidth, screenHeight));
+            System.out.println(TAG + " set Virtual point x" + x_vp + " y" + y_vp);
+            this.sendSyncData(data);
+        } else { // Otherwise drop the connection for getting updates
+            List<SendProtocol> data = new ArrayList<SendProtocol>();
+            // Send updates which are related/interest to closing a dummy player
+            data.add(new SyncPlayer(userID));
+            System.out.println(TAG + "Virtual point x" + x_vp + " y" + y_vp
+                    + " is out from this map. Closing ... ");
+            this.sendSyncData(data);
+            con.closeConnection();
+        }
     }
 
     /**

@@ -11,7 +11,6 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
-import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
@@ -76,18 +75,15 @@ public abstract class Player extends AbsPlayer {
         this.gameEngine.addToPlayerQueue(this);
     }
 
-    public void removeWebSocketConnection() {
-        super.con = null;
-    }
-
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
 
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
-            System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " angle:"
-                    + this.body.getAngle() + " & " + this.body.getAngularVelocity());
-            System.out.println(TAG + "id : " + this.userID + " x_virtual:" + this.x_virtual
+            System.out.print(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " angle:"
+                    + this.body.getAngle() + " & " + this.body.getAngularVelocity() + " ###");
+            System.out.print(TAG + "id : " + this.userID + " x_virtual:" + this.x_virtual
                     + " y_virtual:" + this.y_virtual);
+            System.out.println();
         }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,

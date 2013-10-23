@@ -45,4 +45,8 @@ public class SyncPlayer extends SendProtocol {
         this.w = w;
         this.h = h;
     }
+    
+    public SyncPlayer(long userID){
+        super(4, userID);
+    }
 }

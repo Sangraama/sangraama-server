@@ -6,8 +6,6 @@ import java.util.Random;
 
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
-import org.sangraama.controller.clientprotocol.AbsDelta;
-import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.TileInfo;
@@ -44,16 +42,16 @@ public abstract class AbsPlayer {
      * virtual sliding window (instead having a center view). #gihan
      */
     float x_virtual, y_virtual;
-    
+
     /*
      * To check whether virtual point is setting inside the total map
      */
-    float totOrgX , totOrgY, totEdgeX, totEdgeY; // Total map origin x,y and total map edge x,y
+    float totOrgX, totOrgY, totEdgeX, totEdgeY; // Total map origin x,y and total map edge x,y
 
     // Area of Interest
     float screenWidth = 200.0f, screenHeight = 200.0f;
-    float halfWidth = screenWidth / 2;
-    float halfHieght = screenHeight / 2;
+    float halfWidth = screenWidth / 2; // half width of AOI
+    float halfHieght = screenHeight / 2; // half height of AOI
 
     // player current sub-tile information
     float currentSubTileOriginX;
@@ -107,32 +105,14 @@ public abstract class AbsPlayer {
     /**
      * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
      */
-    public abstract void removeWebSocketConnection();
+    public void removeWebSocketConnection(){
+        this.con = null;
+    }
 
     public abstract void sendUpdate(List<SendProtocol> deltaList);
 
-    /**
-     * Check whether player is inside current tile
-     * 
-     * @param x
-     *            Player's current x coordination
-     * @param y
-     *            Player's current y coordination
-     * @return if inside tile return true, else false
-     */
-    private boolean isInsideMap(float x, float y) {
-        // System.out.println(TAG + "is inside "+x+":"+y);
-        if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()) {
-            return true;
-        } else {
-            System.out.println(TAG + "Outside of map : " + sangraamaMap.getMapWidth() + ":"
-                    + sangraamaMap.getMapHeight());
-            return false;
-        }
-    }
-    
-    protected boolean isInsideTotalMap(float x, float y){
-        if(totOrgX <= x && x <= totEdgeX && totOrgY <= y && y <= totEdgeY){
+    protected boolean isInsideTotalMap(float x, float y) {
+        if (totOrgX <= x && x <= totEdgeX && totOrgY <= y && y <= totEdgeY) {
             return true;
         }
         return false;
@@ -213,19 +193,19 @@ public abstract class AbsPlayer {
     public void sendTileSizeInfo() {
         this.con.sendTileSizeInfo(new TileInfo(this.userID));
     }
-    
+
     /**
-     * Abstract setter methods. Implementation will depends on whether it is a
-     * instance of player or dummy player
+     * Abstract setter methods. Implementation will depends on whether it is a instance of player or
+     * dummy player
      */
     public abstract void setV(float x, float y);
-    
+
     public abstract void setAngle(float angle);
-    
+
     public abstract void setAngularVelocity(float da);
-    
+
     public abstract void shoot(float s);
-    
+
     /**
      * Getter and Setters
      */
@@ -279,12 +259,12 @@ public abstract class AbsPlayer {
     public float getScreenHeight() {
         return screenHeight;
     }
-    
-    public float getScore(){
+
+    public float getScore() {
         return score;
     }
-    
-    public float getHealth(){
+
+    public float getHealth() {
         return health;
     }
 
