@@ -26,7 +26,7 @@ public final class Constants {
     public static final float FROM_RADIANS = (float) (180 / Math.PI);
     
     // Scaling JBox2D units and client side pixels
-    public static final int scale = 32;
+    public static final float scale = 32.0f;
     /* Ex: 32 means 1 unit in JBox2D is showing as 32 pixels in client side */
     
 }

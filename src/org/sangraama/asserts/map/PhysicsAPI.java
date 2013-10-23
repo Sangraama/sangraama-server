@@ -12,6 +12,7 @@ import org.sangraama.asserts.map.physics.PolylineObjectPhysics;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.SangraamaMap;
+import org.sangraama.common.Constants;
 
 public class PhysicsAPI {
 	private BodyDef bodyDef;
@@ -33,13 +34,19 @@ public class PhysicsAPI {
 		}
 		if(staticObject.getType().equals("polyline")){
 		PolylineObjectPhysics polyline=new PolylineObjectPhysics();
+		int X=(int) scale(staticObject.getX());
+		int Y=(int) scale( staticObject.getY());
 		polyline.createBodyDef(staticObject.getX(), staticObject.getY());
 		this.bodyDef=polyline.getBodyDef();
 		Vec2[] vertices=new Vec2[staticObject.getCoordinates().size()];
-		
+		//System.out.println(16.0/32.0);
 		for(int i=0;i<vertices.length;i++){
 		
 			vertices[i]=new Vec2();
+			float verticeX=scale(staticObject.getCoordinates().get(i).getX());
+			System.out.println(staticObject.getCoordinates().get(i).getX()+":"+verticeX);
+			float verticeY=scale(staticObject.getCoordinates().get(i).getY());
+			System.out.println(staticObject.getCoordinates().get(i).getY()+":"+verticeY);
 			vertices[i].set(staticObject.getCoordinates().get(i).getX(), staticObject.getCoordinates().get(i).getY());
 			
 		}
@@ -70,6 +77,14 @@ public class PhysicsAPI {
     				}	
     		
     		}
+	}
+	
+	public float scale(int unitToBeScaled){
+		float jbox2dUnit;
+		float temp=unitToBeScaled;
+		//System.out.println(temp+"dsfd");
+		jbox2dUnit=unitToBeScaled/Constants.scale;
+		return jbox2dUnit;
 	}
 	
 	public void applyPhysics(Player player,World world){
