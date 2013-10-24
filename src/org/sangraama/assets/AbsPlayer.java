@@ -4,19 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
-import org.sangraama.common.Constants;
-import org.sangraama.controller.DummyWebScocketConnection;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
-import org.sangraama.controller.clientprotocol.ClientTransferReq;
-import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
@@ -35,8 +26,7 @@ public abstract class AbsPlayer {
     GameEngine gameEngine;
     SangraamaMap sangraamaMap;
     // WebSocket Connection
-    WebSocketConnection conPlayer;
-    WebSocketConnection conDummy;
+    WebSocketConnection con;
 
     volatile boolean isUpdate = false;
     short isPlayer = 2; // if player type is 1: primary connection player 2: dummy player (to get
@@ -44,19 +34,24 @@ public abstract class AbsPlayer {
 
     // Player Dynamic Parameters
     float x, y; // Player current location
+    float health;
+    float score;
     /*
      * Virtual point: Create a virtual point in server side. Then server will send updates to client
      * side around that point (not around player). This concept is using to create concept of
-     * virtual sliding window (instead having a center view).
-     * 
-     * @Author: gihan karunarathne
+     * virtual sliding window (instead having a center view). #gihan
      */
     float x_virtual, y_virtual;
 
+    /*
+     * To check whether virtual point is setting inside the total map
+     */
+    float totOrgX, totOrgY, totEdgeX, totEdgeY; // Total map origin x,y and total map edge x,y
+
     // Area of Interest
     float screenWidth = 200.0f, screenHeight = 200.0f;
-    float halfWidth = screenWidth / 2;
-    float halfHieght = screenHeight / 2;
+    float halfWidth = screenWidth / 2; // half width of AOI
+    float halfHieght = screenHeight / 2; // half height of AOI
 
     // player current sub-tile information
     float currentSubTileOriginX;
@@ -110,28 +105,17 @@ public abstract class AbsPlayer {
     /**
      * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
      */
-    public abstract void removeWebSocketConnection();
+    public void removeWebSocketConnection(){
+        this.con = null;
+    }
 
-    public abstract void sendUpdate(List<PlayerDelta> deltaList);
+    public abstract void sendUpdate(List<SendProtocol> deltaList);
 
-    /**
-     * Check whether player is inside current tile
-     * 
-     * @param x
-     *            Player's current x coordination
-     * @param y
-     *            Player's current y coordination
-     * @return if inside tile return true, else false
-     */
-    private boolean isInsideMap(float x, float y) {
-        // System.out.println(TAG + "is inside "+x+":"+y);
-        if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()) {
+    protected boolean isInsideTotalMap(float x, float y) {
+        if (totOrgX <= x && x <= totEdgeX && totOrgY <= y && y <= totEdgeY) {
             return true;
-        } else {
-            System.out.println(TAG + "Outside of map : " + sangraamaMap.getMapWidth() + ":"
-                    + sangraamaMap.getMapHeight());
-            return false;
         }
+        return false;
     }
 
     /**
@@ -179,9 +163,17 @@ public abstract class AbsPlayer {
         }
     }
 
-    public abstract void sendNewConnection(ClientTransferReq transferReq);
+    public abstract void sendPassConnectionInfo(SendProtocol transferReq);
 
-    public abstract void sendConnectionInfo(ClientTransferReq transferReq);
+    public abstract void sendUpdateConnectionInfo(SendProtocol transferReq);
+
+    /**
+     * Player and Dummy Player should have different implementation of sync data Ex: player x ,y
+     * coordinates which dummy donesn't have
+     * 
+     * @param syncData
+     */
+    public abstract void sendSyncData(List<SendProtocol> syncData);
 
     /**
      * Send details about the size of the tile on current server
@@ -190,7 +182,7 @@ public abstract class AbsPlayer {
      *            ArrayList of sub-tile details
      */
     public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
-        this.conPlayer.sendTileSizeInfo(new TileInfo(this.userID, tiles));
+        this.con.sendTileSizeInfo(new TileInfo(this.userID, tiles));
     }
 
     /**
@@ -199,8 +191,24 @@ public abstract class AbsPlayer {
      * 
      */
     public void sendTileSizeInfo() {
-        this.conPlayer.sendTileSizeInfo(new TileInfo(this.userID));
+        this.con.sendTileSizeInfo(new TileInfo(this.userID));
     }
+
+    /**
+     * Abstract setter methods. Implementation will depends on whether it is a instance of player or
+     * dummy player
+     */
+    public abstract void setV(float x, float y);
+
+    public abstract void setAngle(float angle);
+
+    public abstract void setAngularVelocity(float da);
+
+    public abstract void shoot(float s);
+
+    /**
+     * Getter and Setters
+     */
 
     public float getX() {
         return x;
@@ -209,17 +217,14 @@ public abstract class AbsPlayer {
     public float getY() {
         return this.y;
     }
-    
-    public void setVirtualPoint(float x_v, float y_v){
-        this.x_virtual = x_v;
-        this.y_virtual = y_v;
-    }
-    
-    public float getXVirtualPoint(){
+
+    public abstract void setVirtualPoint(float x_v, float y_v);
+
+    public float getXVirtualPoint() {
         return this.x_virtual;
     }
-    
-    public float getYVirtualPoint(){
+
+    public float getYVirtualPoint() {
         return this.y_virtual;
     }
 
@@ -232,6 +237,11 @@ public abstract class AbsPlayer {
         this.screenHeight = height;
         this.halfWidth = width / 2;
         this.halfHieght = height / 2;
+        // Set point which virtual point can holds
+        this.totOrgX = this.halfWidth;
+        this.totOrgY = this.halfHieght;
+        this.totEdgeX = SangraamaMap.INSTANCE.getMaxWidth() - this.halfWidth;
+        this.totEdgeY = SangraamaMap.INSTANCE.getMaxHeight() - this.halfHieght;
     }
 
     public float getAOIWidth() {
@@ -248,6 +258,14 @@ public abstract class AbsPlayer {
 
     public float getScreenHeight() {
         return screenHeight;
+    }
+
+    public float getScore() {
+        return score;
+    }
+
+    public float getHealth() {
+        return health;
     }
 
 }

@@ -3,13 +3,10 @@ package org.sangraama.assets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sangraama.controller.DummyWebScocketConnection;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
-import org.sangraama.controller.clientprotocol.ClientTransferReq;
-import org.sangraama.controller.clientprotocol.PlayerDelta;
-import org.sangraama.controller.clientprotocol.SangraamaTile;
-import org.sangraama.controller.clientprotocol.TileInfo;
+import org.sangraama.controller.clientprotocol.SendProtocol;
+import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,17 +18,9 @@ public class DummyPlayer extends AbsPlayer {
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "DummyPlayer : ";
 
-    // Area of Interest
-    private float halfWidth = 10f;
-    private float halfHieght = 1000f;
-
     // bullets
     private List<Bullet> newBulletList;
     private List<Bullet> bulletList;
-
-    // player current sub-tile information
-    float currentSubTileOriginX;
-    float currentSubTileOriginY;
 
     public boolean isUpdate() {
         return this.isUpdate;
@@ -40,30 +29,43 @@ public class DummyPlayer extends AbsPlayer {
     public DummyPlayer(long userID, WebSocketConnection con) {
         super(userID);
         super.isPlayer = 2;
-        super.conDummy = con;
+        super.con = con;
         this.gameEngine.addToDummyQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
+        // Send tile info
+        sendTileSizeInfo();
     }
 
+    /**
+     * Create a dummy player in order to get updates to fulfill the player's AOI in client side
+     * 
+     * @param userID
+     *            userID of the player in server side
+     * @param x
+     *            player's current location x coordinates
+     * @param y
+     *            player's current location y coordinates
+     * @param w
+     *            width of player's AOI
+     * @param h
+     *            height of player's AOI
+     * @param con
+     *            web socket Connection
+     */
     public DummyPlayer(long userID, float x, float y, float w, float h, WebSocketConnection con) {
         super(userID, x, y, w, h);
         super.isPlayer = 2;
-        super.conDummy = con;
+        super.con = con;
         this.gameEngine.addToDummyQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
+        // Send tile info
+        sendTileSizeInfo();
     }
 
     /**
-     * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
-     */
-    public void removeWebSocketConnection() {
-        super.conDummy = null;
-    }
-
-    /**
-     * Check whether player is inside current tile
+     * Check whether given location is inside current tile (map of current server)
      * 
      * @param x
      *            Player's current x coordination
@@ -73,7 +75,8 @@ public class DummyPlayer extends AbsPlayer {
      */
     private boolean isInsideMap(float x, float y) {
         // System.out.println(TAG + "is inside "+x+":"+y);
-        if (0 <= x && x <= sangraamaMap.getMapWidth() && 0 <= y && y <= sangraamaMap.getMapHeight()) {
+        if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
+                && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
             return true;
         } else {
             System.out.println(TAG + "Outside of map : " + sangraamaMap.getMapWidth() + ":"
@@ -127,69 +130,111 @@ public class DummyPlayer extends AbsPlayer {
         }
     }
 
-    public void sendUpdate(List<PlayerDelta> deltaList) {
-        if (super.conDummy != null) {
-            conPlayer.sendUpdate(deltaList);
+    public void sendUpdate(List<SendProtocol> deltaList) {
+        if (super.con != null) {
+            con.sendUpdate(deltaList);
         } else if (super.isPlayer == 2) {
             this.gameEngine.addToRemoveDummyQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send updates,coz con :" + super.conDummy
+            System.out.println(TAG + "Unable to send updates,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
         }
     }
 
-    public void sendNewConnection(ClientTransferReq transferReq) {
-        if (super.conDummy != null) {
-            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
-            transferReqList.add(transferReq);
-            conPlayer.sendNewConnection(transferReqList);
-        } else if (super.isPlayer == 2) {
-            this.gameEngine.addToRemoveDummyQueue(this);
-            super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conDummy
-                    + ". Add to remove queue.");
-        } else {
-            System.out.println(TAG + " waiting for remove");
-        }
+    public void sendPassConnectionInfo(SendProtocol transferReq) {
+        /* dummy can't pass the player : no implementation */
     }
 
     // Need refactoring
-    public void sendConnectionInfo(ClientTransferReq transferReq) {
-        if (super.conDummy != null) {
-            ArrayList<ClientTransferReq> transferReqList = new ArrayList<ClientTransferReq>();
+    public void sendUpdateConnectionInfo(SendProtocol transferReq) {
+        if (super.con != null) {
+            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
             transferReqList.add(transferReq);
-            conPlayer.sendNewConnection(transferReqList);
+            con.sendNewConnection(transferReqList);
         } else if (super.isPlayer == 2) {
             this.gameEngine.addToRemoveDummyQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.conDummy
+            System.out.println(TAG + "Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
         }
     }
 
-    /**
-     * Send details about the size of the tile on current server
-     * 
-     * @param tiles
-     *            ArrayList of sub-tile details
-     */
-    public void sendTileSizeInfo(ArrayList<SangraamaTile> tiles) {
-        super.conDummy.sendTileSizeInfo(new TileInfo(this.userID, tiles));
+    public void sendSyncData(List<SendProtocol> syncData) {
+        if (super.con != null) {
+            con.sendUpdate(syncData);
+        } else if (super.isPlayer == 2) {
+            this.gameEngine.addToRemoveDummyQueue(this);
+            super.isPlayer = 0;
+            System.out.println(TAG + "Unable to send syncdata,coz con :" + super.con
+                    + ". Add to remove queue.");
+        } else {
+            System.out.println(TAG + " waiting for remove");
+        }
+    }
+
+    /* Getter Setter methis */
+
+    public void setVirtualPoint(float x_vp, float y_vp) {
+        /*
+         * Validate data before set virtual point. Idea: Virtual point can't go beyond edges of Full
+         * map (the map which divide into sub tiles) with having half of the size of AOI. Then
+         * possible virtual point setting will validate by server side. #gihan
+         */
+        this.x_virtual = x_vp;
+        this.y_virtual = y_vp;
+
+        /**
+         * Check whether AOI is inside the map or not
+         */
+        if (isInsideMap(x_vp - halfWidth, y_vp - halfHieght)
+                || isInsideMap(x_vp + halfWidth, y_vp - halfHieght)
+                || isInsideMap(x_vp - halfWidth, y_vp + halfHieght)
+                || isInsideMap(x_vp + halfWidth, y_vp + halfHieght)) {
+            // one of point is located in server, set virtual point
+
+            List<SendProtocol> data = new ArrayList<SendProtocol>();
+            // Send updates which are related/interest to dummy player
+            data.add(new SyncPlayer(userID, x_virtual, y_virtual, screenWidth, screenHeight));
+            System.out.println(TAG + " set Virtual point x" + x_vp + " y" + y_vp);
+            this.sendSyncData(data);
+        } else { // Otherwise drop the connection for getting updates
+            List<SendProtocol> data = new ArrayList<SendProtocol>();
+            // Send updates which are related/interest to closing a dummy player
+            data.add(new SyncPlayer(userID));
+            System.out.println(TAG + "Virtual point x" + x_vp + " y" + y_vp
+                    + " is out from this map. Closing ... ");
+            this.sendSyncData(data);
+            con.closeConnection();
+        }
     }
 
     /**
-     * Send details about the size of the tile on current server. Sub-tiles sizes may access during
-     * TileInfo Object creation
-     * 
+     * Setter methods which are not relevant to dummy player (but inherits)
      */
-    public void sendTileSizeInfo() {
-        super.conDummy.sendTileSizeInfo(new TileInfo(this.userID));
+
+    public void setV(float x, float y) {
+        /* Don't implement. Not relevant to dummy player */
     }
 
+    public void setAngle(float angle) {
+        /* Don't implement. Not relevant to dummy player */
+    }
+
+    public void setAngularVelocity(float da) {
+        /* Don't implement. Not relevant to dummy player */
+    }
+
+    public void shoot(float s) {
+        /* Don't implement. Not relevant to dummy player */
+    }
+
+    /*
+     * Getter and setter methods
+     */
     public void setX(float x) {
         if (x > 0) {
             this.x = x;

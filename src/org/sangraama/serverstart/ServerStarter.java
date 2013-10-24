@@ -9,10 +9,11 @@ import org.sangraama.gameLogic.CollisionManager;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.thrift.server.ThriftServer;
+import javax.servlet.ServletContextListener;
 
 import com.hazelcast.core.Hazelcast;
 
-public class ServerStarter implements javax.servlet.ServletContextListener {
+public class ServerStarter implements ServletContextListener {
     private ThriftServer thriftServer = null;
     private Thread gameEngine = null;
     private Thread updateEngine = null;
@@ -42,23 +43,24 @@ public class ServerStarter implements javax.servlet.ServletContextListener {
                 Float.parseFloat(prop.getProperty("mapwidth")),
                 Float.parseFloat(prop.getProperty("mapheight")), prop.getProperty("host") + ":"
                         + prop.getProperty("port") + "/" + prop.getProperty("dir")
-                        + "/sangraama/player");
-        System.out.println(prop.getProperty("host") + ":"
-                + prop.getProperty("port") + "/" + prop.getProperty("dir")
-                + "/sangraama/player");
+                        + "/sangraama/player", Float.parseFloat(prop.getProperty("maxlength")),
+                Float.parseFloat(prop.getProperty("maxheight")));
+
+        System.out.println(prop.getProperty("host") + ":" + prop.getProperty("port") + "/"
+                + prop.getProperty("dir") + "/sangraama/player");
         SangraamaMap.INSTANCE.setSubTileProperties(
                 Float.parseFloat(prop.getProperty("subtilewidth")),
                 Float.parseFloat(prop.getProperty("subtileheight")));
         this.updateEngine = new Thread(UpdateEngine.INSTANCE);
         this.updateEngine.start();
-      //  System.out.println("AAAAAAAAAAA");
+        // System.out.println("AAAAAAAAAAA");
         this.gameEngine = new Thread(GameEngine.INSTANCE);
         this.gameEngine.start();
         this.collisionManager = new Thread(CollisionManager.INSTANCE);
         this.collisionManager.start();
         TileCoordinator.INSTANCE.generateSubtiles();
         TileCoordinator.INSTANCE.printEntriesInSubtileMap();
-       
+
         // thriftServer = new ThriftServer(Integer.parseInt(prop.getProperty("thriftserverport")));
         // thriftServerThread = new Thread(thriftServer);
         // thriftServerThread.start();

@@ -9,8 +9,6 @@ import java.util.List;
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.assets.DummyPlayer;
-import org.sangraama.assets.Player;
-import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
@@ -32,7 +30,7 @@ public class DummyWebScocketConnection extends MessageInbound {
     private DummyPlayer dummyPlayer;
     private Gson gson;
 
-    public DummyWebScocketConnection(){
+    public DummyWebScocketConnection() {
         this.gson = new Gson();
     }
 
@@ -74,14 +72,11 @@ public class DummyWebScocketConnection extends MessageInbound {
         ClientEvent clientEvent = gson.fromJson(user, ClientEvent.class);
 
         if (this.dummyPlayer != null) {
-            switch (Integer.parseInt(clientEvent.getType())) {
+            switch (clientEvent.getType()) {
                 case 1: // setting user event request
                     /* not applicable for dummy */
                     break;
-                case 2: // requesting for interesting area
-                    this.dummyPlayer.reqInterestIn(clientEvent.getX(), clientEvent.getY());
-                    System.out.println(TAG + "player interesting in x:" + clientEvent.getX()
-                            + " & y:" + clientEvent.getY());
+                case 2: // Only allowed to requesting for interesting area form player
                     break;
                 case 3: // Request to move the dummy player
                     this.dummyPlayer.setX(clientEvent.getX());
@@ -93,20 +88,21 @@ public class DummyWebScocketConnection extends MessageInbound {
             }
 
         } else {
-            if (clientEvent.getType().equals("1")) { // create new player & set the
+            if (clientEvent.getType() == 1) { // create new player & set the
                 // connection
-//                this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), clientEvent.getX(),
-//                        clientEvent.getY(), this);
+                // this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), clientEvent.getX(),
+                // clientEvent.getY(), this);
                 System.out.println(TAG + " Add new dummy Player " + clientEvent.getUserID());
-            }else if (clientEvent.getType().equals("2")) {
+            } else if (clientEvent.getType() == 2) {
                 TransferInfo playerInfo;
                 String info = clientEvent.getInfo();
                 byte[] signedInfo = clientEvent.getSignedInfo();
                 boolean msgVerification = VerifyMsg.INSTANCE.verifyMessage(info, signedInfo);
-                if(msgVerification){
+                if (msgVerification) {
                     playerInfo = gson.fromJson(info, TransferInfo.class);
-//                    this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), playerInfo.getPositionX(),
-//                            playerInfo.getPositionY(), this);
+                    // this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(),
+                    // playerInfo.getPositionX(),
+                    // playerInfo.getPositionY(), this);
                     System.out.println(TAG + "Adding player from another server to GameEngine.");
                 }
             }

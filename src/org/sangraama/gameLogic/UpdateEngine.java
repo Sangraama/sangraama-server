@@ -9,11 +9,13 @@ import java.util.Map;
 
 import javax.swing.Timer;
 
+import org.sangraama.assets.Bullet;
 import org.sangraama.assets.Player;
-import org.sangraama.assets.Ship;
 import org.sangraama.common.Constants;
+import org.sangraama.controller.clientprotocol.BulletDelta;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.sangraama.controller.clientprotocol.SendProtocol;
 
 public enum UpdateEngine implements Runnable {
     INSTANCE;
@@ -24,14 +26,16 @@ public enum UpdateEngine implements Runnable {
     private volatile boolean isUpdate = false;
 
     private List<Player> playerList; // don't modify;read only
+    private List<Bullet> bulletList;
     /* Should be atomic operation. */
     private volatile List<Player> waitingPlayerList;
     private Map<Long, PlayerDelta> playerDelta;
 
     UpdateEngine() {
         System.out.println(TAG + "Init Update Engine ...");
-        this.playerList = new ArrayList<Player>();
-        this.waitingPlayerList = new ArrayList<Player>();
+        this.playerList = new ArrayList<>();
+        this.bulletList = new ArrayList<>();
+        this.waitingPlayerList = new ArrayList<>();
         // this.locations = new float[100][3];
     }
 
@@ -47,6 +51,10 @@ public enum UpdateEngine implements Runnable {
          */
         this.waitingPlayerList = playerList;
         this.isUpdate = true;
+    }
+
+    public void setBulletList(List<Bullet> bulletList) {
+        this.bulletList = bulletList;
     }
 
     @Override
@@ -100,22 +108,28 @@ public enum UpdateEngine implements Runnable {
      * @param player
      * @return ArrayList<PlayerDelta>
      */
-    private ArrayList<PlayerDelta> getAreaOfInterest(Player p) {
-        ArrayList<PlayerDelta> delta = new ArrayList<PlayerDelta>();
-        // Add players own details
-         delta.add(this.playerDelta.get(p.getUserID()));
+    private List<SendProtocol> getAreaOfInterest(Player p) {
+        List<SendProtocol> delta = new ArrayList<>();
 
-        // going through all players and check their locations
-        // inefficient when it becomes 1000 of players
-        // Need a efficient algo and a data structure : #gihan
-        
-        // iterate through other players as well
+        delta.add(p.getPlayerDelta());
         for (Player player : playerList) {
             if (p.getXVirtualPoint() - p.getAOIWidth() <= player.getX()
                     && player.getX() <= p.getXVirtualPoint() + p.getAOIWidth()
                     && p.getYVirtualPoint() - p.getAOIHeight() <= player.getY()
                     && player.getY() <= p.getYVirtualPoint() + p.getAOIHeight()) {
-                delta.add(this.playerDelta.get(player.getUserID()));
+                if (player.getUserID() != p.getUserID()) {
+                    delta.add(this.playerDelta.get(player.getUserID()));
+                }
+            }
+        }
+        for (Bullet bullet : bulletList) {
+
+            BulletDelta bulletDelta = bullet.getBulletDelta();
+            if (p.getXVirtualPoint() - p.getAOIWidth() <= bulletDelta.getDx()
+                    && bulletDelta.getDx() <= p.getXVirtualPoint() + p.getAOIWidth()
+                    && p.getYVirtualPoint() - p.getAOIHeight() <= bulletDelta.getDy()
+                    && bulletDelta.getDy() <= p.getYVirtualPoint() + p.getAOIHeight()) {
+                delta.add(bullet.getBulletDelta());
             }
         }
 

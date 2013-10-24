@@ -3,12 +3,12 @@ package org.sangraama.controller.clientprotocol;
 import java.util.Arrays;
 
 public class ClientEvent {
-    private String type;
+    private int type;
     private long userID;
     private float x; // Player current x location on the map
     private float y; // Player current y location on the map
-    private float x_v; // Virtual point's x coordination
-    private float y_v; // Virtual point's y coordination
+    private float x_vp; // Virtual point's x coordination
+    private float y_vp; // Virtual point's y coordination
     private float w; // Area of Interest width
     private float h; // Area of Interest height
     private float v_x; // Player's velocity on x direction
@@ -19,7 +19,7 @@ public class ClientEvent {
     private String info;
     private byte[] signedInfo;
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
@@ -35,12 +35,12 @@ public class ClientEvent {
         return y;
     }
     
-    public float getX_v(){
-        return x_v;
+    public float getX_vp(){
+        return x_vp;
     }
     
-    public float getY_v(){
-        return y_v;
+    public float getY_vp(){
+        return y_vp;
     }
 
     public float getV_x() {

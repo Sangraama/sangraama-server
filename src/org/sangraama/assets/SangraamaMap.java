@@ -3,25 +3,36 @@ package org.sangraama.assets;
 public enum SangraamaMap {
     INSTANCE;
 
-    private float originX = 0f;
-    private float originY = 0f;
+    private float originX = 0.0f;
+    private float originY = 0.0f;
+    private float edgeX = 0.0f; // Store value of originX + mapWidth
+    private float edgeY = 0.0f; // Store value of originY + mapHeight
     private float mapWidth;
     private float mapHeight;
     private float subTileWidth;
     private float subTileHeight;
     private String host = "";
+    
+    /* Total map */
+    private float maxWidth , maxHeight;
+    
 
     private SangraamaMap() {
 
     }
 
-    public void setMap(float originX, float originY, float width, float height, String host) {
+    public void setMap(float originX, float originY, float width, float height, String host,float maxWidth,float maxHeight) {
         // Next milestone: map will load via DB
         this.originX = originX;
         this.originY = originY;
         this.mapWidth = width;
         this.mapHeight = height;
         this.host = host;
+        this.maxWidth = maxWidth;
+        this.maxHeight = maxHeight;
+        
+        this.edgeX = originX + width;
+        this.edgeY = originY + height;
     }
 
     public void setSubTileProperties(float width, float height) {
@@ -45,6 +56,22 @@ public enum SangraamaMap {
         return originY;
     }
 
+    /**
+     * Get value of originX + mapWidth
+     * @return float (originX + mapWidth)
+     */
+    public float getEdgeX() {
+        return this.edgeX;
+    }
+
+    /**
+     * Get value of originY + mapWidth
+     * @return float (originY + mapHeight)
+     */
+    public float getEdgeY() {
+        return this.edgeY;
+    }
+
     public float getSubTileWidth() {
         return subTileWidth;
     }
@@ -52,9 +79,17 @@ public enum SangraamaMap {
     public float getSubTileHeight() {
         return subTileHeight;
     }
-    
+
     public String getHost() {
         return host;
+    }
+
+    public float getMaxWidth() {
+        return maxWidth;
+    }
+
+    public float getMaxHeight() {
+        return maxHeight;
     }
 
 }
