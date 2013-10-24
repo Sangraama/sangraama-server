@@ -1,5 +1,6 @@
 package org.sangraama.assets;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,20 +20,14 @@ public class DummyPlayer extends AbsPlayer {
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "DummyPlayer : ";
 
-    // bullets
-    private List<Bullet> newBulletList;
-    private List<Bullet> bulletList;
-
     public boolean isUpdate() {
         return this.isUpdate;
     }
 
     public DummyPlayer(long userID, WebSocketConnection con) {
         super(userID);
-        super.isPlayer = 2;
-        super.con = con;
-        this.newBulletList = new ArrayList<Bullet>();
-        this.bulletList = new ArrayList<Bullet>();
+        this.isPlayer = 2;
+        this.con = con;
         UpdateEngine.INSTANCE.addToDummyQueue(this);
     }
 
@@ -54,10 +49,8 @@ public class DummyPlayer extends AbsPlayer {
      */
     public DummyPlayer(long userID, float x, float y, float w, float h, WebSocketConnection con) {
         super(userID, x, y, w, h);
-        super.isPlayer = 2;
-        super.con = con;
-        this.newBulletList = new ArrayList<Bullet>();
-        this.bulletList = new ArrayList<Bullet>();
+        isPlayer = 2;
+        this.con = con;
         UpdateEngine.INSTANCE.addToDummyQueue(this);
     }
 
@@ -65,7 +58,7 @@ public class DummyPlayer extends AbsPlayer {
      * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
      */
     public void removeWebSocketConnection() {
-        con = null;
+        this.con = null;
     }
 
     /**
@@ -135,12 +128,19 @@ public class DummyPlayer extends AbsPlayer {
     }
 
     public void sendUpdate(List<SendProtocol> deltaList) {
-        if (super.con != null) {
-            this.con.sendUpdate(deltaList);
-        } else if (super.isPlayer == 2) {
+        if (this.con != null) {
+            try {
+                this.con.sendUpdate(deltaList);
+            } catch (IOException e) {
+                UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+                this.isPlayer = 0;
+                e.printStackTrace();
+            }
+
+        } else if (this.isPlayer == 2) {
             UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
-            super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send updates,coz con :" + super.con
+            this.isPlayer = 0;
+            System.out.println(TAG + "Unable to send updates,coz con :" + con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -153,14 +153,14 @@ public class DummyPlayer extends AbsPlayer {
 
     // Need re factoring
     public void sendUpdateConnectionInfo(SendProtocol transferReq) {
-        if (super.con != null) {
+        if (this.con != null) {
             ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
             transferReqList.add(transferReq);
-            con.sendNewConnection(transferReqList);
-        } else if (super.isPlayer == 2) {
+            this.con.sendNewConnection(transferReqList);
+        } else if (isPlayer == 2) {
             UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
-            super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.con
+            this.isPlayer = 0;
+            System.out.println(TAG + "Unable to send new connection,coz con :" + con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -168,12 +168,18 @@ public class DummyPlayer extends AbsPlayer {
     }
 
     public void sendSyncData(List<SendProtocol> syncData) {
-        if (super.con != null) {
-            con.sendUpdate(syncData);
-        } else if (super.isPlayer == 2) {
+        if (this.con != null) {
+            try {
+                this.con.sendUpdate(syncData);
+            } catch (IOException e) {
+                UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+                this.isPlayer = 0;
+                e.printStackTrace();
+            }
+        } else if (this.isPlayer == 2) {
             UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
-            super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send syncdata,coz con :" + super.con
+            this.isPlayer = 0;
+            System.out.println(TAG + "Unable to send syncdata,coz con :" + con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");

@@ -63,7 +63,7 @@ public class WebSocketConnection extends MessageInbound {
         // log.info("Connection closed");
 
         this.player.removeWebSocketConnection();
-        //this.player = null;
+        this.player = null;
 
         System.out.println(TAG + " Close connection");
     }
@@ -186,15 +186,9 @@ public class WebSocketConnection extends MessageInbound {
      * @param playerDeltaList
      *            delta updates of players who are located inside AOI
      */
-    public void sendUpdate(List<SendProtocol> playerDeltaList) {
-        try {
+    public void sendUpdate(List<SendProtocol> playerDeltaList) throws IOException {
             String convertedString = gson.toJson(playerDeltaList);
             getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));
-        } catch (IOException e) {
-            System.out.println(TAG + " Unable to send update ");
-            e.printStackTrace();
-            log.error(TAG, e);
-        }
     }
 
     /**

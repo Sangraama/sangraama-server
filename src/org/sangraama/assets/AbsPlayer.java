@@ -109,6 +109,12 @@ public abstract class AbsPlayer {
 
     public abstract void sendUpdate(List<SendProtocol> deltaList);
 
+    /**
+     * Check whether given location (the virtual point to be set) it inside the total map 
+     * @param x
+     * @param y
+     * @return true if it's inside the map, otherwise false
+     */
     protected boolean isInsideTotalMap(float x, float y) {
         if (totOrgX <= x && x <= totEdgeX && totOrgY <= y && y <= totEdgeY) {
             return true;
