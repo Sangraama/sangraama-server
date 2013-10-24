@@ -29,7 +29,7 @@ public enum UpdateEngine implements Runnable {
 
     private List<Player> playerList; // don't modify;read only
     private List<Bullet> bulletList;
-    private List<AbsPlayer> dummyList;
+    private List<DummyPlayer> dummyList;
     /* Should be atomic operation. */
     private volatile List<Player> updatedPlayerList;
     private Map<Long, PlayerDelta> playerDelta;
@@ -38,7 +38,7 @@ public enum UpdateEngine implements Runnable {
         System.out.println(TAG + "Init Update Engine ...");
         this.playerList = new ArrayList<Player>();
         this.bulletList = new ArrayList<Bullet>();
-        this.dummyList = new ArrayList<AbsPlayer>();
+        this.dummyList = new ArrayList<DummyPlayer>();
         this.updatedPlayerList = new ArrayList<Player>();
     }
 
@@ -70,7 +70,7 @@ public enum UpdateEngine implements Runnable {
                 player.sendUpdate(this.getAreaOfInterest(player));
             }
             // Send updates for Dummy Player
-            for (AbsPlayer dummy : dummyList) {
+            for (DummyPlayer dummy : dummyList) {
                 dummy.sendUpdate(this.getAreaOfInterest(dummy));
             }
         } catch (Exception e) {
@@ -111,14 +111,14 @@ public enum UpdateEngine implements Runnable {
 
         return delta;
     }
-    
+
     /**
      * This method can replace with region query in 4.14 box2D manual
      * 
      * @param player
      * @return ArrayList<PlayerDelta>
      */
-    private List<SendProtocol> getAreaOfInterest(AbsPlayer d) {
+    private List<SendProtocol> getAreaOfInterest(DummyPlayer d) {
         List<SendProtocol> delta = new ArrayList<>();
 
         for (Player player : playerList) {
@@ -162,8 +162,8 @@ public enum UpdateEngine implements Runnable {
     /**
      * Add a player in order to get updates
      * 
-     * @NOTE : {@linkGameEngine} dummies have to add via GameEngine if there are
-     *       multiple Update Engines @author gihan
+     * @NOTE : {@linkGameEngine} dummies have to add via GameEngine if there are multiple Update
+     *       Engines @author gihan
      * 
      * @param player
      *            Player want to get updates
@@ -177,7 +177,7 @@ public enum UpdateEngine implements Runnable {
     public synchronized boolean addToRemoveDummyQueue(DummyPlayer player) {
         return this.dummyList.remove(player);
     }
-    
+
     public synchronized boolean setStop() {
         this.playerList.clear();
         this.bulletList.clear();

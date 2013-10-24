@@ -61,6 +61,13 @@ public class DummyPlayer extends AbsPlayer {
         UpdateEngine.INSTANCE.addToDummyQueue(this);
     }
 
+    /*
+     * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
+     */
+    public void removeWebSocketConnection() {
+        con = null;
+    }
+
     /**
      * Check whether given location is inside current tile (map of current server)
      * 
@@ -129,7 +136,7 @@ public class DummyPlayer extends AbsPlayer {
 
     public void sendUpdate(List<SendProtocol> deltaList) {
         if (super.con != null) {
-            con.sendUpdate(deltaList);
+            this.con.sendUpdate(deltaList);
         } else if (super.isPlayer == 2) {
             UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
             super.isPlayer = 0;
@@ -144,7 +151,7 @@ public class DummyPlayer extends AbsPlayer {
         /* dummy can't pass the player : no implementation */
     }
 
-    // Need refactoring
+    // Need re factoring
     public void sendUpdateConnectionInfo(SendProtocol transferReq) {
         if (super.con != null) {
             ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
@@ -173,7 +180,7 @@ public class DummyPlayer extends AbsPlayer {
         }
     }
 
-    /* Getter Setter methis */
+    /* Getter Setter methods */
 
     public void setVirtualPoint(float x_vp, float y_vp) {
         /*

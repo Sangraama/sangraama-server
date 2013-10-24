@@ -125,6 +125,13 @@ public abstract class Player extends AbsPlayer {
 
     }
 
+    /*
+     * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
+     */
+    public void removeWebSocketConnection() {
+        con = null;
+    }
+
     /**
      * Check whether player is inside current tile
      * 
@@ -359,7 +366,8 @@ public abstract class Player extends AbsPlayer {
         }
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
-        data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth, screenHeight));
+        data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth,
+                screenHeight));
         System.out.println(TAG + "Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
     }
