@@ -72,10 +72,8 @@ public class WebSocketConnection extends MessageInbound {
     protected void onClose(int status) {
         // log.info("Connection closed");
 
-        if (this.player != null) {
             this.player.removeWebSocketConnection();
             this.player = null;
-        }
 
         System.out.println(TAG + " Close connection");
     }

@@ -31,15 +31,12 @@ public enum GameEngine implements Runnable {
     // list for send updates
     private List<Player> playerList;
     private List<Bullet> bulletList;
-    private List<DummyPlayer> dummyList;
     // list of newly adding players
     private List<Player> newPlayerQueue;
     private List<Bullet> newBulletQueue;
-    private List<DummyPlayer> newDummyQueue;
     // list of removing players
     private List<Player> removePlayerQueue;
     private List<Bullet> removeBulletQueue;
-    private List<DummyPlayer> removeDummyQueue;
     private CollisionDetector sangraamaCollisionDet;
     private List<Wall> wallList;
 
@@ -49,13 +46,10 @@ public enum GameEngine implements Runnable {
         this.world = new World(new Vec2(0.0f, 0.0f));
         this.playerList = new ArrayList<>();
         this.bulletList = new ArrayList<>();
-        this.dummyList = new ArrayList<>();
         this.newPlayerQueue = new ArrayList<>();
         this.newBulletQueue = new ArrayList<>();
-        this.newDummyQueue = new ArrayList<>();
         this.removePlayerQueue = new ArrayList<>();
         this.removeBulletQueue = new ArrayList<>();
-        this.removeDummyQueue = new ArrayList<>();
         this.wallList = new ArrayList<>();
         this.updateEngine = UpdateEngine.INSTANCE;
     }
@@ -153,7 +147,6 @@ public enum GameEngine implements Runnable {
         this.removePlayerQueue.clear();
 
         // Add new player to the world
-
         for (Player newPlayer : newPlayerQueue) {
             System.out.println(TAG + "Adding new players");
             Body newPlayerBody = world.createBody(newPlayer.getBodyDef());
@@ -197,7 +190,7 @@ public enum GameEngine implements Runnable {
     }
 
     public void pushUpdate() {
-        this.updateEngine.setWaitingPlayerList(playerList);
+        this.updateEngine.setUpdatedPlayerList(playerList);
         this.updateEngine.setBulletList(bulletList);
     }
 
@@ -205,16 +198,8 @@ public enum GameEngine implements Runnable {
         this.newPlayerQueue.add(ship);
     }
 
-    public synchronized void addToDummyQueue(DummyPlayer player) {
-        this.newDummyQueue.add(player);
-    }
-
     public synchronized void addToRemovePlayerQueue(Player ship) {
         this.removePlayerQueue.add(ship);
-    }
-
-    public synchronized void addToRemoveDummyQueue(DummyPlayer player) {
-        this.removeDummyQueue.add(player);
     }
 
     public List<Player> getPlayerList() {

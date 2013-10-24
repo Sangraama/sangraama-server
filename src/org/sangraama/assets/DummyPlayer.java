@@ -8,6 +8,7 @@ import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
+import org.sangraama.gameLogic.UpdateEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,11 +31,9 @@ public class DummyPlayer extends AbsPlayer {
         super(userID);
         super.isPlayer = 2;
         super.con = con;
-        this.gameEngine.addToDummyQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
-        // Send tile info
-        sendTileSizeInfo();
+        UpdateEngine.INSTANCE.addToDummyQueue(this);
     }
 
     /**
@@ -57,11 +56,9 @@ public class DummyPlayer extends AbsPlayer {
         super(userID, x, y, w, h);
         super.isPlayer = 2;
         super.con = con;
-        this.gameEngine.addToDummyQueue(this);
         this.newBulletList = new ArrayList<Bullet>();
         this.bulletList = new ArrayList<Bullet>();
-        // Send tile info
-        sendTileSizeInfo();
+        UpdateEngine.INSTANCE.addToDummyQueue(this);
     }
 
     /**
@@ -134,7 +131,7 @@ public class DummyPlayer extends AbsPlayer {
         if (super.con != null) {
             con.sendUpdate(deltaList);
         } else if (super.isPlayer == 2) {
-            this.gameEngine.addToRemoveDummyQueue(this);
+            UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
             super.isPlayer = 0;
             System.out.println(TAG + "Unable to send updates,coz con :" + super.con
                     + ". Add to remove queue.");
@@ -154,7 +151,7 @@ public class DummyPlayer extends AbsPlayer {
             transferReqList.add(transferReq);
             con.sendNewConnection(transferReqList);
         } else if (super.isPlayer == 2) {
-            this.gameEngine.addToRemoveDummyQueue(this);
+            UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
             super.isPlayer = 0;
             System.out.println(TAG + "Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
@@ -167,7 +164,7 @@ public class DummyPlayer extends AbsPlayer {
         if (super.con != null) {
             con.sendUpdate(syncData);
         } else if (super.isPlayer == 2) {
-            this.gameEngine.addToRemoveDummyQueue(this);
+            UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
             super.isPlayer = 0;
             System.out.println(TAG + "Unable to send syncdata,coz con :" + super.con
                     + ". Add to remove queue.");
