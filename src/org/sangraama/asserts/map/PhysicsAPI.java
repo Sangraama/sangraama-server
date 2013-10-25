@@ -36,7 +36,7 @@ public class PhysicsAPI {
 		PolylineObjectPhysics polyline=new PolylineObjectPhysics();
 		int X=(int) scale(staticObject.getX());
 		int Y=(int) scale( staticObject.getY());
-		polyline.createBodyDef(X, Y);
+		polyline.createBodyDef(staticObject.getX(), staticObject.getY());
 		this.bodyDef=polyline.getBodyDef();
 		Vec2[] vertices=new Vec2[staticObject.getCoordinates().size()];
 		//System.out.println(16.0/32.0);
@@ -47,7 +47,7 @@ public class PhysicsAPI {
 			System.out.println(staticObject.getCoordinates().get(i).getX()+":"+verticeX);
 			float verticeY=scale(staticObject.getCoordinates().get(i).getY());
 			System.out.println(staticObject.getCoordinates().get(i).getY()+":"+verticeY);
-			vertices[i].set(verticeX, verticeY);
+			vertices[i].set(staticObject.getCoordinates().get(i).getX(), staticObject.getCoordinates().get(i).getY());
 			
 		}
 		polyline.createFixtureDef(vertices, vertices.length);
