@@ -28,13 +28,13 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response) t
     out.println("<h2>Server started</h2>");
     serverPort=request.getServerPort();
     serverName=request.getServerName();
-    prop = new Properties();
-    prop.load(getClass().getResourceAsStream("/sangraamaserver.properties"));
-    thriftServerPort=Integer.parseInt(prop.getProperty("thriftserverport"));
+//    prop = new Properties();
+//    prop.load(getClass().getResourceAsStream("/sangraamaserver.properties"));
+//    thriftServerPort=Integer.parseInt(prop.getProperty("thriftserverport"));
     
     out.println("<p>Server Port :"+" "+serverPort+ "</p>");
     out.println("<p>Server Name :"+" "+serverName+ "</p>");
-    out.println("<p>Thrift Server Port :"+" "+thriftServerPort+ "</p>");
+//    out.println("<p>Thrift Server Port :"+" "+thriftServerPort+ "</p>");
       out.close();	
 	}
 }
