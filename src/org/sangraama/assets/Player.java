@@ -1,5 +1,6 @@
 package org.sangraama.assets;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -125,6 +126,13 @@ public abstract class Player extends AbsPlayer {
 
     }
 
+    /*
+     * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
+     */
+    public void removeWebSocketConnection() {
+        con = null;
+    }
+
     /**
      * Check whether player is inside current tile
      * 
@@ -215,12 +223,18 @@ public abstract class Player extends AbsPlayer {
     }
 
     public void sendUpdate(List<SendProtocol> deltaList) {
-        if (super.con != null) {
-            con.sendUpdate(deltaList);
-        } else if (super.isPlayer == 1) {
+        if (this.con != null) {
+            try {
+                con.sendUpdate(deltaList);
+            } catch (IOException e) {
+                this.gameEngine.addToRemovePlayerQueue(this);
+                this.isPlayer = 0;
+                e.printStackTrace();
+            }
+        } else if (this.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
-            super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send updates,coz con :" + super.con
+            this.isPlayer = 0;
+            System.out.println(TAG + "Unable to send updates,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -258,7 +272,7 @@ public abstract class Player extends AbsPlayer {
      *            Object of Client transferring protocol
      */
     public void sendUpdateConnectionInfo(SendProtocol transferReq) {
-        if (super.con != null) {
+        if (this.con != null) {
             ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
             transferReqList.add(transferReq);
             con.sendNewConnection(transferReqList);
@@ -273,12 +287,18 @@ public abstract class Player extends AbsPlayer {
     }
 
     public void sendSyncData(List<SendProtocol> syncData) {
-        if (super.con != null) {
-            con.sendUpdate(syncData);
+        if (this.con != null) {
+            try {
+                con.sendUpdate(syncData);
+            } catch (IOException e) {
+                this.gameEngine.addToRemovePlayerQueue(this);
+                this.isPlayer = 0;
+                e.printStackTrace();
+            }   
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
-            super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send syncdata,coz con :" + super.con
+            this.isPlayer = 0;
+            System.out.println(TAG + "Unable to send syncdata,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -359,7 +379,8 @@ public abstract class Player extends AbsPlayer {
         }
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
-        data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth, screenHeight));
+        data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth,
+                screenHeight));
         System.out.println(TAG + "Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
     }

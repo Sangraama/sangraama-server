@@ -2,12 +2,14 @@ package org.sangraama.controller;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.sangraama.assets.AbsPlayer;
 import org.sangraama.assets.Player;
-import org.sangraama.assets.Ship;
 import org.sangraama.assets.SangraamaMap;
+import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.ClientTransferReq;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.coordination.ServerHandler;
@@ -20,10 +22,10 @@ import org.sangraama.thrift.client.ThriftClient;
 public enum PlayerPassHandler {
     INSTANCE;
     private static final String TAG = "PlayerPassHandler :";
-    private ArrayList<AbsPlayer> passPlayerList;
-    private Hashtable<Long, AbsPlayer> passPlayerHash;
-    private ArrayList<AbsPlayer> connectionList;
-    private Hashtable<String, AbsPlayer> connectionHash;
+    private List<AbsPlayer> passPlayerList;
+    private Map<Long, AbsPlayer> passPlayerHash;
+    private List<AbsPlayer> connectionList;
+    private Map<String, AbsPlayer> connectionHash;
     private volatile boolean isPass;
     private ServerHandler sHandler;
     private GameEngine gameEngine;

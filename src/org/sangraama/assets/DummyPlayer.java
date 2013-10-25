@@ -1,5 +1,6 @@
 package org.sangraama.assets;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +9,7 @@ import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
+import org.sangraama.gameLogic.UpdateEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,23 +20,15 @@ public class DummyPlayer extends AbsPlayer {
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "DummyPlayer : ";
 
-    // bullets
-    private List<Bullet> newBulletList;
-    private List<Bullet> bulletList;
-
     public boolean isUpdate() {
         return this.isUpdate;
     }
 
     public DummyPlayer(long userID, WebSocketConnection con) {
         super(userID);
-        super.isPlayer = 2;
-        super.con = con;
-        this.gameEngine.addToDummyQueue(this);
-        this.newBulletList = new ArrayList<Bullet>();
-        this.bulletList = new ArrayList<Bullet>();
-        // Send tile info
-        sendTileSizeInfo();
+        this.isPlayer = 2;
+        this.con = con;
+        UpdateEngine.INSTANCE.addToDummyQueue(this);
     }
 
     /**
@@ -55,13 +49,16 @@ public class DummyPlayer extends AbsPlayer {
      */
     public DummyPlayer(long userID, float x, float y, float w, float h, WebSocketConnection con) {
         super(userID, x, y, w, h);
-        super.isPlayer = 2;
-        super.con = con;
-        this.gameEngine.addToDummyQueue(this);
-        this.newBulletList = new ArrayList<Bullet>();
-        this.bulletList = new ArrayList<Bullet>();
-        // Send tile info
-        sendTileSizeInfo();
+        isPlayer = 2;
+        this.con = con;
+        UpdateEngine.INSTANCE.addToDummyQueue(this);
+    }
+
+    /*
+     * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
+     */
+    public void removeWebSocketConnection() {
+        this.con = null;
     }
 
     /**
@@ -131,12 +128,19 @@ public class DummyPlayer extends AbsPlayer {
     }
 
     public void sendUpdate(List<SendProtocol> deltaList) {
-        if (super.con != null) {
-            con.sendUpdate(deltaList);
-        } else if (super.isPlayer == 2) {
-            this.gameEngine.addToRemoveDummyQueue(this);
-            super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send updates,coz con :" + super.con
+        if (this.con != null) {
+            try {
+                this.con.sendUpdate(deltaList);
+            } catch (IOException e) {
+                UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+                this.isPlayer = 0;
+                e.printStackTrace();
+            }
+
+        } else if (this.isPlayer == 2) {
+            UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+            this.isPlayer = 0;
+            System.out.println(TAG + "Unable to send updates,coz con :" + con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -147,16 +151,16 @@ public class DummyPlayer extends AbsPlayer {
         /* dummy can't pass the player : no implementation */
     }
 
-    // Need refactoring
+    // Need re factoring
     public void sendUpdateConnectionInfo(SendProtocol transferReq) {
-        if (super.con != null) {
+        if (this.con != null) {
             ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
             transferReqList.add(transferReq);
-            con.sendNewConnection(transferReqList);
-        } else if (super.isPlayer == 2) {
-            this.gameEngine.addToRemoveDummyQueue(this);
-            super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.con
+            this.con.sendNewConnection(transferReqList);
+        } else if (isPlayer == 2) {
+            UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+            this.isPlayer = 0;
+            System.out.println(TAG + "Unable to send new connection,coz con :" + con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
@@ -164,19 +168,25 @@ public class DummyPlayer extends AbsPlayer {
     }
 
     public void sendSyncData(List<SendProtocol> syncData) {
-        if (super.con != null) {
-            con.sendUpdate(syncData);
-        } else if (super.isPlayer == 2) {
-            this.gameEngine.addToRemoveDummyQueue(this);
-            super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send syncdata,coz con :" + super.con
+        if (this.con != null) {
+            try {
+                this.con.sendUpdate(syncData);
+            } catch (IOException e) {
+                UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+                this.isPlayer = 0;
+                e.printStackTrace();
+            }
+        } else if (this.isPlayer == 2) {
+            UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+            this.isPlayer = 0;
+            System.out.println(TAG + "Unable to send syncdata,coz con :" + con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + " waiting for remove");
         }
     }
 
-    /* Getter Setter methis */
+    /* Getter Setter methods */
 
     public void setVirtualPoint(float x_vp, float y_vp) {
         /*

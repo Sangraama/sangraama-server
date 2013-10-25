@@ -9,7 +9,9 @@ import java.util.Map;
 
 import javax.swing.Timer;
 
+import org.sangraama.assets.AbsPlayer;
 import org.sangraama.assets.Bullet;
+import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.clientprotocol.BulletDelta;
@@ -27,34 +29,17 @@ public enum UpdateEngine implements Runnable {
 
     private List<Player> playerList; // don't modify;read only
     private List<Bullet> bulletList;
+    private List<DummyPlayer> dummyList;
     /* Should be atomic operation. */
-    private volatile List<Player> waitingPlayerList;
+    private volatile List<Player> updatedPlayerList;
     private Map<Long, PlayerDelta> playerDelta;
 
     UpdateEngine() {
         System.out.println(TAG + "Init Update Engine ...");
-        this.playerList = new ArrayList<>();
-        this.bulletList = new ArrayList<>();
-        this.waitingPlayerList = new ArrayList<>();
-        // this.locations = new float[100][3];
-    }
-
-    public synchronized boolean setStop() {
-        this.isRun = false;
-        return this.isRun;
-    }
-
-    public void setWaitingPlayerList(List<Player> playerList) {
-        /*
-         * if previous updates unable to send to players, ignore current updates until previous
-         * update sent.
-         */
-        this.waitingPlayerList = playerList;
-        this.isUpdate = true;
-    }
-
-    public void setBulletList(List<Bullet> bulletList) {
-        this.bulletList = bulletList;
+        this.playerList = new ArrayList<Player>();
+        this.bulletList = new ArrayList<Bullet>();
+        this.dummyList = new ArrayList<DummyPlayer>();
+        this.updatedPlayerList = new ArrayList<Player>();
     }
 
     @Override
@@ -73,32 +58,23 @@ public enum UpdateEngine implements Runnable {
     public void pushUpdate() {
         playerDelta = new HashMap<Long, PlayerDelta>();
         // Make a clone of Updates which need to send
-        this.playerList = this.waitingPlayerList;
+        this.playerList = this.updatedPlayerList;
         for (Player player : playerList) {
 
             playerDelta.put(player.getUserID(), player.getPlayerDelta());
         }
 
         try {
+            // Send updates for player
             for (Player player : playerList) {
-                player.sendUpdate(getAreaOfInterest(player));
+                player.sendUpdate(this.getAreaOfInterest(player));
+            }
+            // Send updates for Dummy Player
+            for (DummyPlayer dummy : dummyList) {
+                // dummy.sendUpdate(this.getAreaOfInterest(dummy));
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * When sub-tiles moving around the servers, size of map get change. Send notifications to
-     * clients
-     * 
-     * @param tiles
-     *            Details of sub-tiles
-     */
-    public void pushTileSizeInfo(ArrayList<SangraamaTile> tiles) {
-        List<Player> playerLists = this.waitingPlayerList;
-        for (Player player : playerLists) {
-            player.sendTileSizeInfo(tiles);
         }
     }
 
@@ -134,6 +110,95 @@ public enum UpdateEngine implements Runnable {
         }
 
         return delta;
+    }
+
+    /**
+     * This method can replace with region query in 4.14 box2D manual
+     * 
+     * @param player
+     * @return ArrayList<PlayerDelta>
+     */
+    private List<SendProtocol> getAreaOfInterest(DummyPlayer d) {
+        List<SendProtocol> delta = new ArrayList<>();
+
+        for (Player player : playerList) {
+            if (d.getXVirtualPoint() - d.getAOIWidth() <= player.getX()
+                    && player.getX() <= d.getXVirtualPoint() + d.getAOIWidth()
+                    && d.getYVirtualPoint() - d.getAOIHeight() <= player.getY()
+                    && player.getY() <= d.getYVirtualPoint() + d.getAOIHeight()) {
+                if (player.getUserID() != d.getUserID()) {
+                    delta.add(this.playerDelta.get(player.getUserID()));
+                }
+            }
+        }
+        for (Bullet bullet : bulletList) {
+
+            BulletDelta bulletDelta = bullet.getBulletDelta();
+            if (d.getXVirtualPoint() - d.getAOIWidth() <= bulletDelta.getDx()
+                    && bulletDelta.getDx() <= d.getXVirtualPoint() + d.getAOIWidth()
+                    && d.getYVirtualPoint() - d.getAOIHeight() <= bulletDelta.getDy()
+                    && bulletDelta.getDy() <= d.getYVirtualPoint() + d.getAOIHeight()) {
+                delta.add(bullet.getBulletDelta());
+            }
+        }
+
+        return delta;
+    }
+
+    /**
+     * NOTE: For Dynamic load handling :: When sub-tiles moving around the servers, size of map get
+     * change. Send notifications to clients
+     * 
+     * @param tiles
+     *            Details of sub-tiles
+     */
+    public void pushTileSizeInfo(ArrayList<SangraamaTile> tiles) {
+        List<Player> playerLists = this.updatedPlayerList;
+        for (Player player : playerLists) {
+            player.sendTileSizeInfo(tiles);
+        }
+    }
+
+    /**
+     * Add a player in order to get updates
+     * 
+     * @NOTE : {@linkGameEngine} dummies have to add via GameEngine if there are multiple Update
+     *       Engines @author gihan
+     * 
+     * @param player
+     *            Player want to get updates
+     * @return true if added to the list, false otherwise
+     */
+    public synchronized boolean addToDummyQueue(DummyPlayer player) {
+        player.sendTileSizeInfo();
+        return this.dummyList.add(player);
+    }
+
+    public synchronized boolean addToRemoveDummyQueue(DummyPlayer player) {
+        return this.dummyList.remove(player);
+    }
+
+    public synchronized boolean setStop() {
+        this.playerList.clear();
+        this.bulletList.clear();
+        this.dummyList.clear();
+        this.updatedPlayerList.clear();
+
+        this.isRun = false;
+        return this.isRun;
+    }
+
+    public void setUpdatedPlayerList(List<Player> playerList) {
+        /*
+         * if previous updates unable to send to players, ignore current updates until previous
+         * update sent.
+         */
+        this.updatedPlayerList = playerList;
+        this.isUpdate = true;
+    }
+
+    public void setBulletList(List<Bullet> bulletList) {
+        this.bulletList = bulletList;
     }
 
 }
