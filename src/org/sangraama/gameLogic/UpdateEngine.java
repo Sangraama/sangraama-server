@@ -71,7 +71,7 @@ public enum UpdateEngine implements Runnable {
             }
             // Send updates for Dummy Player
             for (DummyPlayer dummy : dummyList) {
-                // dummy.sendUpdate(this.getAreaOfInterest(dummy));
+                 dummy.sendUpdate(this.getAreaOfInterest(dummy));
             }
         } catch (Exception e) {
             e.printStackTrace();
