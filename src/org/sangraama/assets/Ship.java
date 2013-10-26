@@ -20,49 +20,9 @@ public class Ship extends Player {
         super(userID, con);
     }
 
-    public Ship(long userID, float x, float y, float w, float h, float health, float score, WebSocketConnection con) {
+    public Ship(long userID, float x, float y, float w, float h, float health, float score,
+            WebSocketConnection con) {
         super(userID, x, y, w, h, health, score, con);
-    }
-
-    public void shoot(float s) {
-        float r = 50;
-        if (s == 1) {
-            float x = this.body.getPosition().x;
-            float y = this.body.getPosition().y;
-            if (0 <= this.angle && this.angle <= 90) {
-                float ang = this.angle * Constants.TO_RADIANS;
-                float rX = (float) (r * Math.cos(ang));
-                float rY = (float) (r * Math.sin(ang));
-                x = x + rX;
-                y = y + rY;
-            } else if (90 <= this.angle && this.angle <= 180) {
-                float ang = (180 - this.angle) * Constants.TO_RADIANS;
-                float rX = (float) (r * Math.cos(ang));
-                float rY = (float) (r * Math.sin(ang));
-
-                x = x - rX;
-                y = y + rY;
-            } else if (180 <= this.angle && this.angle <= 270) {
-                float ang = (this.angle - 180) * Constants.TO_RADIANS;
-                float rX = (float) (r * Math.cos(ang));
-                float rY = (float) (r * Math.sin(ang));
-
-                x = x - rX;
-                y = y - rY;
-            } else if (270 <= this.angle && this.angle <= 360) {
-                float ang = (360 - this.angle) * Constants.TO_RADIANS;
-                float rX = (float) (r * Math.cos(ang));
-                float rY = (float) (r * Math.sin(ang));
-
-                x = x + rX;
-                y = y - rY;
-            }
-            long id = (long) (generator.nextInt(10000));
-            Bullet bullet = new Bullet(id, this.userID, x, y, this.body.getPosition().x,
-                    this.body.getPosition().y, this.getScreenWidth(), this.getScreenHeight());
-            this.gameEngine.addToBulletQueue(bullet);
-            System.out.println(TAG + ": Added a new bullet");
-        }
     }
 
     public BodyDef getBodyDef() {
@@ -78,7 +38,7 @@ public class Ship extends Player {
         // CircleShape circle = new CircleShape();
         // circle.m_radius = 1f;
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(10f, 10f);
+        ps.setAsBox(1f, 1f);
 
         FixtureDef fd = new FixtureDef();
         fd.density = 0.5f;

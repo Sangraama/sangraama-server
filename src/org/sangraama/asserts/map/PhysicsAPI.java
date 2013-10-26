@@ -34,9 +34,9 @@ public class PhysicsAPI {
 		}
 		if(staticObject.getType().equals("polyline")){
 		PolylineObjectPhysics polyline=new PolylineObjectPhysics();
-		int X=(int) scale(staticObject.getX());
-		int Y=(int) scale( staticObject.getY());
-		polyline.createBodyDef(staticObject.getX(), staticObject.getY());
+		int x=(int) scale(staticObject.getX());
+		int y=(int) scale( staticObject.getY());
+		polyline.createBodyDef(x, y);
 		this.bodyDef=polyline.getBodyDef();
 		Vec2[] vertices=new Vec2[staticObject.getCoordinates().size()];
 		//System.out.println(16.0/32.0);
@@ -47,15 +47,13 @@ public class PhysicsAPI {
 			System.out.println(staticObject.getCoordinates().get(i).getX()+":"+verticeX);
 			float verticeY=scale(staticObject.getCoordinates().get(i).getY());
 			System.out.println(staticObject.getCoordinates().get(i).getY()+":"+verticeY);
-			vertices[i].set(staticObject.getCoordinates().get(i).getX(), staticObject.getCoordinates().get(i).getY());
+			vertices[i].set(verticeX, verticeY);
 			
 		}
 		polyline.createFixtureDef(vertices, vertices.length);
 		
 		this.fixtureDef=polyline.getFixtureDef();
 		
-		System.out.println("XXXXXXXXXX"+staticObject.getX());
-		System.out.println("YYYYYYYYYYYYYYY"+staticObject.getY());
 		
 		}
 	}
@@ -80,11 +78,7 @@ public class PhysicsAPI {
 	}
 	
 	public float scale(int unitToBeScaled){
-		float jbox2dUnit;
-		float temp=unitToBeScaled;
-		//System.out.println(temp+"dsfd");
-		jbox2dUnit=unitToBeScaled/Constants.scale;
-		return jbox2dUnit;
+		return unitToBeScaled/Constants.scale;
 	}
 	
 	public void applyPhysics(Player player,World world){

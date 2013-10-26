@@ -41,7 +41,7 @@ public abstract class Player extends AbsPlayer {
 
     /* Player moving parameters */
     // Player speed factor
-    int v_rate = 200;
+    int v_rate = 1;
     Vec2 v = new Vec2(0f, 0f);
     PlayerDelta delta;
 
@@ -294,7 +294,7 @@ public abstract class Player extends AbsPlayer {
                 this.gameEngine.addToRemovePlayerQueue(this);
                 this.isPlayer = 0;
                 e.printStackTrace();
-            }   
+            }
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             this.isPlayer = 0;
@@ -306,7 +306,7 @@ public abstract class Player extends AbsPlayer {
     }
 
     public void shoot(float s) {
-        float r = 50;
+        float r = 2;
         if (s == 1) {
             float x = this.body.getPosition().x;
             float y = this.body.getPosition().y;

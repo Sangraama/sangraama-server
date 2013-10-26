@@ -55,7 +55,7 @@ public class Bullet {
 
     public FixtureDef getFixtureDef() {
         CircleShape circle = new CircleShape();
-        circle.m_radius = 1.0f;
+        circle.m_radius = 0.5f;
         FixtureDef fd = new FixtureDef();
         fd.shape = circle;
         fd.density = 0.1f;

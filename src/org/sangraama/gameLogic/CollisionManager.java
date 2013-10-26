@@ -1,6 +1,7 @@
 package org.sangraama.gameLogic;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jbox2d.dynamics.contacts.Contact;
 import org.sangraama.assets.Bullet;
@@ -14,11 +15,11 @@ public enum CollisionManager implements Runnable {
     private GameEngine gameEngine;
     private volatile boolean isRun = true;
     private volatile boolean isUpdate = false;
-    private ArrayList<Contact> collisionList;
+    private List<Contact> collisionList;
 
     CollisionManager() {
         gameEngine = GameEngine.INSTANCE;
-        collisionList = new ArrayList<Contact>();
+        collisionList = new ArrayList<>();
         System.out.println(TAG + " init ... ");
     }
 
@@ -80,6 +81,7 @@ public enum CollisionManager implements Runnable {
                 || ("island".equals(collision.getFixtureB().getUserData()) && collision
                         .getFixtureA().getUserData().getClass() == Ship.class)) {
             Player ship;
+            System.out.println(TAG + "$$Hitting Island..");
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
                 ship = (Player) collision.getFixtureA().getUserData();
             } else {

@@ -121,11 +121,12 @@ public enum GameEngine implements Runnable {
             Body newBulletBody = world.createBody(newBullet.getBodyDef());
             newBulletBody.createFixture(newBullet.getFixtureDef());
             newBullet.setBody(newBulletBody);
-            Vec2 velocity = new Vec2(newBulletBody.getPosition().x - newBullet.getOriginX(),
-                    newBulletBody.getPosition().y - newBullet.getOriginY());
+            Vec2 velocity = new Vec2((newBulletBody.getPosition().x - newBullet.getOriginX()) * 1f,
+                    (newBulletBody.getPosition().y - newBullet.getOriginY()) * 1f);
             newBulletBody.setLinearVelocity(velocity);
             this.bulletList.add(newBullet);
-            System.out.println(TAG + "Added new bullet :" + newBullet.getId());
+            System.out.println(TAG + "Added new bullet :" + newBullet.getId() + "x : "
+                    + newBulletBody.getPosition().x + "y : " + newBulletBody.getPosition().y);
         }
         this.newBulletQueue.clear();
 
@@ -171,7 +172,7 @@ public enum GameEngine implements Runnable {
         float y = bullet.getOriginY();
         float bulletX = bullet.getBody().getPosition().x;
         float bulletY = bullet.getBody().getPosition().y;
-        float bulletRange = 300;
+        float bulletRange = 10;
         float currentRange = (float) Math.sqrt(Math.pow((bulletX - x), 2)
                 + Math.pow((bulletY - y), 2));
         if (currentRange >= bulletRange) {
