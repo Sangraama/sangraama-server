@@ -170,6 +170,8 @@ public abstract class AbsPlayer {
     public abstract void sendPassConnectionInfo(SendProtocol transferReq);
 
     public abstract void sendUpdateConnectionInfo(SendProtocol transferReq);
+    
+    public abstract void sendPassGameObjectInfo(SendProtocol transferReq);
 
     /**
      * Player and Dummy Player should have different implementation of sync data Ex: player x ,y

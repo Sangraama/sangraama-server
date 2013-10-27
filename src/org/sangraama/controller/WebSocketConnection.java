@@ -245,6 +245,20 @@ public class WebSocketConnection extends MessageInbound {
             log.error(TAG, e);
         }
     }
+    
+    public void sendPassGameObjInfo(List<SendProtocol> tranferReqList){
+        try {
+            getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tranferReqList)));
+            System.out.println(TAG + " send size of tile " + gson.toJson(tranferReqList));
+        } catch (IOException e) {
+            System.out.println(TAG + " Unable to send passing game objects information");
+            log.error(TAG, e);
+        }
+    }
+
+    /**
+     * Send coordination detail abo
+    }
 
     /**
      * Close the WebSocket connection of the player

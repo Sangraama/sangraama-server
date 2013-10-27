@@ -285,6 +285,14 @@ public abstract class Player extends AbsPlayer {
             System.out.println(TAG + " waiting for remove");
         }
     }
+    
+    public void sendPassGameObjectInfo(SendProtocol transferReq){
+        if (this.con != null) {
+            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
+            transferReqList.add(transferReq);
+            con.sendPassGameObjInfo(transferReqList);
+        } 
+    }
 
     public void sendSyncData(List<SendProtocol> syncData) {
         if (this.con != null) {

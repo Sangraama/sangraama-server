@@ -265,4 +265,12 @@ public class DummyPlayer extends AbsPlayer {
         return this.y;
     }
 
+    @Override
+    public void sendPassGameObjectInfo(SendProtocol transferReq) {
+        // No game object info passing for dummy yet
+        
+    }
+
+    
+
 }
