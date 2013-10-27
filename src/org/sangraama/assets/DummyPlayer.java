@@ -110,21 +110,10 @@ public class DummyPlayer extends AbsPlayer {
         return insideServerSubTile;
     }
 
-    /**
-     * Request for client's Area of Interest around player. When player wants to fulfill it's Area
-     * of Interest, it will ask for the updates of that area. This method checked in following
-     * sequence, 1) check on own sub-tile 2) check whether location is inside current 3) check for
-     * the server which own that location and send connection tag
-     * 
-     * @param x
-     *            x coordination of interest location
-     * @param y
-     *            y coordination of interest location
-     */
     public void reqInterestIn(float x, float y) {
-        if (!isInsideServerSubTile(x, y)) {
-            PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
-        }
+        /*
+         * Just ignore
+         */
     }
 
     public void sendUpdate(List<SendProtocol> deltaList) {

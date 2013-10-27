@@ -1,5 +1,7 @@
 package org.sangraama.assets;
 
+import org.sangraama.common.Constants;
+
 public enum SangraamaMap {
     INSTANCE;
 
@@ -12,32 +14,32 @@ public enum SangraamaMap {
     private float subTileWidth;
     private float subTileHeight;
     private String host = "";
-    
+
     /* Total map */
-    private float maxWidth , maxHeight;
-    
+    private float maxWidth, maxHeight;
 
     private SangraamaMap() {
 
     }
 
-    public void setMap(float originX, float originY, float width, float height, String host,float maxWidth,float maxHeight) {
+    public void setMap(float originX, float originY, float width, float height, String host,
+            float maxWidth, float maxHeight) {
         // Next milestone: map will load via DB
-        this.originX = originX;
-        this.originY = originY;
-        this.mapWidth = width;
-        this.mapHeight = height;
+        this.originX = originX / Constants.scale;
+        this.originY = originY / Constants.scale;
+        this.mapWidth = width / Constants.scale;
+        this.mapHeight = height / Constants.scale;
         this.host = host;
-        this.maxWidth = maxWidth;
-        this.maxHeight = maxHeight;
-        
-        this.edgeX = originX + width;
-        this.edgeY = originY + height;
+        this.maxWidth = maxWidth / Constants.scale;
+        this.maxHeight = maxHeight / Constants.scale;
+
+        this.edgeX = this.originX + this.mapWidth;
+        this.edgeY = this.originY + this.mapHeight;
     }
 
     public void setSubTileProperties(float width, float height) {
-        this.subTileWidth = width;
-        this.subTileHeight = height;
+        this.subTileWidth = width / Constants.scale;
+        this.subTileHeight = height / Constants.scale;
     }
 
     public float getMapWidth() {
@@ -58,6 +60,7 @@ public enum SangraamaMap {
 
     /**
      * Get value of originX + mapWidth
+     * 
      * @return float (originX + mapWidth)
      */
     public float getEdgeX() {
@@ -66,6 +69,7 @@ public enum SangraamaMap {
 
     /**
      * Get value of originY + mapWidth
+     * 
      * @return float (originY + mapHeight)
      */
     public float getEdgeY() {

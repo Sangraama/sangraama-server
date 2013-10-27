@@ -32,7 +32,7 @@ public abstract class Player extends AbsPlayer {
     float angle;// actual angle
     float oldAngle;// actual angle
 
-    float v_x, v_y, midX, midY;
+    float v_x, v_y;
     float health;
     float score;
 
@@ -215,9 +215,7 @@ public abstract class Player extends AbsPlayer {
      *            y coordination of interest location
      */
     public void reqInterestIn(float x, float y) {
-        this.midX = x;
-        this.midY = y;
-        if (!isInsideServerSubTile(x, y)) {
+        if (!isInsideServerSubTile(x, y) && isInsideTotalMap(x, y)) {
             PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }
@@ -360,22 +358,28 @@ public abstract class Player extends AbsPlayer {
          * map (the map which divide into sub tiles) with having half of the size of AOI. Then
          * possible virtual point setting will validate by server side. #gihan
          */
+        System.out.println(TAG + " want to set vp x:" + x_vp + " y:" + y_vp);
+
         this.x_virtual = x_vp;
         this.y_virtual = y_vp;
 
-        if (isInsideTotalMap(x_vp, y_vp)) { // If not in permitted area check by server
+        /**
+         * Check whether player is in permitted area [check by server]
+         */
+        if (!isInsideTotalMap(x_vp, y_vp)) {
             if (x_vp < totOrgX) {
-                this.x_virtual = totOrgX;
+                x_virtual = totOrgX;
             }
             if (y_vp < totOrgY) {
-                this.y_virtual = totOrgY;
+                y_virtual = totOrgY;
             }
             if (totEdgeX < x_vp) {
-                this.x_virtual = totEdgeX;
+                x_virtual = totEdgeX;
             }
             if (totEdgeY < y_vp) {
-                this.y_virtual = totEdgeY;
+                y_virtual = totEdgeY;
             }
+            System.out.println(TAG + " But set as vp x:" + x_vp + " y:" + y_vp);
         }
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
@@ -462,14 +466,6 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.score = 0;
         }
-    }
-
-    public float getMidX() {
-        return midX;
-    }
-
-    public float getMidY() {
-        return midY;
     }
 
 }

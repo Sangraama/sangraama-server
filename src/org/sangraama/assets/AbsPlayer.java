@@ -41,15 +41,16 @@ public abstract class AbsPlayer {
      * side around that point (not around player). This concept is using to create concept of
      * virtual sliding window (instead having a center view). #gihan
      */
-    float x_virtual, y_virtual;
+    float x_virtual = 50.0f, y_virtual = 50.0f;
 
     /*
-     * To check whether virtual point is setting inside the total map
+     * To check whether virtual point is setting inside the total map. Total map origin x,y and
+     * total map edge x,y
      */
-    float totOrgX, totOrgY, totEdgeX, totEdgeY; // Total map origin x,y and total map edge x,y
+    float totOrgX = 40.0f, totOrgY = 40.0f, totEdgeX = 40.0f, totEdgeY = 40.0f;
 
     // Area of Interest
-    float screenWidth = 200.0f, screenHeight = 200.0f;
+    float screenWidth = 40.0f, screenHeight = 40.0f;
     float halfWidth = screenWidth / 2; // half width of AOI
     float halfHieght = screenHeight / 2; // half height of AOI
 
@@ -83,12 +84,7 @@ public abstract class AbsPlayer {
         this.userID = userID;
         this.x = x;
         this.y = y;
-        this.screenWidth = w; // / Constants.scale; not enable scaling
-        this.screenHeight = h; // / Constants.scale;
-        this.halfWidth = screenWidth / 2;
-        this.halfHieght = screenHeight / 2;
-        // System.out.println(TAG +
-        // "AOI w:"+screenWidth+" h:"+screenHeight+" = half w:"+halfWidth+" h:"+halfHieght);
+        this.setAOI(w, h);
 
         this.sangraamaMap = SangraamaMap.INSTANCE;
         /*
@@ -110,7 +106,8 @@ public abstract class AbsPlayer {
     public abstract void sendUpdate(List<SendProtocol> deltaList);
 
     /**
-     * Check whether given location (the virtual point to be set) it inside the total map 
+     * Check whether given location (the virtual point to be set) it inside the total map
+     * 
      * @param x
      * @param y
      * @return true if it's inside the map, otherwise false
@@ -161,11 +158,7 @@ public abstract class AbsPlayer {
      * @param y
      *            y coordination of interest location
      */
-    public void reqInterestIn(float x, float y) {
-        if (!isInsideServerSubTile(x, y)) {
-            PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
-        }
-    }
+    public abstract void reqInterestIn(float x, float y);
 
     public abstract void sendPassConnectionInfo(SendProtocol transferReq);
 
@@ -237,6 +230,7 @@ public abstract class AbsPlayer {
     }
 
     public void setAOI(float width, float height) {
+        System.out.println(TAG + " set AOI as w:" + width + " h:" + height);
         this.screenWidth = width;
         this.screenHeight = height;
         this.halfWidth = width / 2;
