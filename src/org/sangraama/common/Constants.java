@@ -18,9 +18,6 @@ public final class Constants {
     public static final int positionIterations = 2; // Defaults 2
     public static final int simulatingDelay = 50; // delay of simulating
 
-    // Game Client Canvas width & height
-    public static final int canvasWidth = 600;
-    public static final int canvasHeight = 600;
     public static final float TO_RADIANS = (float) (Math.PI / 180);
     public static final float FROM_RADIANS = (float) (180 / Math.PI);
 
