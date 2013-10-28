@@ -215,6 +215,6 @@ public enum GameEngine implements Runnable {
 
     public void addToBulletQueue(Bullet bullet) {
         this.newBulletQueue.add(bullet);
-
     }
+    
 }

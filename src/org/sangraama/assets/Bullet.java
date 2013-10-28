@@ -122,6 +122,16 @@ public class Bullet {
         return bulletDelta;
     }
     
+    /**
+     * This method check whether the x,y coordinates are out of the server controlled area or not
+     * 
+     * @param x
+     *      x coordination of the position
+     * @param y
+     *      y coordination of the position
+     * @return
+     *      true if coordinate is inside the server assingned area.
+     */
     private boolean isInsideSeverSubTile(float x,float y){
         if (currentSubTileOriginX <= x && x <= currentSubTileEndX && currentSubTileOriginY <= y && y <= currentSubTileEndY) { 
             return true;

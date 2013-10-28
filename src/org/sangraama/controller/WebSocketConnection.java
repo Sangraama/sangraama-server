@@ -178,15 +178,17 @@ public class WebSocketConnection extends MessageInbound {
             case 33: /*
                  * 
                  * 
-                 * @case 1: 
                  * 
-                 * @case 2: 
+                 * Adding the bullet to the game world of the server.
+                 * The bullet was passed from the neighbor server.  
+                 * First the information is verified to check whether it is changed by the client
+                 * or not. Then dummy player add bullets to the world.
                  * 
                  */
                 if(VerifyMsg.INSTANCE.verifyMessage(event.getInfo(), event.getSignedInfo())){
                     BulletTransferReq bulletTransReq = gson.fromJson(event.getInfo(), BulletTransferReq.class);
                     Bullet bullet = bulletTransReq.reCreateBullet(event.getInfo());
-                    GameEngine.INSTANCE.addToBulletQueue(bullet);
+                    ((DummyPlayer) this.player).addBulletToGameWorld(bullet);
                 }
                 
                 break;
@@ -266,6 +268,11 @@ public class WebSocketConnection extends MessageInbound {
         }
     }
     
+    /**
+     * Send the information of the transferring object to the client.
+     * 
+     * @param tranferReqList
+     */
     public void sendPassGameObjInfo(List<SendProtocol> tranferReqList){
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tranferReqList)));

@@ -286,7 +286,14 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
-    public void sendPassGameObjectInfo(SendProtocol transferReq) {
+    /**
+     * This method is used to send the information of the transferring object to the neighbor
+     * server.
+     * 
+     * @param transferReq
+     *          message which contains the information of the transferring object
+     */
+    public void sendTransferringGameObjectInfo(SendProtocol transferReq) {
         if (this.con != null) {
             ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
             transferReqList.add(transferReq);

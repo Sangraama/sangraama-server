@@ -9,6 +9,7 @@ import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
+import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.UpdateEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -264,13 +265,14 @@ public class DummyPlayer extends AbsPlayer {
     public float getY() {
         return this.y;
     }
-
-    @Override
-    public void sendPassGameObjectInfo(SendProtocol transferReq) {
-        // No game object info passing for dummy yet
-        
-    }
-
     
+    /**
+     * Add the bullet transferred from the neighbor server to the game world
+     * 
+     * @param bullet
+     */
+    public void addBulletToGameWorld(Bullet bullet){
+        GameEngine.INSTANCE.addToBulletQueue(bullet);
+    }
 
 }

@@ -18,6 +18,13 @@ public enum BulletPassHandler {
         this.gameEngine = GameEngine.INSTANCE;
     }
 
+    /**
+     * This method is used to pass the bullet to the suitable neighbor server if bullet is out of
+     * the area of the current server.
+     * 
+     * @param bullet
+     *        bullet which going to transferred to another server
+     */
     public void passBullets(Bullet bullet) {
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(bullet.getX(),
                 bullet.getY());
@@ -32,7 +39,7 @@ public enum BulletPassHandler {
     private void passBulletInfoToClient(Bullet bullet, BulletTransferReq bulletTransReq) {
         for (Player player : gameEngine.getPlayerList()) {
             if (player.getUserID() == bullet.getPlayerId()) {
-                player.sendPassGameObjectInfo(bulletTransReq);
+                player.sendTransferringGameObjectInfo(bulletTransReq);
             }
         }
     }
