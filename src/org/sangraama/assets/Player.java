@@ -41,7 +41,7 @@ public abstract class Player extends AbsPlayer {
 
     /* Player moving parameters */
     // Player speed factor
-    int v_rate = 1;
+    int v_rate = 2;
     Vec2 v = new Vec2(0f, 0f);
     PlayerDelta delta;
 

@@ -61,6 +61,8 @@ public class PhysicsAPI {
 	public void applyPhysics(List<StaticObject> staticObjects,World world){
 		float xLimit=SangraamaMap.INSTANCE.getOriginX()+SangraamaMap.INSTANCE.getMapWidth(); 	//The limit in X-axis of the map related to the server.
     	float yLimit=SangraamaMap.INSTANCE.getOriginY()+SangraamaMap.INSTANCE.getMapHeight();	//The limit in Y-axis of the map related to the server.
+    	xLimit = xLimit*Constants.scale;
+    	yLimit = yLimit*Constants.scale;
     	for(int i=0;i<staticObjects.size();i++){ // for each static object
     		int count=0;
     			for(int k=0;k<staticObjects.get(i).getCoordinates().size();k++){ //for each coordinate of the object
