@@ -66,10 +66,7 @@ public enum UpdateEngine implements Runnable {
         try {
             // Send updates for player
             for (Player player : playerList) {
-                List<SendProtocol> deltaList = this.getAreaOfInterest(player);
-                if (deltaList.size() > 0) {
-                    player.sendUpdate(deltaList);
-                }
+                player.sendUpdate(this.getAreaOfInterest(player));
             }
             // Send updates for Dummy Player
             for (DummyPlayer dummy : dummyList) {
