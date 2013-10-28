@@ -9,7 +9,6 @@ import java.util.Map;
 
 import javax.swing.Timer;
 
-import org.sangraama.assets.AbsPlayer;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
@@ -67,11 +66,17 @@ public enum UpdateEngine implements Runnable {
         try {
             // Send updates for player
             for (Player player : playerList) {
-                player.sendUpdate(this.getAreaOfInterest(player));
+                List<SendProtocol> deltaList = this.getAreaOfInterest(player);
+                if (deltaList.size() > 0) {
+                    player.sendUpdate(deltaList);
+                }
             }
             // Send updates for Dummy Player
             for (DummyPlayer dummy : dummyList) {
-                dummy.sendUpdate(this.getAreaOfInterest(dummy));
+                List<SendProtocol> deltaList = this.getAreaOfInterest(dummy);
+                if (deltaList.size() > 0) {
+                    dummy.sendUpdate(deltaList);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -108,7 +113,6 @@ public enum UpdateEngine implements Runnable {
                 delta.add(bullet.getBulletDelta());
             }
         }
-
         return delta;
     }
 

@@ -271,6 +271,21 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
+    /**
+     * This method is used to send the information of the transferring object to the neighbor
+     * server.
+     * 
+     * @param transferReq
+     *          message which contains the information of the transferring object
+     */
+    public void sendTransferringGameObjectInfo(SendProtocol transferReq) {
+        if (this.con != null) {
+            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
+            transferReqList.add(transferReq);
+            con.sendPassGameObjInfo(transferReqList);
+        }
+    }
+
     public void sendSyncData(List<SendProtocol> syncData) {
         if (this.con != null) {
             try {
@@ -324,8 +339,11 @@ public abstract class Player extends AbsPlayer {
                 y = y - rY;
             }
             long id = (long) (generator.nextInt(10000));
-            Bullet bullet = new Bullet(id, this.userID, x, y, this.body.getPosition().x,
-                    this.body.getPosition().y, this.getScreenWidth(), this.getScreenHeight());
+            Vec2 bulletVelocity = new Vec2((x - this.body.getPosition().x) * 2f, (y
+                    - this.body.getPosition().y) * 2f);
+            Bullet bullet = new Bullet(id, this.userID, x, y, bulletVelocity,
+                    this.body.getPosition().x, this.body.getPosition().y, this.getScreenWidth(),
+                    this.getScreenHeight());
             this.gameEngine.addToBulletQueue(bullet);
             System.out.println(TAG + ": Added a new bullet");
         }

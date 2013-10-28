@@ -9,12 +9,16 @@ import java.util.List;
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
 import org.sangraama.assets.AbsPlayer;
+import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
+import org.sangraama.controller.clientprotocol.BulletTransferReq;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.DefeatMsg;
 import org.sangraama.controller.clientprotocol.SendProtocol;
+import org.sangraama.gameLogic.GameEngine;
+import org.sangraama.util.VerifyMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,6 +175,24 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
                 System.out.println(TAG + T + " add new dummy player: " + event.toString());
                 break;
+            case 33: /*
+                 * 
+                 * 
+                 * 
+                 * Adding the bullet to the game world of the server.
+                 * The bullet was passed from the neighbor server.  
+                 * First the information is verified to check whether it is changed by the client
+                 * or not. Then dummy player add bullets to the world.
+                 * 
+                 */
+                if(VerifyMsg.INSTANCE.verifyMessage(event.getInfo(), event.getSignedInfo())){
+                    BulletTransferReq bulletTransReq = gson.fromJson(event.getInfo(), BulletTransferReq.class);
+                    Bullet bullet = bulletTransReq.reCreateBullet(event.getInfo());
+                    ((DummyPlayer) this.player).addBulletToGameWorld(bullet);
+                }
+                
+                break;
+                
             default:
                 break;
         }
@@ -244,6 +266,25 @@ public class WebSocketConnection extends MessageInbound {
             System.out.println(TAG + " Unable to send player defeat message.");
             log.error(TAG, e);
         }
+    }
+    
+    /**
+     * Send the information of the transferring object to the client.
+     * 
+     * @param tranferReqList
+     */
+    public void sendPassGameObjInfo(List<SendProtocol> tranferReqList){
+        try {
+            getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tranferReqList)));
+            System.out.println(TAG + " send bullet transfer message : " + gson.toJson(tranferReqList));
+        } catch (IOException e) {
+            System.out.println(TAG + " Unable to send passing game objects information");
+            log.error(TAG, e);
+        }
+    }
+
+    /**
+     * Send coordination detail abo
     }
 
     /**
