@@ -6,7 +6,9 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
+import org.sangraama.controller.BulletPassHandler;
 import org.sangraama.controller.clientprotocol.BulletDelta;
+import org.sangraama.coordination.staticPartition.TileCoordinator;
 
 public class Bullet {
 
@@ -16,14 +18,18 @@ public class Bullet {
     private float originX, originY;
     private float x, y;
     private Vec2 velocity;
-    private int v_rate = 300;
     private Body body;
     private BulletDelta bulletDelta;
     private long id;
     float screenWidth, screenHeight;
 
-    public Bullet(long id, long playerId, float x, float y, float originX, float originY, float w,
-            float h) {
+    private SangraamaMap sangraamaMap;
+    private float currentSubTileOriginX;
+    private float currentSubTileOriginY;
+    private float currentSubTileEndX;
+    private float currentSubTileEndY;
+
+    public Bullet(long id, long playerId, float x, float y, Vec2 velocity, float originX, float originY, float w, float h) {
         this.id = id;
         this.playerId = playerId;
         this.originX = originX;
@@ -32,8 +38,12 @@ public class Bullet {
         this.screenWidth = w;
         this.x = x;
         this.y = y;
-        this.velocity = new Vec2(1.0f * v_rate, 1.0f * v_rate);
-
+        this.velocity = velocity;
+        this.sangraamaMap = SangraamaMap.INSTANCE;
+        this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+        this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+        this.currentSubTileEndX = (x - (x % sangraamaMap.getSubTileWidth())) + sangraamaMap.getSubTileWidth();
+        this.currentSubTileEndY = (y - (y % sangraamaMap.getSubTileHeight())) + sangraamaMap.getSubTileHeight();
     }
 
     public void setBody(Body bulletBody) {
@@ -67,6 +77,14 @@ public class Bullet {
         return fd;
     }
 
+    public float getX(){
+        return this.body.getPosition().x;
+    }
+    
+    public float getY(){
+        return this.body.getPosition().y;
+    }
+    
     public Vec2 getVelocity() {
         return velocity;
     }
@@ -98,7 +116,37 @@ public class Bullet {
     public BulletDelta getBulletDelta() {
         bulletDelta = new BulletDelta(this.body.getPosition().x, this.body.getPosition().y,
                 this.body.getAngle(), this.playerId, this.id);
+        if(!isInsideSeverSubTile(this.body.getPosition().x, this.body.getPosition().y)){
+            BulletPassHandler.INSTANCE.passBullets(this);
+        }
         return bulletDelta;
     }
-
+    
+    /**
+     * This method check whether the x,y coordinates are out of the server controlled area or not
+     * 
+     * @param x
+     *      x coordination of the position
+     * @param y
+     *      y coordination of the position
+     * @return
+     *      true if coordinate is inside the server assingned area.
+     */
+    private boolean isInsideSeverSubTile(float x,float y){
+        if (currentSubTileOriginX <= x && x <= currentSubTileEndX && currentSubTileOriginY <= y && y <= currentSubTileEndY) { 
+            return true;
+        }
+        else{
+            currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+            currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+            currentSubTileEndX = (x - (x % sangraamaMap.getSubTileWidth())) + sangraamaMap.getSubTileWidth();
+            currentSubTileEndY = (y - (y % sangraamaMap.getSubTileHeight())) + sangraamaMap.getSubTileHeight();
+            if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
+                System.out.println(TAG + "Bullet is not inside a subtile of "
+                        + sangraamaMap.getHost());
+                return false;
+            }
+            return true;
+        }
+    }
 }
