@@ -9,4 +9,9 @@ public abstract class SendProtocol {
         this.userID = userID;
     }
 
+    @Override
+    public String toString() {
+        return "SendProtocol [type=" + type + ", userID=" + userID + "]";
+    }
+    
 }
