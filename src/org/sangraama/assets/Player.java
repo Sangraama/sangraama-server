@@ -285,13 +285,13 @@ public abstract class Player extends AbsPlayer {
             System.out.println(TAG + " waiting for remove");
         }
     }
-    
-    public void sendPassGameObjectInfo(SendProtocol transferReq){
+
+    public void sendPassGameObjectInfo(SendProtocol transferReq) {
         if (this.con != null) {
             ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
             transferReqList.add(transferReq);
             con.sendPassGameObjInfo(transferReqList);
-        } 
+        }
     }
 
     public void sendSyncData(List<SendProtocol> syncData) {
@@ -302,7 +302,7 @@ public abstract class Player extends AbsPlayer {
                 this.gameEngine.addToRemovePlayerQueue(this);
                 this.isPlayer = 0;
                 e.printStackTrace();
-            }   
+            }
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             this.isPlayer = 0;
@@ -347,8 +347,11 @@ public abstract class Player extends AbsPlayer {
                 y = y - rY;
             }
             long id = (long) (generator.nextInt(10000));
-            Bullet bullet = new Bullet(id, this.userID, x, y, this.body.getPosition().x,
-                    this.body.getPosition().y, this.getScreenWidth(), this.getScreenHeight());
+            Vec2 bulletVelocity = new Vec2(x - this.body.getPosition().x, y
+                    - this.body.getPosition().y);
+            Bullet bullet = new Bullet(id, this.userID, x, y, bulletVelocity,
+                    this.body.getPosition().x, this.body.getPosition().y, this.getScreenWidth(),
+                    this.getScreenHeight());
             this.gameEngine.addToBulletQueue(bullet);
             System.out.println(TAG + ": Added a new bullet");
         }

@@ -121,9 +121,7 @@ public enum GameEngine implements Runnable {
             Body newBulletBody = world.createBody(newBullet.getBodyDef());
             newBulletBody.createFixture(newBullet.getFixtureDef());
             newBullet.setBody(newBulletBody);
-            Vec2 velocity = new Vec2(newBulletBody.getPosition().x - newBullet.getOriginX(),
-                    newBulletBody.getPosition().y - newBullet.getOriginY());
-            newBulletBody.setLinearVelocity(velocity);
+            newBulletBody.setLinearVelocity(newBullet.getVelocity());
             this.bulletList.add(newBullet);
             System.out.println(TAG + "Added new bullet :" + newBullet.getId());
         }

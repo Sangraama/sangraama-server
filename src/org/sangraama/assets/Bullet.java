@@ -18,7 +18,6 @@ public class Bullet {
     private float originX, originY;
     private float x, y;
     private Vec2 velocity;
-    private int v_rate = 300;
     private Body body;
     private BulletDelta bulletDelta;
     private long id;
@@ -30,8 +29,7 @@ public class Bullet {
     private float currentSubTileEndX;
     private float currentSubTileEndY;
 
-    public Bullet(long id, long playerId, float x, float y, float originX, float originY, float w,
-            float h) {
+    public Bullet(long id, long playerId, float x, float y, Vec2 velocity, float originX, float originY, float w, float h) {
         this.id = id;
         this.playerId = playerId;
         this.originX = originX;
@@ -40,7 +38,7 @@ public class Bullet {
         this.screenWidth = w;
         this.x = x;
         this.y = y;
-        this.velocity = new Vec2(1.0f * v_rate, 1.0f * v_rate);
+        this.velocity = velocity;
         this.sangraamaMap = SangraamaMap.INSTANCE;
         this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());

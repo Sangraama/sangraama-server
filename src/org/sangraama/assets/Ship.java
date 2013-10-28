@@ -1,6 +1,7 @@
 package org.sangraama.assets;
 
 import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
@@ -20,7 +21,8 @@ public class Ship extends Player {
         super(userID, con);
     }
 
-    public Ship(long userID, float x, float y, float w, float h, float health, float score, WebSocketConnection con) {
+    public Ship(long userID, float x, float y, float w, float h, float health, float score,
+            WebSocketConnection con) {
         super(userID, x, y, w, h, health, score, con);
     }
 
@@ -58,8 +60,11 @@ public class Ship extends Player {
                 y = y - rY;
             }
             long id = (long) (generator.nextInt(10000));
-            Bullet bullet = new Bullet(id, this.userID, x, y, this.body.getPosition().x,
-                    this.body.getPosition().y, this.getScreenWidth(), this.getScreenHeight());
+            Vec2 bulletVelocity = new Vec2(x - this.body.getPosition().x, y
+                    - this.body.getPosition().y);
+            Bullet bullet = new Bullet(id, this.userID, x, y, bulletVelocity,
+                    this.body.getPosition().x, this.body.getPosition().y, this.getScreenWidth(),
+                    this.getScreenHeight());
             this.gameEngine.addToBulletQueue(bullet);
             System.out.println(TAG + ": Added a new bullet");
         }

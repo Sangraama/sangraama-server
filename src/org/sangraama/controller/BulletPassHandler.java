@@ -22,14 +22,16 @@ public enum BulletPassHandler {
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(bullet.getX(),
                 bullet.getY());
         BulletTransferReq bulletTransReq = new BulletTransferReq(33, bullet.getPlayerId(),
-                bullet.getId(), bullet.getX(), bullet.getY(), newHost);
+                bullet.getId(), bullet.getX(), bullet.getY(), bullet.getVelocity(),
+                bullet.getOriginX(), bullet.getOriginY(), bullet.getScreenHeight(),
+                bullet.getScreenWidth(), newHost);
         gameEngine.removeBullet(bullet);
-        passBulletInfoToClient(bullet,bulletTransReq);
+        passBulletInfoToClient(bullet, bulletTransReq);
     }
-    
-    private void passBulletInfoToClient(Bullet bullet, BulletTransferReq bulletTransReq){
-        for(Player player : gameEngine.getPlayerList()){
-            if(player.getUserID() == bullet.getPlayerId()){
+
+    private void passBulletInfoToClient(Bullet bullet, BulletTransferReq bulletTransReq) {
+        for (Player player : gameEngine.getPlayerList()) {
+            if (player.getUserID() == bullet.getPlayerId()) {
                 player.sendPassGameObjectInfo(bulletTransReq);
             }
         }
