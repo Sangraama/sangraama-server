@@ -166,8 +166,8 @@ public class WebSocketConnection extends MessageInbound {
                       * @case 2: if it's a player => change it to dummy player <include
                       * authentication>
                       */
-                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getX(), event.getY(),
-                        event.getW(), event.getH(), this));
+                this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getW(), event.getH(),
+                        this));
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
                 System.out.println(TAG + T + " add new dummy player: " + event.toString());
                 break;
@@ -187,8 +187,8 @@ public class WebSocketConnection extends MessageInbound {
      *            delta updates of players who are located inside AOI
      */
     public void sendUpdate(List<SendProtocol> playerDeltaList) throws IOException {
-            String convertedString = gson.toJson(playerDeltaList);
-            getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));
+        String convertedString = gson.toJson(playerDeltaList);
+        getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));
     }
 
     /**

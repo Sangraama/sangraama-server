@@ -41,25 +41,12 @@ public abstract class Player extends AbsPlayer {
 
     /* Player moving parameters */
     // Player speed factor
-    int v_rate = 2;
-    Vec2 v = new Vec2(0f, 0f);
+    float v_rate = 0.25f;
+    Vec2 v = new Vec2(0.0f, 0.0f);
     PlayerDelta delta;
 
     private float subTileEdgeX = 0.0f; // Store value of subTileOriginX + subtileWidth
     private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subtileHeight
-
-    public Player(long userID, WebSocketConnection con) {
-        super(userID);
-        super.isPlayer = 1;
-        System.out.println(TAG + " player added to queue");
-        /* Set sub tile edge values without method */
-        this.subTileEdgeX = (x - (x % sangraamaMap.getSubTileWidth()))
-                + sangraamaMap.getSubTileWidth();
-        this.subTileEdgeY = (y - (y % sangraamaMap.getSubTileHeight()))
-                + sangraamaMap.getSubTileHeight();
-
-        this.gameEngine.addToPlayerQueue(this);
-    }
 
     public Player(long userID, float x, float y, float w, float h, float health, float score,
             WebSocketConnection con) {
@@ -80,11 +67,11 @@ public abstract class Player extends AbsPlayer {
         // if (!isUpdate) {
 
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
-            System.out.print(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " angle:"
-                    + this.body.getAngle() + " & " + this.body.getAngularVelocity() + " ###");
-            System.out.print(TAG + "id : " + this.userID + " x_virtual:" + this.x_virtual
-                    + " y_virtual:" + this.y_virtual);
-            System.out.println();
+            System.out.print(TAG + "id : " + this.userID + " x:" + x * Constants.scale + " y:" + y
+                    * Constants.scale + " angle:" + this.body.getAngle() + " & "
+                    + this.body.getAngularVelocity() + " # ");
+            System.out.println(" x_virtual:" + this.x_virtual * Constants.scale + " y_virtual:"
+                    + this.y_virtual * Constants.scale);
         }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
@@ -252,7 +239,7 @@ public abstract class Player extends AbsPlayer {
             con.sendNewConnection(transferReqList);
             /* Changed player type into dummy player and remove from the world */
             this.gameEngine.addToRemovePlayerQueue(this);
-            con.setDummyPlayer(new DummyPlayer(userID, con));
+            con.setDummyPlayer(new DummyPlayer(userID, screenWidth, screenHeight, con));
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;

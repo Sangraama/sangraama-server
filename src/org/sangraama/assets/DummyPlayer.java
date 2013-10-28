@@ -24,13 +24,6 @@ public class DummyPlayer extends AbsPlayer {
         return this.isUpdate;
     }
 
-    public DummyPlayer(long userID, WebSocketConnection con) {
-        super(userID);
-        this.isPlayer = 2;
-        this.con = con;
-        UpdateEngine.INSTANCE.addToDummyQueue(this);
-    }
-
     /**
      * Create a dummy player in order to get updates to fulfill the player's AOI in client side
      * 
@@ -47,8 +40,8 @@ public class DummyPlayer extends AbsPlayer {
      * @param con
      *            web socket Connection
      */
-    public DummyPlayer(long userID, float x, float y, float w, float h, WebSocketConnection con) {
-        super(userID, x, y, w, h);
+    public DummyPlayer(long userID, float w, float h, WebSocketConnection con) {
+        super(userID, 0.0f, 0.0f, w, h);
         isPlayer = 2;
         this.con = con;
         UpdateEngine.INSTANCE.addToDummyQueue(this);
@@ -74,10 +67,14 @@ public class DummyPlayer extends AbsPlayer {
         // System.out.println(TAG + "is inside "+x+":"+y);
         if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
                 && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
+            System.out.println(TAG + " x:" + x + " y:" + y + " inside of map x: "
+                    + sangraamaMap.getOriginX() + ":" + sangraamaMap.getOriginY() + " y:"
+                    + sangraamaMap.getEdgeX() + ":" + sangraamaMap.getEdgeY());
             return true;
         } else {
-            System.out.println(TAG + "Outside of map : " + sangraamaMap.getMapWidth() + ":"
-                    + sangraamaMap.getMapHeight());
+            System.out.println(TAG + " x:" + x + " y:" + y + "Outside of map x: "
+                    + sangraamaMap.getOriginX() + ":" + sangraamaMap.getOriginY() + " y:"
+                    + sangraamaMap.getEdgeX() + ":" + sangraamaMap.getEdgeY());
             return false;
         }
     }
@@ -183,6 +180,8 @@ public class DummyPlayer extends AbsPlayer {
          * map (the map which divide into sub tiles) with having half of the size of AOI. Then
          * possible virtual point setting will validate by server side. #gihan
          */
+        System.out.println(TAG + " want to set vp x:" + x_vp + " y:" + y_vp);
+
         this.x_virtual = x_vp;
         this.y_virtual = y_vp;
 

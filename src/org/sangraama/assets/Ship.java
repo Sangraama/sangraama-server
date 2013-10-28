@@ -16,10 +16,6 @@ public class Ship extends Player {
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "Ship : ";
 
-    public Ship(long userID, WebSocketConnection con) {
-        super(userID, con);
-    }
-
     public Ship(long userID, float x, float y, float w, float h, float health, float score,
             WebSocketConnection con) {
         super(userID, x, y, w, h, health, score, con);

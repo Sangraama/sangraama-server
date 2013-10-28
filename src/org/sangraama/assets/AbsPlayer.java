@@ -41,43 +41,25 @@ public abstract class AbsPlayer {
      * side around that point (not around player). This concept is using to create concept of
      * virtual sliding window (instead having a center view). #gihan
      */
-    float x_virtual = 50.0f, y_virtual = 50.0f;
+    float x_virtual = 0.0f, y_virtual = 0.0f;
 
     /*
      * To check whether virtual point is setting inside the total map. Total map origin x,y and
      * total map edge x,y
      */
-    float totOrgX = 40.0f, totOrgY = 40.0f, totEdgeX = 40.0f, totEdgeY = 40.0f;
+    float totOrgX = 0.0f, totOrgY = 0.0f, totEdgeX = 0.0f, totEdgeY = 0.0f;
 
     // Area of Interest
-    float screenWidth = 40.0f, screenHeight = 40.0f;
-    float halfWidth = screenWidth / 2; // half width of AOI
-    float halfHieght = screenHeight / 2; // half height of AOI
+    float screenWidth = 0.0f, screenHeight = 0.0f;
+    float halfWidth = 0.0f; // half width of AOI
+    float halfHieght = 0.0f; // half height of AOI
 
     // player current sub-tile information
-    float currentSubTileOriginX;
-    float currentSubTileOriginY;
+    float currentSubTileOriginX = 0.0f;
+    float currentSubTileOriginY = 0.0f;
 
     public boolean isUpdate() {
         return this.isUpdate;
-    }
-
-    public AbsPlayer(long userID) {
-        Random r = new Random();
-
-        this.userID = userID;
-        this.x = (float) r.nextInt(1000);
-        this.y = (float) r.nextInt(1000);
-        this.sangraamaMap = SangraamaMap.INSTANCE;
-        /*
-         * Note: this should replace by sangraama map method. Player shouldn't responsible for
-         * Deciding it's sub-tile
-         */
-        this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
-        this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        this.gameEngine = GameEngine.INSTANCE;
-
-        System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
     }
 
     public AbsPlayer(long userID, float x, float y, float w, float h) {
@@ -95,7 +77,8 @@ public abstract class AbsPlayer {
         this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
         this.gameEngine = GameEngine.INSTANCE;
 
-        System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y);
+        System.out.println(TAG + " init player : " + userID + " x-" + x + " : y-" + y + " w:"
+                + screenWidth + " h:" + screenHeight);
     }
 
     /**
@@ -236,10 +219,10 @@ public abstract class AbsPlayer {
         this.halfWidth = width / 2;
         this.halfHieght = height / 2;
         // Set point which virtual point can holds
-        this.totOrgX = this.halfWidth;
-        this.totOrgY = this.halfHieght;
-        this.totEdgeX = SangraamaMap.INSTANCE.getMaxWidth() - this.halfWidth;
-        this.totEdgeY = SangraamaMap.INSTANCE.getMaxHeight() - this.halfHieght;
+        this.totOrgX = this.halfWidth + 1.0f;
+        this.totOrgY = this.halfHieght + 1.0f;
+        this.totEdgeX = SangraamaMap.INSTANCE.getMaxWidth() - (this.halfWidth + 1.0f);
+        this.totEdgeY = SangraamaMap.INSTANCE.getMaxHeight() - (this.halfHieght + 1.0f);
     }
 
     public float getAOIWidth() {
