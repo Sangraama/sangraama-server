@@ -339,8 +339,8 @@ public abstract class Player extends AbsPlayer {
                 y = y - rY;
             }
             long id = (long) (generator.nextInt(10000));
-            Vec2 bulletVelocity = new Vec2((x - this.body.getPosition().x) * 2f, (y
-                    - this.body.getPosition().y) * 2f);
+            Vec2 bulletVelocity = new Vec2((x - this.body.getPosition().x) * 0.5f, (y
+                    - this.body.getPosition().y) * 0.5f);
             Bullet bullet = new Bullet(id, this.userID, x, y, bulletVelocity,
                     this.body.getPosition().x, this.body.getPosition().y, this.getScreenWidth(),
                     this.getScreenHeight());

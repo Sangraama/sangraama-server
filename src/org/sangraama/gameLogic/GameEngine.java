@@ -179,15 +179,6 @@ public enum GameEngine implements Runnable {
         }
     }
 
-    public void removeBullet(Bullet bullet) {
-        world.destroyBody(bullet.getBody());
-        for (Player player : playerList) {
-            if (player.getUserID() == bullet.getPlayerId()) {
-                removeBulletQueue.add(bullet);
-            }
-        }
-    }
-
     public void pushUpdate() {
         this.updateEngine.setUpdatedPlayerList(playerList);
         this.updateEngine.setBulletList(bulletList);
@@ -216,6 +207,10 @@ public enum GameEngine implements Runnable {
 
     public void addToBulletQueue(Bullet bullet) {
         this.newBulletQueue.add(bullet);
+    }
+    
+    public void addToRemoveBulletQueue(Bullet bullet){
+        this.removeBulletQueue.add(bullet);
     }
     
 }

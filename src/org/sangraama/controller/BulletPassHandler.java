@@ -32,7 +32,7 @@ public enum BulletPassHandler {
                 bullet.getId(), bullet.getX(), bullet.getY(), bullet.getVelocity(),
                 bullet.getOriginX(), bullet.getOriginY(), bullet.getScreenHeight(),
                 bullet.getScreenWidth(), newHost);
-        gameEngine.removeBullet(bullet);
+        gameEngine.addToRemoveBulletQueue(bullet);
         passBulletInfoToClient(bullet, bulletTransReq);
     }
 

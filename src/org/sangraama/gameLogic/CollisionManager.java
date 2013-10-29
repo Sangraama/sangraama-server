@@ -98,7 +98,7 @@ public enum CollisionManager implements Runnable {
             } else {
                 bullet = (Bullet) collision.getFixtureB().getUserData();
             }
-            gameEngine.removeBullet(bullet);
+            gameEngine.addToRemoveBulletQueue(bullet);
         } else if (("wall".equals(collision.getFixtureA().getUserData()) && collision.getFixtureB()
                 .getUserData().getClass() == Bullet.class)
                 || ("wall".equals(collision.getFixtureB().getUserData()) && collision.getFixtureA()
@@ -109,7 +109,7 @@ public enum CollisionManager implements Runnable {
             } else {
                 bullet = (Bullet) collision.getFixtureB().getUserData();
             }
-            gameEngine.removeBullet(bullet);
+            gameEngine.addToRemoveBulletQueue(bullet);
         }
     }
 
@@ -125,11 +125,10 @@ public enum CollisionManager implements Runnable {
         for (Player player : gameEngine.getPlayerList()) {
             if (player.getUserID() == shooterUserID) {
                 player.setScore(10);
-                gameEngine.removeBullet(bullet);
                 break;
             }
         }
-
+        gameEngine.addToRemoveBulletQueue(bullet);
     }
 
     private void reduceShipHealth(float userID, float valChange) {
