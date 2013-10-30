@@ -213,7 +213,11 @@ public class DummyPlayer extends AbsPlayer {
     }
 
     public void sendScoreChange(ScoreChangeTransferReq scoreChangeReq){
-        this.con.sendScoreChangeReq(scoreChangeReq);
+        if (this.con != null) {
+            ArrayList<SendProtocol> scoreChangeReqList = new ArrayList<SendProtocol>();
+            scoreChangeReqList.add(scoreChangeReq);
+            con.sendPassGameObjInfo(scoreChangeReqList);
+        }
     }
     
     /**

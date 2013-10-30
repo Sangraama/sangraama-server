@@ -82,8 +82,8 @@ public class WebSocketConnection extends MessageInbound {
 
     @Override
     protected void onTextMessage(CharBuffer charBuffer) throws IOException {
-        String user = charBuffer.toString();
-        ClientEvent event = gson.fromJson(user, ClientEvent.class);
+        String clientMsg = charBuffer.toString();
+        ClientEvent event = gson.fromJson(clientMsg, ClientEvent.class);
 
         // Avoid checking whether player is created every time access it.
         try {
@@ -119,16 +119,19 @@ public class WebSocketConnection extends MessageInbound {
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
                         + event.getV_y());
                 break;
+                
             case 2: // requesting for interesting area
                 this.player.reqInterestIn(event.getX(), event.getY());
                 System.out.println(TAG + T + "player interesting in x:" + event.getX() + " & y:"
                         + event.getY());
                 break;
             // set AOI of the player
+                
             case 3:
                 this.player.setAOI(event.getW(), event.getH());
                 System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
                 break;
+                
             case 4: // Reset settings and make dummy player
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
@@ -136,8 +139,36 @@ public class WebSocketConnection extends MessageInbound {
                 System.out.println(TAG + T + " RESET user events " + event.getV_x() + " : "
                         + event.getV_y());
                 break;
+                
             case 5: // Set Virtual point as the center of AOI in order to get updates
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
+                break;
+
+            case 20: /*
+                      * 
+                      * 
+                      * 
+                      * Adding the bullet to the game world of the server. The bullet was passed
+                      * from the neighbor server. First the information is verified to check whether
+                      * it is changed by the client or not. Then dummy player add bullets to the
+                      * world.
+                      */
+                if (VerifyMsg.INSTANCE.verifyMessage(event.getInfo(), event.getSignedInfo())) {
+                    BulletTransferReq bulletTransReq = gson.fromJson(event.getInfo(),
+                            BulletTransferReq.class);
+                    Bullet bullet = bulletTransReq.reCreateBullet(event.getInfo());
+                    ((DummyPlayer) this.player).addBulletToGameWorld(bullet);
+                }
+
+                break;
+
+            case 21: // Get the score change message from another server
+                if (VerifyMsg.INSTANCE.verifyMessage(event.getInfo(), event.getSignedInfo())) {
+                    ScoreChangeTransferReq scoreChangeReq = gson.fromJson(event.getInfo(),
+                            ScoreChangeTransferReq.class);
+                    float scoreChange = scoreChangeReq.getScore(event.getInfo());
+                    ((Player) this.player).setScore(scoreChange);
+                }
                 break;
 
             case 30: /*
@@ -163,6 +194,7 @@ public class WebSocketConnection extends MessageInbound {
                  * message which is can use to create a dummy player
                  */
                 break;
+                
             case 31: /*
                       * Create a dummy player
                       * 
@@ -176,24 +208,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
                 System.out.println(TAG + T + " add new dummy player: " + event.toString());
                 break;
-            case 33: /*
-                 * 
-                 * 
-                 * 
-                 * Adding the bullet to the game world of the server.
-                 * The bullet was passed from the neighbor server.  
-                 * First the information is verified to check whether it is changed by the client
-                 * or not. Then dummy player add bullets to the world.
-                 * 
-                 */
-                if(VerifyMsg.INSTANCE.verifyMessage(event.getInfo(), event.getSignedInfo())){
-                    BulletTransferReq bulletTransReq = gson.fromJson(event.getInfo(), BulletTransferReq.class);
-                    Bullet bullet = bulletTransReq.reCreateBullet(event.getInfo());
-                    ((DummyPlayer) this.player).addBulletToGameWorld(bullet);
-                }
-                
-                break;
-                
+
             default:
                 break;
         }
@@ -268,43 +283,43 @@ public class WebSocketConnection extends MessageInbound {
             log.error(TAG, e);
         }
     }
-    
+
     /**
      * Send the information of the transferring object to the client.
      * 
      * @param tranferReqList
      */
-    public void sendPassGameObjInfo(List<SendProtocol> tranferReqList){
+    public void sendPassGameObjInfo(List<SendProtocol> tranferReqList) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tranferReqList)));
-            System.out.println(TAG + " send bullet transfer message : " + gson.toJson(tranferReqList));
+            System.out.println(TAG + " send bullet transfer message : "
+                    + gson.toJson(tranferReqList));
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send passing game objects information");
             log.error(TAG, e);
         }
     }
-    
+
     /**
      * Send the score change when a player in another server shoots a player in another server
      * 
      * @param scoreChangeReq
      */
-    public void sendScoreChangeReq(ScoreChangeTransferReq scoreChangeReq){
+    public void sendScoreChangeReq(List<SendProtocol> scoreChangeReq) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(scoreChangeReq)));
-            System.out.println(TAG + " send score change to player : " + gson.toJson(scoreChangeReq));
+            System.out.println(TAG + " send score change to player : "
+                    + gson.toJson(scoreChangeReq));
         } catch (IOException e) {
             System.out.println(TAG + " Unable to send score change information");
             log.error(TAG, e);
         }
     }
-    
-    /**
-     * Send coordination detail abo
-    }
 
     /**
-     * Close the WebSocket connection of the player
+     * Send coordination detail abo }
+     * 
+     * /** Close the WebSocket connection of the player
      * 
      * @return null
      */

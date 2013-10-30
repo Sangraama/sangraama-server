@@ -28,7 +28,7 @@ public enum BulletPassHandler {
     public void passBullets(Bullet bullet) {
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(bullet.getX(),
                 bullet.getY());
-        BulletTransferReq bulletTransReq = new BulletTransferReq(33, bullet.getPlayerId(),
+        BulletTransferReq bulletTransReq = new BulletTransferReq(20, bullet.getPlayerId(),
                 bullet.getId(), bullet.getX(), bullet.getY(), bullet.getVelocity(),
                 bullet.getOriginX(), bullet.getOriginY(), bullet.getScreenHeight(),
                 bullet.getScreenWidth(), newHost);

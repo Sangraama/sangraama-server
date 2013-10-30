@@ -17,6 +17,12 @@ public class ScoreChangeTransferReq extends SendProtocol{
         signedInfo = SignMsg.INSTANCE.signMessage(info);
     }
     
+    public float getScore(String info){
+        Gson gson = new Gson();
+        ScoreChangeInfo scoreChangeInfo = gson.fromJson(info, ScoreChangeInfo.class);
+        return scoreChangeInfo.scoreChange;
+    }
+    
     private class ScoreChangeInfo{
         
         private float scoreChange;
