@@ -16,6 +16,7 @@ import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.BulletTransferReq;
 import org.sangraama.controller.clientprotocol.ClientEvent;
 import org.sangraama.controller.clientprotocol.DefeatMsg;
+import org.sangraama.controller.clientprotocol.ScoreChangeTransferReq;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.util.VerifyMsg;
@@ -282,7 +283,22 @@ public class WebSocketConnection extends MessageInbound {
             log.error(TAG, e);
         }
     }
-
+    
+    /**
+     * Send the score change when a player in another server shoots a player in another server
+     * 
+     * @param scoreChangeReq
+     */
+    public void sendScoreChangeReq(ScoreChangeTransferReq scoreChangeReq){
+        try {
+            getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(scoreChangeReq)));
+            System.out.println(TAG + " send score change to player : " + gson.toJson(scoreChangeReq));
+        } catch (IOException e) {
+            System.out.println(TAG + " Unable to send score change information");
+            log.error(TAG, e);
+        }
+    }
+    
     /**
      * Send coordination detail abo
     }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
+import org.sangraama.controller.clientprotocol.ScoreChangeTransferReq;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
@@ -211,6 +212,10 @@ public class DummyPlayer extends AbsPlayer {
         }
     }
 
+    public void sendScoreChange(ScoreChangeTransferReq scoreChangeReq){
+        this.con.sendScoreChangeReq(scoreChangeReq);
+    }
+    
     /**
      * Setter methods which are not relevant to dummy player (but inherits)
      */

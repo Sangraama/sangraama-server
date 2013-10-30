@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jbox2d.dynamics.contacts.Contact;
+import org.sangraama.assets.AbsPlayer;
 import org.sangraama.assets.Bullet;
+import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
+import org.sangraama.controller.clientprotocol.ScoreChangeTransferReq;
 
 public enum CollisionManager implements Runnable {
     INSTANCE;
@@ -120,15 +123,20 @@ public enum CollisionManager implements Runnable {
     }
 
     private void processBulletShipCollition(Player ship, Bullet bullet) {
+        boolean playerInServer = false;
         reduceShipHealth(ship.getUserID(), -10);
-        float shooterUserID = bullet.getPlayerId();
+        long shooterUserID = bullet.getPlayerId();
         for (Player player : gameEngine.getPlayerList()) {
             if (player.getUserID() == shooterUserID) {
                 player.setScore(10);
+                playerInServer = true;
                 break;
             }
         }
         gameEngine.addToRemoveBulletQueue(bullet);
+        if(!playerInServer){
+            sendScoreChangeEventFromDummy(shooterUserID, 10);
+        }
     }
 
     private void reduceShipHealth(float userID, float valChange) {
@@ -137,6 +145,16 @@ public enum CollisionManager implements Runnable {
             if (player.getUserID() == userID) {
                 player.setHealth(valChange);
                 break;
+            }
+        }
+    }
+    
+    private void sendScoreChangeEventFromDummy(long shipID,int scoreChange){
+        List<DummyPlayer> dummyList = UpdateEngine.INSTANCE.getDummyList();
+        for(DummyPlayer dummyPlayer : dummyList){
+            if(dummyPlayer.getUserID() == shipID){
+                ScoreChangeTransferReq scoreChangeReq = new ScoreChangeTransferReq(21, shipID, scoreChange);
+                dummyPlayer.sendScoreChange(scoreChangeReq);
             }
         }
     }
