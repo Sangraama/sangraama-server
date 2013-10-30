@@ -32,13 +32,15 @@ public enum UpdateEngine implements Runnable {
     /* Should be atomic operation. */
     private volatile List<Player> updatedPlayerList;
     private Map<Long, PlayerDelta> playerDelta;
+    private List<Player> defeatMsgList;
 
     UpdateEngine() {
         System.out.println(TAG + "Init Update Engine ...");
-        this.playerList = new ArrayList<Player>();
-        this.bulletList = new ArrayList<Bullet>();
-        this.dummyList = new ArrayList<DummyPlayer>();
-        this.updatedPlayerList = new ArrayList<Player>();
+        this.playerList = new ArrayList<>();
+        this.bulletList = new ArrayList<>();
+        this.dummyList = new ArrayList<>();
+        this.updatedPlayerList = new ArrayList<>();
+        this.defeatMsgList = new ArrayList<>();
     }
 
     @Override
@@ -110,6 +112,16 @@ public enum UpdateEngine implements Runnable {
                 delta.add(bullet.getBulletDelta());
             }
         }
+        for (Player player : defeatMsgList) {
+            if (p.getXVirtualPoint() - p.getAOIWidth() <= player.getX()
+                    && player.getX() <= p.getXVirtualPoint() + p.getAOIWidth()
+                    && p.getYVirtualPoint() - p.getAOIHeight() <= player.getY()
+                    && player.getY() <= p.getYVirtualPoint() + p.getAOIHeight()) {
+                if (player.getUserID() != p.getUserID()) {
+                    delta.add(player.getDefeatMsg());
+                }
+            }
+        }
         return delta;
     }
 
@@ -140,6 +152,17 @@ public enum UpdateEngine implements Runnable {
                     && d.getYVirtualPoint() - d.getAOIHeight() <= bulletDelta.getDy()
                     && bulletDelta.getDy() <= d.getYVirtualPoint() + d.getAOIHeight()) {
                 delta.add(bullet.getBulletDelta());
+            }
+        }
+
+        for (Player player : defeatMsgList) {
+            if (d.getXVirtualPoint() - d.getAOIWidth() <= player.getX()
+                    && player.getX() <= d.getXVirtualPoint() + d.getAOIWidth()
+                    && d.getYVirtualPoint() - d.getAOIHeight() <= player.getY()
+                    && player.getY() <= d.getYVirtualPoint() + d.getAOIHeight()) {
+                if (player.getUserID() != d.getUserID()) {
+                    delta.add(player.getDefeatMsg());
+                }
             }
         }
 
@@ -196,6 +219,10 @@ public enum UpdateEngine implements Runnable {
          */
         this.updatedPlayerList = playerList;
         this.isUpdate = true;
+    }
+
+    public void setDefeatList(List<Player> playerList) {
+        this.defeatMsgList = playerList;
     }
 
     public void setBulletList(List<Bullet> bulletList) {

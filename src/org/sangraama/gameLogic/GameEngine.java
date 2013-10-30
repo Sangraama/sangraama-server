@@ -13,6 +13,7 @@ import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Wall;
 import org.sangraama.common.Constants;
+import org.sangraama.controller.clientprotocol.DefeatMsg;
 import org.sangraama.util.BoundaryCreator;
 
 import java.awt.event.ActionListener;
@@ -37,6 +38,7 @@ public enum GameEngine implements Runnable {
     // list of removing players
     private List<Player> removePlayerQueue;
     private List<Bullet> removeBulletQueue;
+    private List<Player> defeatMsgList;
     private CollisionDetector sangraamaCollisionDet;
     private List<Wall> wallList;
 
@@ -51,6 +53,7 @@ public enum GameEngine implements Runnable {
         this.removePlayerQueue = new ArrayList<>();
         this.removeBulletQueue = new ArrayList<>();
         this.wallList = new ArrayList<>();
+        this.defeatMsgList = new ArrayList<>();
         this.updateEngine = UpdateEngine.INSTANCE;
     }
 
@@ -182,6 +185,8 @@ public enum GameEngine implements Runnable {
     public void pushUpdate() {
         this.updateEngine.setUpdatedPlayerList(playerList);
         this.updateEngine.setBulletList(bulletList);
+        this.updateEngine.setDefeatList(defeatMsgList);
+        defeatMsgList.clear();
     }
 
     public synchronized void addToPlayerQueue(Player ship) {
@@ -207,6 +212,10 @@ public enum GameEngine implements Runnable {
 
     public void addToBulletQueue(Bullet bullet) {
         this.newBulletQueue.add(bullet);
+    }
+    
+    public void addToDefaetList(Player player) {
+        this.defeatMsgList.add(player);
     }
     
     public void addToRemoveBulletQueue(Bullet bullet){

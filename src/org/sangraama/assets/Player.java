@@ -12,6 +12,7 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
+import org.sangraama.controller.clientprotocol.DefeatMsg;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
@@ -41,7 +42,7 @@ public abstract class Player extends AbsPlayer {
 
     /* Player moving parameters */
     // Player speed factor
-    float v_rate = 0.25f;
+    float v_rate = 1f;
     Vec2 v = new Vec2(0.0f, 0.0f);
     PlayerDelta delta;
 
@@ -276,7 +277,7 @@ public abstract class Player extends AbsPlayer {
      * server.
      * 
      * @param transferReq
-     *          message which contains the information of the transferring object
+     *            message which contains the information of the transferring object
      */
     public void sendTransferringGameObjectInfo(SendProtocol transferReq) {
         if (this.con != null) {
@@ -339,8 +340,8 @@ public abstract class Player extends AbsPlayer {
                 y = y - rY;
             }
             long id = (long) (generator.nextInt(10000));
-            Vec2 bulletVelocity = new Vec2((x - this.body.getPosition().x) * 0.5f, (y
-                    - this.body.getPosition().y) * 0.5f);
+            Vec2 bulletVelocity = new Vec2((x - this.body.getPosition().x) * 0.5f,
+                    (y - this.body.getPosition().y) * 0.5f);
             Bullet bullet = new Bullet(id, this.userID, x, y, bulletVelocity,
                     this.body.getPosition().x, this.body.getPosition().y, this.getScreenWidth(),
                     this.getScreenHeight());
@@ -445,7 +446,7 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.health = 0;
             this.setScore(-200);
-            super.con.sendPlayerDefeatMsg(this);
+            gameEngine.addToDefaetList(this);
             gameEngine.addToRemovePlayerQueue(this);
         }
     }
@@ -471,6 +472,11 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.score = 0;
         }
+    }
+
+    public DefeatMsg getDefeatMsg() {
+        return new DefeatMsg(this.body.getPosition().x, this.body.getPosition().y,
+                this.body.getAngle(), this.userID, this.score, 6);
     }
 
 }
