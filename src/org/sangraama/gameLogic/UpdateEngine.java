@@ -198,7 +198,15 @@ public enum UpdateEngine implements Runnable {
         return this.dummyList.add(player);
     }
 
+    public synchronized boolean addToRemoveDummyQueue(long player) {
+        for(DummyPlayer d : dummyList){
+            if(d.getUserID() == player) this.dummyList.remove(d);
+        }
+        return true;
+    }
+    
     public synchronized boolean addToRemoveDummyQueue(DummyPlayer player) {
+        
         return this.dummyList.remove(player);
     }
 

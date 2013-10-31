@@ -19,6 +19,7 @@ import org.sangraama.controller.clientprotocol.DefeatMsg;
 import org.sangraama.controller.clientprotocol.ScoreChangeTransferReq;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.gameLogic.GameEngine;
+import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.util.VerifyMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,19 +120,19 @@ public class WebSocketConnection extends MessageInbound {
                 System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
                         + event.getV_y());
                 break;
-                
+
             case 2: // requesting for interesting area
                 this.player.reqInterestIn(event.getX(), event.getY());
                 System.out.println(TAG + T + "player interesting in x:" + event.getX() + " & y:"
                         + event.getY());
                 break;
             // set AOI of the player
-                
+
             case 3:
                 this.player.setAOI(event.getW(), event.getH());
                 System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
                 break;
-                
+
             case 4: // Reset settings and make dummy player
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
@@ -139,7 +140,7 @@ public class WebSocketConnection extends MessageInbound {
                 System.out.println(TAG + T + " RESET user events " + event.getV_x() + " : "
                         + event.getV_y());
                 break;
-                
+
             case 5: // Set Virtual point as the center of AOI in order to get updates
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
                 break;
@@ -184,6 +185,8 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
+                // Remove already existing dummy player
+                UpdateEngine.INSTANCE.addToRemoveDummyQueue(this.player.getUserID());
                 System.out.println(TAG + T + " add new Player " + event.toString());
                 /*
                  * AOI and Virtual point will add to the player after creation of it NOTE: These
@@ -194,7 +197,7 @@ public class WebSocketConnection extends MessageInbound {
                  * message which is can use to create a dummy player
                  */
                 break;
-                
+
             case 31: /*
                       * Create a dummy player
                       * 
