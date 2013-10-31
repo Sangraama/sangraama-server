@@ -216,7 +216,7 @@ public class DummyPlayer extends AbsPlayer {
         if (this.con != null) {
             ArrayList<SendProtocol> scoreChangeReqList = new ArrayList<SendProtocol>();
             scoreChangeReqList.add(scoreChangeReq);
-            con.sendPassGameObjInfo(scoreChangeReqList);
+            con.sendScoreChangeReq(scoreChangeReqList);
         }
     }
     
