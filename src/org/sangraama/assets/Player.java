@@ -24,7 +24,7 @@ public abstract class Player extends AbsPlayer {
 
     // Debug
     // Local Debug or logs
-    public static final Logger log = LoggerFactory.getLogger(Ship.class);
+    private static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "player : ";
     static Random generator = new Random();
     Body body;
