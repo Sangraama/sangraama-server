@@ -46,8 +46,6 @@ public class ServerStarter implements ServletContextListener {
                         + "/sangraama/player", Float.parseFloat(prop.getProperty("maxlength")),
                 Float.parseFloat(prop.getProperty("maxheight")));
 
-        System.out.println(prop.getProperty("host") + ":" + prop.getProperty("port") + "/"
-                + prop.getProperty("dir") + "/sangraama/player");
         SangraamaMap.INSTANCE.setSubTileProperties(
                 Float.parseFloat(prop.getProperty("subtilewidth")),
                 Float.parseFloat(prop.getProperty("subtileheight")));

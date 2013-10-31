@@ -18,7 +18,12 @@ import org.apache.coyote.http11.Http11AprProtocol;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.coyote.http11.Http11Protocol;
 import org.sangraama.assets.SangraamaMap;
+import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
@@ -28,6 +33,8 @@ public enum TileCoordinator {
     INSTANCE;
     private String TAG = "TileCoordinator : ";
     private boolean D = true;
+    private Marker subTile = MarkerFactory.getMarker("Sub Tile: ");
+    private Logger log = LoggerFactory.getLogger(Ship.class);
 
     private HazelcastInstance hazelcastInstance;
 
@@ -36,6 +43,7 @@ public enum TileCoordinator {
     private float subTileWidth;
     private SangraamaMap sangraamaMap;
     private String serverURL;
+    private int serverPort = 8080;
     private ArrayList<SangraamaTile> tileInfo;
 
     TileCoordinator() {
@@ -46,17 +54,16 @@ public enum TileCoordinator {
         this.subTileWidth = sangraamaMap.getSubTileHeight();
 
         Properties prop = new Properties();
+        this.serverPort = this.getHostPort();
         try {
             prop.load(getClass().getResourceAsStream("/conf/sangraamaserver.properties"));
-            this.serverURL = prop.getProperty("host") + ":" + prop.getProperty("port") + "/"
+            this.serverURL = prop.getProperty("host") + ":" + this.serverPort + "/"
                     + prop.getProperty("dir") + "/sangraama/player";
-            System.out.println(TAG + serverURL);
+            System.out.println(serverURL);
         } catch (Exception e) {
             System.out.println("sangraamaserver.properties file not found.");
             e.printStackTrace();
         }
-
-        this.getHostPort();
     }
 
     /**
@@ -100,7 +107,7 @@ public enum TileCoordinator {
                 subTileOriginY = (j * subTileHeight) + sangraamaMap.getOriginY();
                 subTileOrigins = Float.toString(subTileOriginX) + ":"
                         + Float.toString(subTileOriginY);
-                System.out.println("subTileOrigins"+subTileOrigins);
+                System.out.println("subTileOrigins" + subTileOrigins);
                 subtileMap.put(subTileOrigins, serverURL);
             }
         }
@@ -115,8 +122,8 @@ public enum TileCoordinator {
         String host = "";
         float subTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        host = (String) subtileMap.get(
-                Float.toString(subTileOriginX) + ":" + Float.toString(subTileOriginY));
+        host = (String) subtileMap.get(Float.toString(subTileOriginX) + ":"
+                + Float.toString(subTileOriginY));
         return host;
     }
 
@@ -129,17 +136,18 @@ public enum TileCoordinator {
     private ArrayList<SangraamaTile> calSubTilesCoordinations() {
         ArrayList<SangraamaTile> tiles = new ArrayList<SangraamaTile>();
         Set<String> keySet = subtileMap.keySet();
-        
+
         // Iterate though all keys
         for (String key : keySet) {
             // If sub-tile is inside current server, add to list
-            if ( this.serverURL.equals(subtileMap.get(key)) ) {
+            if (this.serverURL.equals(subtileMap.get(key))) {
                 String[] s = key.split(":");
                 tiles.add(new SangraamaTile(Float.parseFloat(s[0]), Float.parseFloat(s[1]),
                         this.subTileWidth, this.subTileHeight));
             }
         }
-        if(D) System.out.println(TAG + " calculated size of tile (subtiles)");
+        if (D)
+            System.out.println(TAG + " calculated size of tile (subtiles)");
         return tiles;
     }
 
@@ -163,7 +171,7 @@ public enum TileCoordinator {
             System.out.println(TAG + key);
         }
     }
-    
+
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
     }
