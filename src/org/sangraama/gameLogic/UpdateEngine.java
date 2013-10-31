@@ -228,5 +228,9 @@ public enum UpdateEngine implements Runnable {
     public void setBulletList(List<Bullet> bulletList) {
         this.bulletList = bulletList;
     }
+    
+    public List<DummyPlayer> getDummyList(){
+        return this.dummyList;
+    }
 
 }
