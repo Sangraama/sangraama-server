@@ -134,11 +134,10 @@ public class WebSocketConnection extends MessageInbound {
                 break;
 
             case 4: // Reset settings and make dummy player
-                this.player.setV(event.getV_x(), event.getV_y());
-                this.player.setAngle(event.getA());
-                this.player.shoot(event.getS());
-                System.out.println(TAG + T + " RESET user events " + event.getV_x() + " : "
-                        + event.getV_y());
+                this.player.setV(0, 0);
+                this.player.setAngle(0);
+                this.player.shoot(0);
+                System.out.println(TAG + T + " RESET user events ");
                 break;
 
             case 5: // Set Virtual point as the center of AOI in order to get updates
