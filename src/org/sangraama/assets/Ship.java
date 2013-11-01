@@ -35,7 +35,7 @@ public class Ship extends Player {
         // CircleShape circle = new CircleShape();
         // circle.m_radius = 1f;
         PolygonShape ps = new PolygonShape();
-        ps.setAsBox(1f, 1f);
+        ps.setAsBox(1.0f, 1f);
 
         FixtureDef fd = new FixtureDef();
         fd.density = 0.5f;
