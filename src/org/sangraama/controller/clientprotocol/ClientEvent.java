@@ -18,6 +18,8 @@ public class ClientEvent {
     private float s;
     private String info;
     private byte[] signedInfo;
+    private int st;// player image type
+    private int bt;// player bullet image type
 
     public int getType() {
         return type;
@@ -34,12 +36,12 @@ public class ClientEvent {
     public float getY() {
         return y;
     }
-    
-    public float getX_vp(){
+
+    public float getX_vp() {
         return x_vp;
     }
-    
-    public float getY_vp(){
+
+    public float getY_vp() {
         return y_vp;
     }
 
@@ -65,6 +67,7 @@ public class ClientEvent {
 
     /**
      * Get Area of interest width
+     * 
      * @return AOI width
      */
     public float getW() {
@@ -73,6 +76,7 @@ public class ClientEvent {
 
     /**
      * Get Area of interest height
+     * 
      * @return AOI height
      */
     public float getH() {
@@ -87,13 +91,23 @@ public class ClientEvent {
         return da;
     }
 
-    // Update as necessary before using
+    public int getSt() {
+        return st;
+    }
+
+    public int getBt() {
+        return bt;
+    }
+
     @Override
     public String toString() {
         return "ClientEvent [type=" + type + ", userID=" + userID + ", x=" + x + ", y=" + y
-                + ", w=" + w + ", h=" + h + ", v_x=" + v_x + ", v_y=" + v_y + ", a=" + a + ", da="
-                + da + ", s=" + s + ", info=" + info + ", signedInfo="
-                + Arrays.toString(signedInfo) + "]";
+                + ", x_vp=" + x_vp + ", y_vp=" + y_vp + ", w=" + w + ", h=" + h + ", v_x=" + v_x
+                + ", v_y=" + v_y + ", a=" + a + ", da=" + da + ", s=" + s + ", info=" + info
+                + ", signedInfo=" + Arrays.toString(signedInfo) + ", st=" + st + ", bt=" + bt + "]";
     }
+
+    // Update as necessary before using
+    
 
 }

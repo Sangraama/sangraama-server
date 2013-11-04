@@ -23,18 +23,16 @@ public enum PlayerPassHandler {
     INSTANCE;
     private static final String TAG = "PlayerPassHandler :";
     private List<AbsPlayer> passPlayerList;
-    private Map<Long, AbsPlayer> passPlayerHash;
-    private List<AbsPlayer> connectionList;
-    private Map<String, AbsPlayer> connectionHash;
+    private Map<Long, Player> passPlayerHash;
+    private Map<String, Player> connectionHash;
     private volatile boolean isPass;
     private ServerHandler sHandler;
     private GameEngine gameEngine;
 
     private PlayerPassHandler() {
-        this.passPlayerList = new ArrayList<AbsPlayer>();
-        this.passPlayerHash = new Hashtable<Long, AbsPlayer>();
-        this.connectionList = new ArrayList<AbsPlayer>();
-        this.connectionHash = new Hashtable<String, AbsPlayer>();
+        this.passPlayerList = new ArrayList<>();
+        this.passPlayerHash = new Hashtable<>();
+        this.connectionHash = new Hashtable<>();
         this.sHandler = ServerHandler.INSTANCE;
         this.gameEngine = GameEngine.INSTANCE;
     }
@@ -113,7 +111,7 @@ public enum PlayerPassHandler {
      * @param ship
      *            Player who need details about the server
      */
-    public synchronized void setPassConnection(float x, float y, AbsPlayer ship) {
+    public synchronized void setPassConnection(float x, float y, Player ship) {
         // this.connectionList.add(ship);
         this.connectionHash.put(Float.toString(x) + ":" + Float.toString(y), ship);
         this.isPass = true;
@@ -121,7 +119,7 @@ public enum PlayerPassHandler {
         this.run();
     }
 
-    private void passNewServerInfo(AbsPlayer ship) {
+    private void passNewServerInfo(Player ship) {
         /*
          * ServerLocation serverLoc = this.sHandler.getServerLocation(player.getX(), player.getY());
          * 
@@ -133,10 +131,10 @@ public enum PlayerPassHandler {
          * " Sending new connection information. server URL:" + serverLoc.getServerURL() +
          * " serverPort:" + serverLoc.getServerPort()); }
          */
-        
+
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(ship.getX(), ship.getY());
         SendProtocol transferReq = new ClientTransferReq(30, ship.getUserID(), ship.getX(),
-                ship.getY(), ship.getHealth(), ship.getScore(), newHost);
+                ship.getY(), ship.getHealth(), ship.getScore(), newHost, ship.getType());
         System.out.println(TAG + " new player pass server url " + newHost + " for x:" + ship.getX()
                 + " y:" + ship.getY());
         ship.sendPassConnectionInfo(transferReq);
@@ -145,18 +143,18 @@ public enum PlayerPassHandler {
     /**
      * Send the connection details about new server that player needs to get updates
      * 
-     * @param ship
+     * @param dummy
      *            Player that needs updates
      */
-    private void passNewConnectionInfo(String key, AbsPlayer ship) {
+    private void passNewConnectionInfo(String key, Player dummy) {
         String[] s = key.split(":");
         String updateHost = (String) TileCoordinator.INSTANCE.getSubTileHost(
                 Float.parseFloat(s[0]), Float.parseFloat(s[1]));
-        System.out.println(TAG + " new update server url " + updateHost + " for x:" + ship.getX()
-                + " y:" + ship.getY());
-        SendProtocol transferReq = new ClientTransferReq(31, ship.getUserID(), ship.getX(),
-                ship.getY(), ship.getHealth(), ship.getScore(), updateHost);
-        ship.sendUpdateConnectionInfo(transferReq);
+        System.out.println(TAG + " new update server url " + updateHost + " for x:" + dummy.getX()
+                + " y:" + dummy.getY());
+        SendProtocol transferReq = new ClientTransferReq(31, dummy.getUserID(), dummy.getX(),
+                dummy.getY(), dummy.getHealth(), dummy.getScore(), updateHost, dummy.getType());
+        dummy.sendUpdateConnectionInfo(transferReq);
     }
 
 }

@@ -18,8 +18,8 @@ public class Ship extends Player {
     private static final String TAG = "Ship : ";
 
     public Ship(long userID, float x, float y, float w, float h, float health, float score,
-            WebSocketConnection con) {
-        super(userID, x, y, w, h, health, score, con);
+            WebSocketConnection con, int type, int bulletType) {
+        super(userID, x, y, w, h, health, score, con, type, bulletType);
     }
 
     public BodyDef getBodyDef() {

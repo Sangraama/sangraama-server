@@ -30,22 +30,22 @@ public class BulletTransferReq extends SendProtocol {
      */
     public BulletTransferReq(int type, long playerID, long BulletId, float x, float y,
             Vec2 velocity, float originX, float originY, float screenHeight, float screenWidth,
-            String newHost) {
+            String newHost, int bulletType) {
         super(type, playerID);
         BulletTransferInfo bulletInfo = new BulletTransferInfo(BulletId, playerID, x, y, velocity,
-                originX, originY, screenHeight, screenWidth, newHost);
+                originX, originY, screenHeight, screenWidth, newHost, bulletType);
         Gson gson = new Gson();
         info = gson.toJson(bulletInfo);
         signedInfo = SignMsg.INSTANCE.signMessage(info);
     }
 
     /**
-     * This method is used to extracted the information of the bullet which is passed. This returns the bullet to generated it.  
+     * This method is used to extracted the information of the bullet which is passed. This returns
+     * the bullet to generated it.
      * 
      * @param info
-     *          GSON string of the bullet information 
-     * @return bullet
-     *          Bullet object after extracting the information
+     *            GSON string of the bullet information
+     * @return bullet Bullet object after extracting the information
      */
     public Bullet reCreateBullet(String info) {
         Bullet bullet = null;
@@ -53,7 +53,7 @@ public class BulletTransferReq extends SendProtocol {
         BulletTransferInfo bulletInfo = gson.fromJson(info, BulletTransferInfo.class);
         bullet = new Bullet(bulletInfo.id, bulletInfo.playerID, bulletInfo.positionX,
                 bulletInfo.positionY, bulletInfo.velocity, bulletInfo.originX, bulletInfo.originY,
-                bulletInfo.screenHeight, bulletInfo.screenWidth);
+                bulletInfo.screenHeight, bulletInfo.screenWidth, bulletInfo.bt);
         return bullet;
     }
 
@@ -74,10 +74,12 @@ public class BulletTransferReq extends SendProtocol {
         private float screenWidth;
         private float originX;
         private float originY;
+        private int bt;// bullet type
         private String url = "";
 
         public BulletTransferInfo(long id, long playerID, float x, float y, Vec2 velocity,
-                float originX, float originY, float screenHeight, float screenWidth, String newHost) {
+                float originX, float originY, float screenHeight, float screenWidth,
+                String newHost, int type) {
             this.id = id;
             this.playerID = playerID;
             this.positionX = x;
@@ -88,6 +90,7 @@ public class BulletTransferReq extends SendProtocol {
             this.screenHeight = screenHeight;
             this.screenWidth = screenWidth;
             this.url = newHost;
+            this.bt = type;
         }
     }
 }

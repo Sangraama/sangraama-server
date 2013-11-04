@@ -28,8 +28,10 @@ public class Bullet {
     private float currentSubTileOriginY;
     private float currentSubTileEndX;
     private float currentSubTileEndY;
+    private int type; // bullet type
 
-    public Bullet(long id, long playerId, float x, float y, Vec2 velocity, float originX, float originY, float w, float h) {
+    public Bullet(long id, long playerId, float x, float y, Vec2 velocity, float originX,
+            float originY, float w, float h, int bulletType) {
         this.id = id;
         this.playerId = playerId;
         this.originX = originX;
@@ -39,11 +41,14 @@ public class Bullet {
         this.x = x;
         this.y = y;
         this.velocity = velocity;
+        this.type = bulletType;
         this.sangraamaMap = SangraamaMap.INSTANCE;
         this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-        this.currentSubTileEndX = (x - (x % sangraamaMap.getSubTileWidth())) + sangraamaMap.getSubTileWidth();
-        this.currentSubTileEndY = (y - (y % sangraamaMap.getSubTileHeight())) + sangraamaMap.getSubTileHeight();
+        this.currentSubTileEndX = (x - (x % sangraamaMap.getSubTileWidth()))
+                + sangraamaMap.getSubTileWidth();
+        this.currentSubTileEndY = (y - (y % sangraamaMap.getSubTileHeight()))
+                + sangraamaMap.getSubTileHeight();
     }
 
     public void setBody(Body bulletBody) {
@@ -77,14 +82,14 @@ public class Bullet {
         return fd;
     }
 
-    public float getX(){
+    public float getX() {
         return this.body.getPosition().x;
     }
-    
-    public float getY(){
+
+    public float getY() {
         return this.body.getPosition().y;
     }
-    
+
     public Vec2 getVelocity() {
         return velocity;
     }
@@ -115,32 +120,37 @@ public class Bullet {
 
     public BulletDelta getBulletDelta() {
         bulletDelta = new BulletDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.playerId, this.id);
-        if(!isInsideSeverSubTile(this.body.getPosition().x, this.body.getPosition().y)){
+                this.body.getAngle(), this.playerId, this.id, this.type);
+        if (!isInsideSeverSubTile(this.body.getPosition().x, this.body.getPosition().y)) {
             BulletPassHandler.INSTANCE.passBullets(this);
         }
         return bulletDelta;
     }
-    
+
+    public int getType() {
+        return type;
+    }
+
     /**
      * This method check whether the x,y coordinates are out of the server controlled area or not
      * 
      * @param x
-     *      x coordination of the position
+     *            x coordination of the position
      * @param y
-     *      y coordination of the position
-     * @return
-     *      true if coordinate is inside the server assingned area.
+     *            y coordination of the position
+     * @return true if coordinate is inside the server assingned area.
      */
-    private boolean isInsideSeverSubTile(float x,float y){
-        if (currentSubTileOriginX <= x && x <= currentSubTileEndX && currentSubTileOriginY <= y && y <= currentSubTileEndY) { 
+    private boolean isInsideSeverSubTile(float x, float y) {
+        if (currentSubTileOriginX <= x && x <= currentSubTileEndX && currentSubTileOriginY <= y
+                && y <= currentSubTileEndY) {
             return true;
-        }
-        else{
+        } else {
             currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
             currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-            currentSubTileEndX = (x - (x % sangraamaMap.getSubTileWidth())) + sangraamaMap.getSubTileWidth();
-            currentSubTileEndY = (y - (y % sangraamaMap.getSubTileHeight())) + sangraamaMap.getSubTileHeight();
+            currentSubTileEndX = (x - (x % sangraamaMap.getSubTileWidth()))
+                    + sangraamaMap.getSubTileWidth();
+            currentSubTileEndY = (y - (y % sangraamaMap.getSubTileHeight()))
+                    + sangraamaMap.getSubTileHeight();
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 System.out.println(TAG + "Bullet is not inside a subtile of "
                         + sangraamaMap.getHost());
