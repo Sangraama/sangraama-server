@@ -180,7 +180,7 @@ public class WebSocketConnection extends MessageInbound {
                       * authentication>
                       */
                 this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),
-                        event.getW(), event.getH(), 100, 0, this));
+                        event.getW(), event.getH(), 100, 0, this, event.getSt(), event.getBt()));
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());

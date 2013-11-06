@@ -23,7 +23,7 @@ public enum BulletPassHandler {
      * the area of the current server.
      * 
      * @param bullet
-     *        bullet which going to transferred to another server
+     *            bullet which going to transferred to another server
      */
     public void passBullets(Bullet bullet) {
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(bullet.getX(),
@@ -31,7 +31,7 @@ public enum BulletPassHandler {
         BulletTransferReq bulletTransReq = new BulletTransferReq(20, bullet.getPlayerId(),
                 bullet.getId(), bullet.getX(), bullet.getY(), bullet.getVelocity(),
                 bullet.getOriginX(), bullet.getOriginY(), bullet.getScreenHeight(),
-                bullet.getScreenWidth(), newHost);
+                bullet.getScreenWidth(), newHost, bullet.getType());
         gameEngine.addToRemoveBulletQueue(bullet);
         passBulletInfoToClient(bullet, bulletTransReq);
     }

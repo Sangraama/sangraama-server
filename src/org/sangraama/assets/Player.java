@@ -39,11 +39,14 @@ public abstract class Player extends AbsPlayer {
 
     int a_rate = 2;
     float angularVelocity;
+    int type;// image type of the player
+    int bulletType;// bullet type of the player
 
     /* Player moving parameters */
     // Player speed factor
 
     float v_rate = 0.5f;
+    float bullet_v_rate = 0.5f;
     Vec2 v = new Vec2(0.0f, 0.0f);
     PlayerDelta delta;
 
@@ -51,7 +54,7 @@ public abstract class Player extends AbsPlayer {
     private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subtileHeight
 
     public Player(long userID, float x, float y, float w, float h, float health, float score,
-            WebSocketConnection con) {
+            WebSocketConnection con, int type, int bulletType) {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
         super.con = con;
@@ -63,6 +66,8 @@ public abstract class Player extends AbsPlayer {
         this.health = health;
         this.score = score;
         this.gameEngine.addToPlayerQueue(this);
+        this.type = type;
+        this.bulletType = bulletType;
     }
 
     public PlayerDelta getPlayerDelta() {
@@ -81,7 +86,7 @@ public abstract class Player extends AbsPlayer {
         // System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " health:" +
         // this.getHealth() + " Score:"+this.getScore());
         this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.userID, this.health, this.score);
+                this.body.getAngle(), this.userID, this.health, this.score, this.type);
         /*
          * for (Bullet bullet : this.removedBulletList) {
          * delta.getBulletDeltaList().add(bullet.getBulletDelta(2)); }
@@ -341,11 +346,11 @@ public abstract class Player extends AbsPlayer {
                 y = y - rY;
             }
             long id = (long) (generator.nextInt(10000));
-            Vec2 bulletVelocity = new Vec2((x - this.body.getPosition().x) * 0.5f,
-                    (y - this.body.getPosition().y) * 0.5f);
+            Vec2 bulletVelocity = new Vec2((x - this.body.getPosition().x) * this.bullet_v_rate,
+                    (y - this.body.getPosition().y) * this.bullet_v_rate);
             Bullet bullet = new Bullet(id, this.userID, x, y, bulletVelocity,
                     this.body.getPosition().x, this.body.getPosition().y, this.getScreenWidth(),
-                    this.getScreenHeight());
+                    this.getScreenHeight(), this.bulletType);
             this.gameEngine.addToBulletQueue(bullet);
             System.out.println(TAG + ": Added a new bullet");
         }
@@ -467,6 +472,10 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
+    public int getType() {
+        return type;
+    }
+
     public void setScore(float scoreChange) {
         if ((this.score + scoreChange) > 0) {
             this.score += scoreChange;
@@ -477,7 +486,7 @@ public abstract class Player extends AbsPlayer {
 
     public DefeatMsg getDefeatMsg() {
         return new DefeatMsg(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.userID, this.score, 6);
+                this.body.getAngle(), this.userID, this.score, 6, this.type);
     }
 
 }
