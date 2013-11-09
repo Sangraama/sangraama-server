@@ -198,7 +198,7 @@ public abstract class AbsPlayer {
         return this.y;
     }
 
-    public abstract void setVirtualPoint(float x_v, float y_v);
+    public abstract boolean setVirtualPoint(float x_v, float y_v);
 
     public float getXVirtualPoint() {
         return this.x_virtual;

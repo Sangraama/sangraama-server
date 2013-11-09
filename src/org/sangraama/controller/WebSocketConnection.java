@@ -92,21 +92,8 @@ public class WebSocketConnection extends MessageInbound {
             this.playerEvents(event);
         } catch (Exception e) {
             System.out.println(TAG + " create new player call " + event.getType());
-            // this.createNewPlayer(event);
-            // System.out.print(TAG + "Player not found ");
-            // e.printStackTrace();
+            e.printStackTrace();
         }
-
-        // if (this.player != null) {
-        // /* Call when "the player" is already connected and added to the server world map */
-        // this.playerEvents(event);
-        // } else if (this.dPlayer != null) {
-        // /* Call when "a Dummy Player" is already created and sending updates to the client */
-        // this.dummyPlayerEvents(event);
-        // } else {
-        // /* Call when a player is not created */
-        // this.newPlayerEvent(event);
-        // }
     }
 
     private void playerEvents(ClientEvent event) {
@@ -126,9 +113,8 @@ public class WebSocketConnection extends MessageInbound {
                 System.out.println(TAG + T + "player interesting in x:" + event.getX() + " & y:"
                         + event.getY());
                 break;
-            // set AOI of the player
-
-            case 3:
+                
+            case 3: // set AOI of the player
                 this.player.setAOI(event.getW(), event.getH());
                 System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
                 break;
@@ -145,9 +131,6 @@ public class WebSocketConnection extends MessageInbound {
                 break;
 
             case 20: /*
-                      * 
-                      * 
-                      * 
                       * Adding the bullet to the game world of the server. The bullet was passed
                       * from the neighbor server. First the information is verified to check whether
                       * it is changed by the client or not. Then dummy player add bullets to the
