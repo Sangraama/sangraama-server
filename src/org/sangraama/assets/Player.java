@@ -364,13 +364,19 @@ public abstract class Player extends AbsPlayer {
      * Getters and Setters
      */
 
-    public void setVirtualPoint(float x_vp, float y_vp) {
+    public boolean setVirtualPoint(float x_vp, float y_vp) {
         /*
          * Validate data before set virtual point. Idea: Virtual point can't go beyond edges of Full
          * map (the map which divide into sub tiles) with having half of the size of AOI. Then
          * possible virtual point setting will validate by server side. #gihan
          */
         System.out.println(TAG + " want to set vp x:" + x_vp + " y:" + y_vp);
+        
+        /*
+         * If asking for same virtual point, then ignore it
+         */
+        if(this.x_virtual == x_vp && this.y_virtual == y_vp)
+            return false;
 
         this.x_virtual = x_vp;
         this.y_virtual = y_vp;
@@ -399,6 +405,8 @@ public abstract class Player extends AbsPlayer {
                 screenHeight));
         System.out.println(TAG + "Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
+        
+        return true;
     }
 
     private void setSubtileEgdeValues() {

@@ -176,7 +176,7 @@ public class DummyPlayer extends AbsPlayer {
 
     /* Getter Setter methods */
 
-    public void setVirtualPoint(float x_vp, float y_vp) {
+    public boolean setVirtualPoint(float x_vp, float y_vp) {
         /*
          * Validate data before set virtual point. Idea: Virtual point can't go beyond edges of Full
          * map (the map which divide into sub tiles) with having half of the size of AOI. Then
@@ -184,6 +184,9 @@ public class DummyPlayer extends AbsPlayer {
          */
         System.out.println(TAG + " want to set vp x:" + x_vp + " y:" + y_vp);
 
+        if(this.x_virtual == x_vp && this.y_virtual == y_vp)
+            return false;
+        
         this.x_virtual = x_vp;
         this.y_virtual = y_vp;
 
@@ -210,6 +213,7 @@ public class DummyPlayer extends AbsPlayer {
             this.sendSyncData(data);
             con.closeConnection();
         }
+        return false;
     }
 
     public void sendScoreChange(ScoreChangeTransferReq scoreChangeReq){
