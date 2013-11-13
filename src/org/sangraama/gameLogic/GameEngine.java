@@ -1,23 +1,23 @@
 package org.sangraama.gameLogic;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+
+import javax.swing.Timer;
+
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
 import org.sangraama.asserts.map.GameMap;
 import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
-import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Wall;
 import org.sangraama.common.Constants;
-import org.sangraama.controller.clientprotocol.DefeatMsg;
 import org.sangraama.util.BoundaryCreator;
-
-import java.awt.event.ActionListener;
-import javax.swing.Timer;
 
 public enum GameEngine implements Runnable {
 
@@ -42,16 +42,21 @@ public enum GameEngine implements Runnable {
     private CollisionDetector sangraamaCollisionDet;
     private List<Wall> wallList;
 
+    /**
+     * Testing values
+     */
+    private int maxPlayers = 0;
+
     // this method only access via class
     GameEngine() {
         System.out.println(TAG + "Init GameEngine...");
         this.world = new World(new Vec2(0.0f, 0.0f));
         this.playerList = new ArrayList<>();
         this.bulletList = new ArrayList<>();
-        this.newPlayerQueue = new ArrayList<>();
-        this.newBulletQueue = new ArrayList<>();
-        this.removePlayerQueue = new ArrayList<>();
-        this.removeBulletQueue = new ArrayList<>();
+        this.newPlayerQueue = new Vector<>(20, 5);
+        this.newBulletQueue = new Vector<Bullet>();
+        this.removePlayerQueue = new Vector<Player>();
+        this.removeBulletQueue = new Vector<Bullet>();
         this.wallList = new ArrayList<>();
         this.defeatMsgList = new ArrayList<>();
         this.updateEngine = UpdateEngine.INSTANCE;
@@ -109,27 +114,30 @@ public enum GameEngine implements Runnable {
     }
 
     private void performBulletUpdates() {
-        for (Bullet rmvBullet : removeBulletQueue) {
-            System.out.println(TAG + "Removing bullet");
-            this.bulletList.remove(rmvBullet);
-            this.world.destroyBody(rmvBullet.getBody());
-            System.out.println(TAG + "Removed bullet :" + rmvBullet.getId());
+        synchronized (this.removeBulletQueue) {
+            for (Bullet rmvBullet : removeBulletQueue) {
+                System.out.println(TAG + "Removing bullet");
+                this.bulletList.remove(rmvBullet);
+                this.world.destroyBody(rmvBullet.getBody());
+                System.out.println(TAG + "Removed bullet :" + rmvBullet.getId());
+            }
+            this.removeBulletQueue.clear();
         }
-        this.removeBulletQueue.clear();
 
         // Add new bullet to the world
-
-        for (Bullet newBullet : newBulletQueue) {
-            System.out.println(TAG + "Adding new bullets");
-            Body newBulletBody = world.createBody(newBullet.getBodyDef());
-            newBulletBody.createFixture(newBullet.getFixtureDef());
-            newBullet.setBody(newBulletBody);
-            newBulletBody.setLinearVelocity(newBullet.getVelocity());
-            this.bulletList.add(newBullet);
-            System.out.println(TAG + "Added new bullet :" + newBullet.getId() + "x : "
-                    + newBulletBody.getPosition().x + "y : " + newBulletBody.getPosition().y);
+        synchronized (this.removeBulletQueue) {
+            for (Bullet newBullet : newBulletQueue) {
+                System.out.println(TAG + "Adding new bullets");
+                Body newBulletBody = world.createBody(newBullet.getBodyDef());
+                newBulletBody.createFixture(newBullet.getFixtureDef());
+                newBullet.setBody(newBulletBody);
+                newBulletBody.setLinearVelocity(newBullet.getVelocity());
+                this.bulletList.add(newBullet);
+                System.out.println(TAG + "Added new bullet :" + newBullet.getId() + "x : "
+                        + newBulletBody.getPosition().x + "y : " + newBulletBody.getPosition().y);
+            }
+            this.newBulletQueue.clear();
         }
-        this.newBulletQueue.clear();
 
         for (Bullet bullet : bulletList) {
             removeBulletByPosition(bullet);
@@ -139,30 +147,39 @@ public enum GameEngine implements Runnable {
 
     private void performPlayerUpdates() {
         // Remove existing players from the game world
-        for (Player rmPlayer : removePlayerQueue) {
-            System.out.println(TAG + "Removing players");
-            if(this.playerList.remove(rmPlayer)){ // True if player contains
-            this.world.destroyBody(rmPlayer.getBody());
+        synchronized (this.removePlayerQueue) {
+            for (Player rmPlayer : removePlayerQueue) {
+                // System.out.println(TAG + "Removing players");
+                if (this.playerList.remove(rmPlayer)) { // True if player contains
+                    this.world.destroyBody(rmPlayer.getBody());
+                }
+                if (this.playerList.size() > maxPlayers)
+                    maxPlayers = this.playerList.size();
+                System.out.print(TAG + " Removed player :" + rmPlayer.getUserID());
+                System.out.println("=>> number of remained players : " + this.playerList.size()
+                        + "/" + maxPlayers + " #################");
+                rmPlayer = null; // free the memory
             }
-            System.out.println(TAG + "Removed player :" + rmPlayer.getUserID());
-            rmPlayer = null; // free the memory
+            this.removePlayerQueue.clear();
         }
-        this.removePlayerQueue.clear();
 
         // Add new player to the world
-        for (Player newPlayer : newPlayerQueue) {
-            System.out.println(TAG + "Adding new players");
-            Body newPlayerBody = world.createBody(newPlayer.getBodyDef());
-            newPlayerBody.createFixture(newPlayer.getFixtureDef());
-            newPlayer.setBody(newPlayerBody);
-            // PhysicsAPI physicsAPI=new PhysicsAPI();
-            // physicsAPI.applyPhysics(newPlayer, world);
-            this.playerList.add(newPlayer);
-            System.out.println(TAG + "Added new player :" + newPlayer.getUserID());
-            // Send size of the tile
-            newPlayer.sendTileSizeInfo();
+        synchronized (this.newPlayerQueue) {
+            for (Player newPlayer : newPlayerQueue) {
+                // System.out.println(TAG + "Adding new players");
+                Body newPlayerBody = world.createBody(newPlayer.getBodyDef());
+                newPlayerBody.createFixture(newPlayer.getFixtureDef());
+                newPlayer.setBody(newPlayerBody);
+                this.playerList.add(newPlayer);
+                System.out.print(TAG + "Added new player :" + newPlayer.getUserID());
+                System.out.println("=>> number of remained players : " + this.playerList.size()
+                        + "/" + maxPlayers + " #################");
+                // Send size of the tile
+                newPlayer.sendTileSizeInfo();
+            }
+            this.newPlayerQueue.clear();
         }
-        this.newPlayerQueue.clear();
+
         for (Player player : playerList) {
             player.applyUpdate();
         }
@@ -190,12 +207,16 @@ public enum GameEngine implements Runnable {
         defeatMsgList.clear();
     }
 
-    public synchronized void addToPlayerQueue(Player ship) {
-        this.newPlayerQueue.add(ship);
+    public void addToPlayerQueue(Player ship) {
+        synchronized (this.newPlayerQueue) {
+            this.newPlayerQueue.add(ship);
+        }
     }
 
-    public synchronized void addToRemovePlayerQueue(Player ship) {
-        this.removePlayerQueue.add(ship);
+    public void addToRemovePlayerQueue(Player ship) {
+        synchronized (this.removePlayerQueue) {
+            this.removePlayerQueue.add(ship);
+        }
     }
 
     public List<Player> getPlayerList() {
@@ -206,21 +227,25 @@ public enum GameEngine implements Runnable {
         BoundaryCreator wallGen = new BoundaryCreator();
         wallList = wallGen.calculateWallBoundary();
         for (Wall wall : wallList) {
-            System.out.println("Adding wall " + wall.getFixtureDef().userData);
+            // System.out.println("Adding wall " + wall.getFixtureDef().userData);
             this.world.createBody(wall.getBodyDef()).createFixture(wall.getFixtureDef());
         }
     }
 
     public void addToBulletQueue(Bullet bullet) {
-        this.newBulletQueue.add(bullet);
+        synchronized (this.newBulletQueue) {
+            this.newBulletQueue.add(bullet);
+        }
     }
-    
+
     public void addToDefaetList(Player player) {
         this.defeatMsgList.add(player);
     }
-    
-    public void addToRemoveBulletQueue(Bullet bullet){
-        this.removeBulletQueue.add(bullet);
+
+    public void addToRemoveBulletQueue(Bullet bullet) {
+        synchronized (this.removeBulletQueue) {
+            this.removeBulletQueue.add(bullet);
+        }
     }
-    
+
 }

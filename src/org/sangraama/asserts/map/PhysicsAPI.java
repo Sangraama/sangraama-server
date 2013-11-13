@@ -44,9 +44,9 @@ public class PhysicsAPI {
 		
 			vertices[i]=new Vec2();
 			float verticeX=scale(staticObject.getCoordinates().get(i).getX());
-			System.out.println(staticObject.getCoordinates().get(i).getX()+":"+verticeX);
+			// System.out.println(staticObject.getCoordinates().get(i).getX()+":"+verticeX);
 			float verticeY=scale(staticObject.getCoordinates().get(i).getY());
-			System.out.println(staticObject.getCoordinates().get(i).getY()+":"+verticeY);
+			// System.out.println(staticObject.getCoordinates().get(i).getY()+":"+verticeY);
 			vertices[i].set(verticeX, verticeY);
 			
 		}

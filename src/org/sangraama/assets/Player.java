@@ -74,11 +74,12 @@ public abstract class Player extends AbsPlayer {
         // if (!isUpdate) {
 
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
-            /*System.out.print(TAG + "id : " + this.userID + " x:" + x * Constants.scale + " y:" + y
-                    * Constants.scale + " angle:" + this.body.getAngle() + " & "
-                    + this.body.getAngularVelocity() + " # ");
-            System.out.println(" x_virtual:" + this.x_virtual * Constants.scale + " y_virtual:"
-                    + this.y_virtual * Constants.scale);*/
+            /*
+             * System.out.print(TAG + "id : " + this.userID + " x:" + x * Constants.scale + " y:" +
+             * y Constants.scale + " angle:" + this.body.getAngle() + " & " +
+             * this.body.getAngularVelocity() + " # "); System.out.println(" x_virtual:" +
+             * this.x_virtual * Constants.scale + " y_virtual:" + this.y_virtual * Constants.scale);
+             */
         }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
@@ -229,7 +230,9 @@ public abstract class Player extends AbsPlayer {
             System.out.println(TAG + userID + " Unable to send updates,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + userID + "  waiting for remove");
+            System.out.println(TAG + userID + "  waiting for remove (1) id:" + userID
+                    + " player type:" + super.isPlayer);
+            this.gameEngine.addToRemovePlayerQueue(this);
         }
     }
 
@@ -250,10 +253,11 @@ public abstract class Player extends AbsPlayer {
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + userID + " Unable to send new connection,coz con :" + super.con
-                    + ". Add to remove queue.");
+            System.out.println(TAG + userID + " Unable to send new connection,coz con :"
+                    + super.con + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + userID + "  waiting for remove id:" + userID + " player type:" + super.isPlayer );
+            System.out.println(TAG + userID + "  waiting for remove (2) id:" + userID
+                    + " player type:" + super.isPlayer);
         }
     }
 
@@ -271,10 +275,11 @@ public abstract class Player extends AbsPlayer {
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + userID + " Unable to send new connection,coz con :" + super.con
-                    + ". Add to remove queue.");
+            System.out.println(TAG + userID + " Unable to send new connection,coz con :"
+                    + super.con + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + userID + "  waiting for remove id:" + userID + " player type:" + super.isPlayer );
+            System.out.println(TAG + userID + "  waiting for remove (3) id:" + userID
+                    + " player type:" + super.isPlayer);
         }
     }
 
@@ -308,7 +313,8 @@ public abstract class Player extends AbsPlayer {
             System.out.println(TAG + userID + " Unable to send syncdata,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + userID + "  waiting for remove id:" + userID + " player type:" + super.isPlayer );
+            System.out.println(TAG + userID + "  waiting for remove (4) id:" + userID
+                    + " player type:" + super.isPlayer);
         }
     }
 
@@ -370,12 +376,12 @@ public abstract class Player extends AbsPlayer {
          * map (the map which divide into sub tiles) with having half of the size of AOI. Then
          * possible virtual point setting will validate by server side. #gihan
          */
-        System.out.println(TAG + userID + "  want to set vp x:" + x_vp + " y:" + y_vp);
-        
+        // System.out.println(TAG + userID + "  want to set vp x:" + x_vp + " y:" + y_vp);
+
         /*
          * If asking for same virtual point, then ignore it
          */
-        if(this.x_virtual == x_vp && this.y_virtual == y_vp)
+        if (this.x_virtual == x_vp && this.y_virtual == y_vp)
             return false;
 
         this.x_virtual = x_vp;
@@ -403,9 +409,9 @@ public abstract class Player extends AbsPlayer {
         List<SendProtocol> data = new ArrayList<SendProtocol>();
         data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth,
                 screenHeight));
-        System.out.println(TAG + userID + " Virtual point x" + x_virtual + " y" + y_virtual);
+        // System.out.println(TAG + userID + " Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
-        
+
         return true;
     }
 
@@ -437,17 +443,18 @@ public abstract class Player extends AbsPlayer {
     public void setV(float x, float y) {
         // Fixed: if client send x value greater than 1
         this.v.set(x % 2 * v_rate, y % 2 * v_rate);
-        System.out.println(TAG + userID + "  set V :" + this.v.x + ":" + this.v.y);
+        // System.out.println(TAG + userID + "  set V :" + this.v.x + ":" + this.v.y);
     }
 
     public void setAngle(float a) {
         this.angle = a;
-        System.out.println(TAG + userID + "  set angle : " + a + " > " + this.angle);
+        // System.out.println(TAG + userID + "  set angle : " + a + " > " + this.angle);
     }
 
     public void setAngularVelocity(float da) {
         this.angularVelocity = da % 2 * a_rate;
-        System.out.println(TAG + userID + "  set angular velocity : " + da + " > " + this.angularVelocity);
+        // System.out.println(TAG + userID + "  set angular velocity : " + da + " > "
+        // + this.angularVelocity);
     }
 
     public float getAngle() {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.Timer;
 
@@ -38,7 +39,7 @@ public enum UpdateEngine implements Runnable {
         System.out.println(TAG + "Init Update Engine ...");
         this.playerList = new ArrayList<>();
         this.bulletList = new ArrayList<>();
-        this.dummyList = new ArrayList<>();
+        this.dummyList = new Vector<DummyPlayer>();
         this.updatedPlayerList = new ArrayList<>();
         this.defeatMsgList = new ArrayList<>();
     }
@@ -193,19 +194,19 @@ public enum UpdateEngine implements Runnable {
      *            Player want to get updates
      * @return true if added to the list, false otherwise
      */
-    public synchronized boolean addToDummyQueue(DummyPlayer player) {
+    public boolean addToDummyQueue(DummyPlayer player) {
         player.sendTileSizeInfo();
         return this.dummyList.add(player);
     }
 
-    public synchronized boolean addToRemoveDummyQueue(long player) {
+    public boolean addToRemoveDummyQueue(long player) {
         for(DummyPlayer d : dummyList){
             if(d.getUserID() == player) this.dummyList.remove(d);
         }
         return true;
     }
     
-    public synchronized boolean addToRemoveDummyQueue(DummyPlayer player) {
+    public boolean addToRemoveDummyQueue(DummyPlayer player) {
         
         return this.dummyList.remove(player);
     }

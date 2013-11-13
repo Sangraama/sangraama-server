@@ -57,10 +57,10 @@ public enum CollisionManager implements Runnable {
 
     private void processCollisions(Contact collision) {
         int i = 0;
-        System.out.println(TAG + "Processing collisions ## ## ");
+        // System.out.println(TAG + "Processing collisions ## ## ");
         if (collision.getFixtureA().getUserData().getClass() == Ship.class
                 && collision.getFixtureB().getUserData().getClass() == Ship.class) {
-            System.out.println(TAG + "Ships are colliding.. " + i);
+            // System.out.println(TAG + "Ships are colliding.. " + i);
             Ship ship1 = (Ship) collision.getFixtureA().getUserData();
             Ship ship2 = (Ship) collision.getFixtureB().getUserData();
             processShipsCollision(ship1, ship2);
@@ -69,7 +69,7 @@ public enum CollisionManager implements Runnable {
                 .getFixtureB().getUserData().getClass() == Bullet.class)
                 || (collision.getFixtureA().getUserData().getClass() == Bullet.class && collision
                         .getFixtureB().getUserData().getClass() == Ship.class)) {
-            System.out.println(TAG + "Hitting Bullet..");
+            // System.out.println(TAG + "Hitting Bullet..");
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
                 Player ship = (Player) collision.getFixtureA().getUserData();
                 Bullet bullet = (Bullet) collision.getFixtureB().getUserData();
@@ -84,7 +84,7 @@ public enum CollisionManager implements Runnable {
                 || ("island".equals(collision.getFixtureB().getUserData()) && collision
                         .getFixtureA().getUserData().getClass() == Ship.class)) {
             Player ship;
-            System.out.println(TAG + "$$Hitting Island..");
+            // System.out.println(TAG + "$$Hitting Island..");
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
                 ship = (Player) collision.getFixtureA().getUserData();
             } else {
@@ -140,7 +140,6 @@ public enum CollisionManager implements Runnable {
     }
 
     private void reduceShipHealth(float userID, float valChange) {
-        System.out.println(TAG + "PlayerList size : " + gameEngine.getPlayerList().size());
         for (Player player : gameEngine.getPlayerList()) {
             if (player.getUserID() == userID) {
                 player.setHealth(valChange);

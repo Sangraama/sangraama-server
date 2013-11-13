@@ -88,7 +88,7 @@ public class WebSocketConnection extends MessageInbound {
 
         // Avoid checking whether player is created every time access it.
         try {
-            System.out.println(TAG + " player event call " + event.getType());
+            // System.out.println(TAG + " player event call " + event.getType());
             this.playerEvents(event);
         } catch (Exception e) {
             System.out.println(TAG + " create new player call " + event.getType());
@@ -104,19 +104,19 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setAngle(event.getA());
                 this.player.setAngularVelocity(event.getDa());
                 this.player.shoot(event.getS());
-                System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
-                        + event.getV_y());
+                // System.out.println(TAG + T + " set user events " + event.getV_x() + " : "
+                // + event.getV_y());
                 break;
 
             case 2: // requesting for interesting area
                 this.player.reqInterestIn(event.getX(), event.getY());
-                System.out.println(TAG + T + "player interesting in x:" + event.getX() + " & y:"
-                        + event.getY());
+                // System.out.println(TAG + T + "player interesting in x:" + event.getX() + " & y:"
+                // + event.getY());
                 break;
-                
+
             case 3: // set AOI of the player
                 this.player.setAOI(event.getW(), event.getH());
-                System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
+                // System.out.println(TAG + T + " set AOI of player: " + event.getUserID());
                 break;
 
             case 4: // Reset settings and make dummy player
