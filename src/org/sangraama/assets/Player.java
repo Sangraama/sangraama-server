@@ -74,11 +74,11 @@ public abstract class Player extends AbsPlayer {
         // if (!isUpdate) {
 
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
-            System.out.print(TAG + "id : " + this.userID + " x:" + x * Constants.scale + " y:" + y
+            /*System.out.print(TAG + "id : " + this.userID + " x:" + x * Constants.scale + " y:" + y
                     * Constants.scale + " angle:" + this.body.getAngle() + " & "
                     + this.body.getAngularVelocity() + " # ");
             System.out.println(" x_virtual:" + this.x_virtual * Constants.scale + " y_virtual:"
-                    + this.y_virtual * Constants.scale);
+                    + this.y_virtual * Constants.scale);*/
         }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
@@ -104,7 +104,7 @@ public abstract class Player extends AbsPlayer {
         // }
         if (!isInsideServerSubTile(this.x, this.y)) {
             PlayerPassHandler.INSTANCE.setPassPlayer(this);
-            System.out.println(TAG + "outside of the subtile detected");
+            System.out.println(TAG + userID + " outside of the subtile detected");
         }
         return this.delta;
     }
@@ -137,12 +137,12 @@ public abstract class Player extends AbsPlayer {
      * @return if inside tile return true, else false
      */
     private boolean isInsideMap(float x, float y) {
-        // System.out.println(TAG + "is inside "+x+":"+y);
+        // System.out.println(TAG + userID + " is inside "+x+":"+y);
         if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
                 && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
             return true;
         } else {
-            System.out.println(TAG + "Outside of map : " + sangraamaMap.getEdgeX() + ":"
+            System.out.println(TAG + userID + " Outside of map : " + sangraamaMap.getEdgeX() + ":"
                     + sangraamaMap.getEdgeY());
             return false;
         }
@@ -169,7 +169,7 @@ public abstract class Player extends AbsPlayer {
             currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 insideServerSubTile = false;
-                System.out.println(TAG + "player is not inside a subtile of "
+                System.out.println(TAG + userID + " player is not inside a subtile of "
                         + sangraamaMap.getHost());
             }
         }
@@ -189,7 +189,7 @@ public abstract class Player extends AbsPlayer {
             this.setSubtileEgdeValues(); // update edge values
             // check whether players coordinates are in current map
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                System.out.println(TAG + "player is not inside a subtile of "
+                System.out.println(TAG + userID + " player is not inside a subtile of "
                         + sangraamaMap.getHost());
                 return false;
             }
@@ -226,10 +226,10 @@ public abstract class Player extends AbsPlayer {
         } else if (this.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             this.isPlayer = 0;
-            System.out.println(TAG + "Unable to send updates,coz con :" + this.con
+            System.out.println(TAG + userID + " Unable to send updates,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + " waiting for remove");
+            System.out.println(TAG + userID + "  waiting for remove");
         }
     }
 
@@ -250,10 +250,10 @@ public abstract class Player extends AbsPlayer {
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.con
+            System.out.println(TAG + userID + " Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + " waiting for remove");
+            System.out.println(TAG + userID + "  waiting for remove id:" + userID + " player type:" + super.isPlayer );
         }
     }
 
@@ -271,10 +271,10 @@ public abstract class Player extends AbsPlayer {
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + super.con
+            System.out.println(TAG + userID + " Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + " waiting for remove");
+            System.out.println(TAG + userID + "  waiting for remove id:" + userID + " player type:" + super.isPlayer );
         }
     }
 
@@ -305,10 +305,10 @@ public abstract class Player extends AbsPlayer {
         } else if (super.isPlayer == 1) {
             this.gameEngine.addToRemovePlayerQueue(this);
             this.isPlayer = 0;
-            System.out.println(TAG + "Unable to send syncdata,coz con :" + this.con
+            System.out.println(TAG + userID + " Unable to send syncdata,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + " waiting for remove");
+            System.out.println(TAG + userID + "  waiting for remove id:" + userID + " player type:" + super.isPlayer );
         }
     }
 
@@ -352,7 +352,7 @@ public abstract class Player extends AbsPlayer {
                     this.body.getPosition().x, this.body.getPosition().y, this.getScreenWidth(),
                     this.getScreenHeight(), this.bulletType);
             this.gameEngine.addToBulletQueue(bullet);
-            System.out.println(TAG + ": Added a new bullet");
+            System.out.println(TAG + userID + " : Added a new bullet");
         }
     }
 
@@ -370,7 +370,7 @@ public abstract class Player extends AbsPlayer {
          * map (the map which divide into sub tiles) with having half of the size of AOI. Then
          * possible virtual point setting will validate by server side. #gihan
          */
-        System.out.println(TAG + " want to set vp x:" + x_vp + " y:" + y_vp);
+        System.out.println(TAG + userID + "  want to set vp x:" + x_vp + " y:" + y_vp);
         
         /*
          * If asking for same virtual point, then ignore it
@@ -397,13 +397,13 @@ public abstract class Player extends AbsPlayer {
             if (totEdgeY < y_vp) {
                 y_virtual = totEdgeY;
             }
-            System.out.println(TAG + " But set as vp x:" + x_vp + " y:" + y_vp);
+            System.out.println(TAG + userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
         }
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
         data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth,
                 screenHeight));
-        System.out.println(TAG + "Virtual point x" + x_virtual + " y" + y_virtual);
+        System.out.println(TAG + userID + " Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
         
         return true;
@@ -437,17 +437,17 @@ public abstract class Player extends AbsPlayer {
     public void setV(float x, float y) {
         // Fixed: if client send x value greater than 1
         this.v.set(x % 2 * v_rate, y % 2 * v_rate);
-        System.out.println(TAG + " set V :" + this.v.x + ":" + this.v.y);
+        System.out.println(TAG + userID + "  set V :" + this.v.x + ":" + this.v.y);
     }
 
     public void setAngle(float a) {
         this.angle = a;
-        System.out.println(TAG + " set angle : " + a + " > " + this.angle);
+        System.out.println(TAG + userID + "  set angle : " + a + " > " + this.angle);
     }
 
     public void setAngularVelocity(float da) {
         this.angularVelocity = da % 2 * a_rate;
-        System.out.println(TAG + " set angular velocity : " + da + " > " + this.angularVelocity);
+        System.out.println(TAG + userID + "  set angular velocity : " + da + " > " + this.angularVelocity);
     }
 
     public float getAngle() {
