@@ -73,6 +73,7 @@ public enum GameEngine implements Runnable {
                 + Constants.timeStep);
         init();
         Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
+
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 updateGameWorld();
@@ -125,7 +126,7 @@ public enum GameEngine implements Runnable {
         }
 
         // Add new bullet to the world
-        synchronized (this.removeBulletQueue) {
+        synchronized (this.newBulletQueue) {
             for (Bullet newBullet : newBulletQueue) {
                 System.out.println(TAG + "Adding new bullets");
                 Body newBulletBody = world.createBody(newBullet.getBodyDef());
@@ -146,6 +147,7 @@ public enum GameEngine implements Runnable {
     }
 
     private void performPlayerUpdates() {
+
         // Remove existing players from the game world
         synchronized (this.removePlayerQueue) {
             for (Player rmPlayer : removePlayerQueue) {
