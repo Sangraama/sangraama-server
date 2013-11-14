@@ -4,7 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.Timer;
 
@@ -29,15 +31,15 @@ public enum GameEngine implements Runnable {
 
     private World world;
     private UpdateEngine updateEngine;
-    // list for send updates
+    // list of players details
     private List<Player> playerList;
+    private ConcurrentLinkedQueue<Player> newPlayerQueue;
+    private ConcurrentLinkedQueue<Player> removePlayerQueue;
+    // list of bullet details
     private List<Bullet> bulletList;
-    // list of newly adding players
-    private List<Player> newPlayerQueue;
     private List<Bullet> newBulletQueue;
-    // list of removing players
-    private List<Player> removePlayerQueue;
     private List<Bullet> removeBulletQueue;
+
     private List<Player> defeatMsgList;
     private CollisionDetector sangraamaCollisionDet;
     private List<Wall> wallList;
@@ -51,11 +53,18 @@ public enum GameEngine implements Runnable {
     GameEngine() {
         System.out.println(TAG + "Init GameEngine...");
         this.world = new World(new Vec2(0.0f, 0.0f));
+        /**
+         * Player Details
+         */
         this.playerList = new ArrayList<>();
+        this.newPlayerQueue = new ConcurrentLinkedQueue<Player>();
+        this.removePlayerQueue = new ConcurrentLinkedQueue<Player>();
+        PlayerQueue.INSTANCE.init(this.newPlayerQueue, this.removePlayerQueue);
+        /**
+         * Bullet details
+         */
         this.bulletList = new ArrayList<>();
-        this.newPlayerQueue = new Vector<>(20, 5);
         this.newBulletQueue = new Vector<Bullet>();
-        this.removePlayerQueue = new Vector<Player>();
         this.removeBulletQueue = new Vector<Bullet>();
         this.wallList = new ArrayList<>();
         this.defeatMsgList = new ArrayList<>();
@@ -114,13 +123,50 @@ public enum GameEngine implements Runnable {
 
     }
 
+    private void performPlayerUpdates() {
+
+        // Remove existing players from the game world
+        Player rmPlayer;
+        while ((rmPlayer = this.removePlayerQueue.poll()) != null) {
+            // System.out.println(TAG + "Removing players");
+            if (this.playerList.remove(rmPlayer)) { // True if player contains
+                this.world.destroyBody(rmPlayer.getBody());
+            }
+            if (this.playerList.size() > maxPlayers)
+                maxPlayers = this.playerList.size();
+            System.out.print(TAG + " Removed player :" + rmPlayer.getUserID());
+            System.out.println("=>> number of remained players : " + this.playerList.size() + "/"
+                    + maxPlayers + " #################");
+            rmPlayer = null; // free the memory @need to add to garbage collector
+        }
+
+        // Add new player to the world
+        Player newPlayer;
+        while ((newPlayer = this.newPlayerQueue.poll()) != null) {
+            Body newPlayerBody = world.createBody(newPlayer.getBodyDef());
+            newPlayerBody.createFixture(newPlayer.getFixtureDef());
+            newPlayer.setBody(newPlayerBody);
+            this.playerList.add(newPlayer);
+            System.out.print(TAG + "Added new player :" + newPlayer.getUserID());
+            System.out.println("=>> number of remained players : " + this.playerList.size() + "/"
+                    + maxPlayers + " #################");
+            // Send size of the tile
+            newPlayer.sendTileSizeInfo();
+        }
+
+        for (Player player : playerList) {
+            player.applyUpdate();
+        }
+
+    }
+
     private void performBulletUpdates() {
         synchronized (this.removeBulletQueue) {
             for (Bullet rmvBullet : removeBulletQueue) {
-                System.out.println(TAG + "Removing bullet");
+                // System.out.println(TAG + "Removing bullet");
                 this.bulletList.remove(rmvBullet);
                 this.world.destroyBody(rmvBullet.getBody());
-                System.out.println(TAG + "Removed bullet :" + rmvBullet.getId());
+                // System.out.println(TAG + "Removed bullet :" + rmvBullet.getId());
             }
             this.removeBulletQueue.clear();
         }
@@ -128,62 +174,20 @@ public enum GameEngine implements Runnable {
         // Add new bullet to the world
         synchronized (this.newBulletQueue) {
             for (Bullet newBullet : newBulletQueue) {
-                System.out.println(TAG + "Adding new bullets");
+                // System.out.println(TAG + "Adding new bullets");
                 Body newBulletBody = world.createBody(newBullet.getBodyDef());
                 newBulletBody.createFixture(newBullet.getFixtureDef());
                 newBullet.setBody(newBulletBody);
                 newBulletBody.setLinearVelocity(newBullet.getVelocity());
                 this.bulletList.add(newBullet);
-                System.out.println(TAG + "Added new bullet :" + newBullet.getId() + "x : "
-                        + newBulletBody.getPosition().x + "y : " + newBulletBody.getPosition().y);
+                /*System.out.println(TAG + "Added new bullet :" + newBullet.getId() + "x : "
+                        + newBulletBody.getPosition().x + "y : " + newBulletBody.getPosition().y);*/
             }
             this.newBulletQueue.clear();
         }
 
         for (Bullet bullet : bulletList) {
             removeBulletByPosition(bullet);
-        }
-
-    }
-
-    private void performPlayerUpdates() {
-
-        // Remove existing players from the game world
-        synchronized (this.removePlayerQueue) {
-            for (Player rmPlayer : removePlayerQueue) {
-                // System.out.println(TAG + "Removing players");
-                if (this.playerList.remove(rmPlayer)) { // True if player contains
-                    this.world.destroyBody(rmPlayer.getBody());
-                }
-                if (this.playerList.size() > maxPlayers)
-                    maxPlayers = this.playerList.size();
-                System.out.print(TAG + " Removed player :" + rmPlayer.getUserID());
-                System.out.println("=>> number of remained players : " + this.playerList.size()
-                        + "/" + maxPlayers + " #################");
-                rmPlayer = null; // free the memory
-            }
-            this.removePlayerQueue.clear();
-        }
-
-        // Add new player to the world
-        synchronized (this.newPlayerQueue) {
-            for (Player newPlayer : newPlayerQueue) {
-                // System.out.println(TAG + "Adding new players");
-                Body newPlayerBody = world.createBody(newPlayer.getBodyDef());
-                newPlayerBody.createFixture(newPlayer.getFixtureDef());
-                newPlayer.setBody(newPlayerBody);
-                this.playerList.add(newPlayer);
-                System.out.print(TAG + "Added new player :" + newPlayer.getUserID());
-                System.out.println("=>> number of remained players : " + this.playerList.size()
-                        + "/" + maxPlayers + " #################");
-                // Send size of the tile
-                newPlayer.sendTileSizeInfo();
-            }
-            this.newPlayerQueue.clear();
-        }
-
-        for (Player player : playerList) {
-            player.applyUpdate();
         }
 
     }
@@ -207,18 +211,6 @@ public enum GameEngine implements Runnable {
         this.updateEngine.setBulletList(bulletList);
         this.updateEngine.setDefeatList(defeatMsgList);
         defeatMsgList.clear();
-    }
-
-    public void addToPlayerQueue(Player ship) {
-        synchronized (this.newPlayerQueue) {
-            this.newPlayerQueue.add(ship);
-        }
-    }
-
-    public void addToRemovePlayerQueue(Player ship) {
-        synchronized (this.removePlayerQueue) {
-            this.removePlayerQueue.add(ship);
-        }
     }
 
     public List<Player> getPlayerList() {

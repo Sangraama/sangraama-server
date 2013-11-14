@@ -7,16 +7,24 @@ public final class Constants {
     public static final boolean L = true;
     public static final boolean D = true;
 
-    // World constants
+    /**
+     * JBox2D World configurations
+     * Warning !!!. Don't change if you don't know exactly their meanings
+     * More details about JBox2D physics engine refer to : http://box2d.org/manual.pdf
+     */
     public static final float gravityHorizontal = 0.0f;
     public static final float gavityVertical = 0.0f;
-    public static final Vec2 gravity = new Vec2(0f, 0f);
     public static final boolean doSleep = true;
-    public static final int fps = 4; // Default greater than 30
+    public static final int velocityIterations = 8; // Default 6
+    public static final int positionIterations = 3; // Defaults 2
+    public static final int fps = 20; // Default 20 ( 20 < fps < 30 ) refer : section 2.4 in manual
+    
+    /**
+     * Auto calculated
+     */
+    public static final Vec2 gravity = new Vec2(gravityHorizontal, gavityVertical);
     public static final float timeStep = 1.0f / fps;
-    public static final int velocityIterations = 6; // Default 6
-    public static final int positionIterations = 2; // Defaults 2
-    public static final int simulatingDelay = 200; // delay of simulating
+    public static final int simulatingDelay = 1000 / fps; // delay of simulating
 
     public static final float TO_RADIANS = (float) (Math.PI / 180);
     public static final float FROM_RADIANS = (float) (180 / Math.PI);

@@ -34,7 +34,7 @@ public enum TileCoordinator {
     private String TAG = "TileCoordinator : ";
     private boolean D = true;
     private Marker subTile = MarkerFactory.getMarker("Sub Tile: ");
-    private Logger log = LoggerFactory.getLogger(Ship.class);
+    private Logger log = LoggerFactory.getLogger(TileCoordinator.class);
 
     private HazelcastInstance hazelcastInstance;
 

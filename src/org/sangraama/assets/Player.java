@@ -17,6 +17,7 @@ import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
+import org.sangraama.gameLogic.PlayerQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +46,8 @@ public abstract class Player extends AbsPlayer {
     /* Player moving parameters */
     // Player speed factor
 
-    float v_rate = 0.5f;
-    float bullet_v_rate = 0.5f;
+    float v_rate = 1.0f;
+    float bullet_v_rate = 2.0f;
     Vec2 v = new Vec2(0.0f, 0.0f);
     PlayerDelta delta;
 
@@ -65,7 +66,7 @@ public abstract class Player extends AbsPlayer {
                 + sangraamaMap.getSubTileHeight();
         this.health = health;
         this.score = score;
-        this.gameEngine.addToPlayerQueue(this);
+        PlayerQueue.INSTANCE.addToPlayerQueue(this);
         this.type = type;
         this.bulletType = bulletType;
     }
@@ -220,19 +221,19 @@ public abstract class Player extends AbsPlayer {
             try {
                 con.sendUpdate(deltaList);
             } catch (IOException e) {
-                this.gameEngine.addToRemovePlayerQueue(this);
+                PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
                 this.isPlayer = 0;
                 e.printStackTrace();
             }
         } else if (this.isPlayer == 1) {
-            this.gameEngine.addToRemovePlayerQueue(this);
+            PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             this.isPlayer = 0;
             System.out.println(TAG + userID + " Unable to send updates,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
             System.out.println(TAG + userID + "  waiting for remove (1) id:" + userID
                     + " player type:" + super.isPlayer);
-            this.gameEngine.addToRemovePlayerQueue(this);
+            PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
         }
     }
 
@@ -248,10 +249,10 @@ public abstract class Player extends AbsPlayer {
             transferReqList.add(transferReq);
             con.sendNewConnection(transferReqList);
             /* Changed player type into dummy player and remove from the world */
-            this.gameEngine.addToRemovePlayerQueue(this);
+            PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             con.setDummyPlayer(new DummyPlayer(userID, screenWidth, screenHeight, con));
         } else if (super.isPlayer == 1) {
-            this.gameEngine.addToRemovePlayerQueue(this);
+            PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
             System.out.println(TAG + userID + " Unable to send new connection,coz con :"
                     + super.con + ". Add to remove queue.");
@@ -273,7 +274,7 @@ public abstract class Player extends AbsPlayer {
             transferReqList.add(transferReq);
             con.sendNewConnection(transferReqList);
         } else if (super.isPlayer == 1) {
-            this.gameEngine.addToRemovePlayerQueue(this);
+            PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
             System.out.println(TAG + userID + " Unable to send new connection,coz con :"
                     + super.con + ". Add to remove queue.");
@@ -303,12 +304,12 @@ public abstract class Player extends AbsPlayer {
             try {
                 con.sendUpdate(syncData);
             } catch (IOException e) {
-                this.gameEngine.addToRemovePlayerQueue(this);
+                PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
                 this.isPlayer = 0;
                 e.printStackTrace();
             }
         } else if (super.isPlayer == 1) {
-            this.gameEngine.addToRemovePlayerQueue(this);
+            PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             this.isPlayer = 0;
             System.out.println(TAG + userID + " Unable to send syncdata,coz con :" + this.con
                     + ". Add to remove queue.");
@@ -467,8 +468,8 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.health = 0;
             this.setScore(-200);
-            gameEngine.addToDefaetList(this);
-            gameEngine.addToRemovePlayerQueue(this);
+            this.gameEngine.addToDefaetList(this);
+            PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
         }
     }
 
