@@ -19,6 +19,7 @@ import org.sangraama.assets.Bullet;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Wall;
 import org.sangraama.common.Constants;
+import org.sangraama.gameLogic.queue.PlayerQueue;
 import org.sangraama.util.BoundaryCreator;
 
 public enum GameEngine implements Runnable {

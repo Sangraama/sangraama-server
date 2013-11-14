@@ -17,7 +17,7 @@ import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
-import org.sangraama.gameLogic.PlayerQueue;
+import org.sangraama.gameLogic.queue.PlayerQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
