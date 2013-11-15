@@ -167,8 +167,11 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
-                // Remove already existing dummy player
-                UpdateEngine.INSTANCE.addToRemoveDummyQueue(this.player.getUserID());
+                /*
+                 * Remove already existing dummy player (null values aren't allowed by
+                 * ConcurrentLinkedQueue)
+                 */
+                    UpdateEngine.INSTANCE.addToRemoveDummyQueue(this.player.getUserID());
                 System.out.println(TAG + T + " add new Player " + event.toString());
                 /*
                  * AOI and Virtual point will add to the player after creation of it NOTE: These

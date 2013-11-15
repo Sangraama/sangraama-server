@@ -10,19 +10,22 @@ import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.ScoreChangeTransferReq;
+import org.sangraama.gameLogic.queue.BulletQueue;
 
 public enum CollisionManager implements Runnable {
     INSTANCE;
     // Debug
     private String TAG = "Collision Manager :";
     private GameEngine gameEngine;
+    private BulletQueue bulletQueue;
     private volatile boolean isRun = true;
     private volatile boolean isUpdate = false;
     private List<Contact> collisionList;
 
     CollisionManager() {
-        gameEngine = GameEngine.INSTANCE;
-        collisionList = new ArrayList<>();
+        this.gameEngine = GameEngine.INSTANCE;
+        this.bulletQueue = BulletQueue.INSTANCE;
+        this.collisionList = new ArrayList<>();
         System.out.println(TAG + " init ... ");
     }
 
@@ -101,7 +104,7 @@ public enum CollisionManager implements Runnable {
             } else {
                 bullet = (Bullet) collision.getFixtureB().getUserData();
             }
-            gameEngine.addToRemoveBulletQueue(bullet);
+            this.bulletQueue.addToRemoveBulletQueue(bullet);
         } else if (("wall".equals(collision.getFixtureA().getUserData()) && collision.getFixtureB()
                 .getUserData().getClass() == Bullet.class)
                 || ("wall".equals(collision.getFixtureB().getUserData()) && collision.getFixtureA()
@@ -112,7 +115,7 @@ public enum CollisionManager implements Runnable {
             } else {
                 bullet = (Bullet) collision.getFixtureB().getUserData();
             }
-            gameEngine.addToRemoveBulletQueue(bullet);
+            this.bulletQueue.addToRemoveBulletQueue(bullet);
         }
     }
 
@@ -133,7 +136,7 @@ public enum CollisionManager implements Runnable {
                 break;
             }
         }
-        gameEngine.addToRemoveBulletQueue(bullet);
+        this.bulletQueue.addToRemoveBulletQueue(bullet);
         if(!playerInServer){
             sendScoreChangeEventFromDummy(shooterUserID, 10);
         }

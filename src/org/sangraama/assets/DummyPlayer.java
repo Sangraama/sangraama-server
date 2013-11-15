@@ -12,6 +12,7 @@ import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.UpdateEngine;
+import org.sangraama.gameLogic.queue.BulletQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -273,7 +274,7 @@ public class DummyPlayer extends AbsPlayer {
      * @param bullet
      */
     public void addBulletToGameWorld(Bullet bullet){
-        GameEngine.INSTANCE.addToBulletQueue(bullet);
+        BulletQueue.INSTANCE.addToBulletQueue(bullet);
     }
 
 }

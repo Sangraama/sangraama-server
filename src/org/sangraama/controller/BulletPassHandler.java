@@ -7,15 +7,18 @@ import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.BulletTransferReq;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
+import org.sangraama.gameLogic.queue.BulletQueue;
 
 public enum BulletPassHandler {
 
     INSTANCE;
 
     private GameEngine gameEngine;
+    private BulletQueue bulletQueue;
 
     private BulletPassHandler() {
         this.gameEngine = GameEngine.INSTANCE;
+        this.bulletQueue = BulletQueue.INSTANCE;
     }
 
     /**
@@ -32,7 +35,7 @@ public enum BulletPassHandler {
                 bullet.getId(), bullet.getX(), bullet.getY(), bullet.getVelocity(),
                 bullet.getOriginX(), bullet.getOriginY(), bullet.getScreenHeight(),
                 bullet.getScreenWidth(), newHost, bullet.getType());
-        gameEngine.addToRemoveBulletQueue(bullet);
+        this.bulletQueue.addToRemoveBulletQueue(bullet);
         passBulletInfoToClient(bullet, bulletTransReq);
     }
 

@@ -61,6 +61,13 @@ public abstract class AbsPlayer {
     public boolean isUpdate() {
         return this.isUpdate;
     }
+    
+    public boolean isPlayer(){
+        if(this.isPlayer == 1)
+            return true;
+        else
+            return false;
+    }
 
     public AbsPlayer(long userID, float x, float y, float w, float h) {
         this.userID = userID;

@@ -16,9 +16,12 @@ import org.jbox2d.dynamics.World;
 import org.sangraama.asserts.map.GameMap;
 import org.sangraama.asserts.map.PhysicsAPI;
 import org.sangraama.assets.Bullet;
+import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Wall;
 import org.sangraama.common.Constants;
+import org.sangraama.gameLogic.queue.BulletQueue;
+import org.sangraama.gameLogic.queue.DummyQueue;
 import org.sangraama.gameLogic.queue.PlayerQueue;
 import org.sangraama.util.BoundaryCreator;
 
@@ -36,10 +39,14 @@ public enum GameEngine implements Runnable {
     private List<Player> playerList;
     private ConcurrentLinkedQueue<Player> newPlayerQueue;
     private ConcurrentLinkedQueue<Player> removePlayerQueue;
+    // list of dummy players details
+    private List<DummyPlayer> dummyList;
+    private ConcurrentLinkedQueue<DummyPlayer> newDummyQueue;
+    private ConcurrentLinkedQueue<DummyPlayer> removeDummyQueue;
     // list of bullet details
     private List<Bullet> bulletList;
-    private List<Bullet> newBulletQueue;
-    private List<Bullet> removeBulletQueue;
+    private ConcurrentLinkedQueue<Bullet> newBulletQueue;
+    private ConcurrentLinkedQueue<Bullet> removeBulletQueue;
 
     private List<Player> defeatMsgList;
     private CollisionDetector sangraamaCollisionDet;
@@ -62,11 +69,20 @@ public enum GameEngine implements Runnable {
         this.removePlayerQueue = new ConcurrentLinkedQueue<Player>();
         PlayerQueue.INSTANCE.init(this.newPlayerQueue, this.removePlayerQueue);
         /**
+         * Dummy Player Details
+         */
+        this.dummyList = new ArrayList<>();
+        this.newDummyQueue = new ConcurrentLinkedQueue<DummyPlayer>();
+        this.removeDummyQueue = new ConcurrentLinkedQueue<DummyPlayer>();
+        DummyQueue.INSTANCE.init(this.newDummyQueue, this.removeDummyQueue);
+        /**
          * Bullet details
          */
         this.bulletList = new ArrayList<>();
-        this.newBulletQueue = new Vector<Bullet>();
-        this.removeBulletQueue = new Vector<Bullet>();
+        this.newBulletQueue = new ConcurrentLinkedQueue<Bullet>();
+        this.removeBulletQueue = new ConcurrentLinkedQueue<Bullet>();
+        BulletQueue.INSTANCE.init(this.newBulletQueue, this.removeBulletQueue);
+
         this.wallList = new ArrayList<>();
         this.defeatMsgList = new ArrayList<>();
         this.updateEngine = UpdateEngine.INSTANCE;
@@ -162,29 +178,28 @@ public enum GameEngine implements Runnable {
     }
 
     private void performBulletUpdates() {
-        synchronized (this.removeBulletQueue) {
-            for (Bullet rmvBullet : removeBulletQueue) {
-                // System.out.println(TAG + "Removing bullet");
-                this.bulletList.remove(rmvBullet);
+        Bullet rmvBullet;
+        while ((rmvBullet = this.removeBulletQueue.poll()) != null) {
+            if (this.bulletList.remove(rmvBullet)) {
                 this.world.destroyBody(rmvBullet.getBody());
-                // System.out.println(TAG + "Removed bullet :" + rmvBullet.getId());
             }
-            this.removeBulletQueue.clear();
+            System.out.println(TAG + "Removed bullet :" + rmvBullet.getId());
+            rmvBullet = null;
         }
 
         // Add new bullet to the world
-        synchronized (this.newBulletQueue) {
-            for (Bullet newBullet : newBulletQueue) {
-                // System.out.println(TAG + "Adding new bullets");
-                Body newBulletBody = world.createBody(newBullet.getBodyDef());
-                newBulletBody.createFixture(newBullet.getFixtureDef());
-                newBullet.setBody(newBulletBody);
-                newBulletBody.setLinearVelocity(newBullet.getVelocity());
-                this.bulletList.add(newBullet);
-                /*System.out.println(TAG + "Added new bullet :" + newBullet.getId() + "x : "
-                        + newBulletBody.getPosition().x + "y : " + newBulletBody.getPosition().y);*/
-            }
-            this.newBulletQueue.clear();
+        Bullet newBullet;
+        while ((newBullet = this.newBulletQueue.poll()) != null) {
+            // System.out.println(TAG + "Adding new bullets");
+            Body newBulletBody = world.createBody(newBullet.getBodyDef());
+            newBulletBody.createFixture(newBullet.getFixtureDef());
+            newBullet.setBody(newBulletBody);
+            newBulletBody.setLinearVelocity(newBullet.getVelocity());
+            this.bulletList.add(newBullet);
+            /*
+             * System.out.println(TAG + "Added new bullet :" + newBullet.getId() + "x : " +
+             * newBulletBody.getPosition().x + "y : " + newBulletBody.getPosition().y);
+             */
         }
 
         for (Bullet bullet : bulletList) {
@@ -227,20 +242,8 @@ public enum GameEngine implements Runnable {
         }
     }
 
-    public void addToBulletQueue(Bullet bullet) {
-        synchronized (this.newBulletQueue) {
-            this.newBulletQueue.add(bullet);
-        }
-    }
-
     public void addToDefaetList(Player player) {
         this.defeatMsgList.add(player);
-    }
-
-    public void addToRemoveBulletQueue(Bullet bullet) {
-        synchronized (this.removeBulletQueue) {
-            this.removeBulletQueue.add(bullet);
-        }
     }
 
 }

@@ -17,6 +17,7 @@ import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
+import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.PlayerQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +47,8 @@ public abstract class Player extends AbsPlayer {
     /* Player moving parameters */
     // Player speed factor
 
-    float v_rate = 1.0f;
-    float bullet_v_rate = 2.0f;
+    float v_rate = 1.7f;
+    float bullet_v_rate = 2.5f;
     Vec2 v = new Vec2(0.0f, 0.0f);
     PlayerDelta delta;
 
@@ -358,7 +359,7 @@ public abstract class Player extends AbsPlayer {
             Bullet bullet = new Bullet(id, this.userID, x, y, bulletVelocity,
                     this.body.getPosition().x, this.body.getPosition().y, this.getScreenWidth(),
                     this.getScreenHeight(), this.bulletType);
-            this.gameEngine.addToBulletQueue(bullet);
+            BulletQueue.INSTANCE.addToBulletQueue(bullet);
             System.out.println(TAG + userID + " : Added a new bullet");
         }
     }
