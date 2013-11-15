@@ -15,11 +15,10 @@ import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
 import org.sangraama.controller.clientprotocol.BulletTransferReq;
 import org.sangraama.controller.clientprotocol.ClientEvent;
-import org.sangraama.controller.clientprotocol.DefeatMsg;
 import org.sangraama.controller.clientprotocol.ScoreChangeTransferReq;
 import org.sangraama.controller.clientprotocol.SendProtocol;
-import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.UpdateEngine;
+import org.sangraama.gameLogic.queue.DummyQueue;
 import org.sangraama.util.VerifyMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,16 +161,20 @@ public class WebSocketConnection extends MessageInbound {
                       * @case 2: if it's a dummy player => change it to player <include
                       * authentication>
                       */
+                if (this.player != null && !this.player.isPlayer()) {
+                    /*
+                     * Remove already existing dummy player (null values aren't allowed by
+                     * ConcurrentLinkedQueue)
+                     */
+                    DummyQueue.INSTANCE.addToRemoveDummyQueue((DummyPlayer) this.player);
+                }
+
                 this.setPlayer(new Ship(event.getUserID(), event.getX(), event.getY(),
                         event.getW(), event.getH(), 100, 0, this, event.getSt(), event.getBt()));
                 this.player.setV(event.getV_x(), event.getV_y());
                 this.player.setAngle(event.getA());
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
-                /*
-                 * Remove already existing dummy player (null values aren't allowed by
-                 * ConcurrentLinkedQueue)
-                 */
-                    UpdateEngine.INSTANCE.addToRemoveDummyQueue(this.player.getUserID());
+
                 System.out.println(TAG + T + " add new Player " + event.toString());
                 /*
                  * AOI and Virtual point will add to the player after creation of it NOTE: These

@@ -18,7 +18,7 @@ public class TileInfo  extends SendProtocol{
     private String tiles;
 
     public TileInfo(long userID) {
-        super(11, userID);
+        super(16, userID);
         this.tiles = new Gson().toJson(TileCoordinator.INSTANCE.getSubTilesCoordinations());
     }
 

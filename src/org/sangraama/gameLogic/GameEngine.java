@@ -56,6 +56,7 @@ public enum GameEngine implements Runnable {
      * Testing values
      */
     private int maxPlayers = 0;
+    private int maxDummies = 0;
 
     // this method only access via class
     GameEngine() {
@@ -135,13 +136,12 @@ public enum GameEngine implements Runnable {
     }
 
     public void updateGameWorld() {
-        performPlayerUpdates();
-        performBulletUpdates();
-
+        this.performPlayerUpdates();
+        this.performDummyPlayerUpdates();
+        this.performBulletUpdates();
     }
 
     private void performPlayerUpdates() {
-
         // Remove existing players from the game world
         Player rmPlayer;
         while ((rmPlayer = this.removePlayerQueue.poll()) != null) {
@@ -174,7 +174,32 @@ public enum GameEngine implements Runnable {
         for (Player player : playerList) {
             player.applyUpdate();
         }
+    }
 
+    private void performDummyPlayerUpdates() {
+        // Remove existing dummy players from the game world
+        DummyPlayer rmDummy;
+        while ((rmDummy = this.removeDummyQueue.poll()) != null) {
+            if (this.dummyList.remove(rmDummy)) { // True if player contains
+                if (this.dummyList.size() > maxDummies)
+                    maxDummies = this.dummyList.size();
+                System.out.print(TAG + " remove Dummy player :" + rmDummy.getUserID());
+                System.out.println("=>> number of remained dummies : " + this.dummyList.size()
+                        + "/" + maxDummies + " ^^^^^^^^^^^^^^^^^^^^");
+            }
+            rmDummy = null; // free the memory @need to add to garbage collector
+        }
+
+        // Add new player to the world
+        DummyPlayer newDummy;
+        while ((newDummy = this.newDummyQueue.poll()) != null) {
+            this.dummyList.add(newDummy);
+            System.out.print(TAG + " add Dummy player :" + newDummy.getUserID());
+            System.out.println("=>> number of remained dummies : " + this.dummyList.size() + "/"
+                    + maxDummies + " ^^^^^^^^^^^^^^^^^^^^");
+            // Send size of the tile
+            newDummy.sendTileSizeInfo();
+        }
     }
 
     private void performBulletUpdates() {
@@ -223,10 +248,11 @@ public enum GameEngine implements Runnable {
     }
 
     public void pushUpdate() {
-        this.updateEngine.setUpdatedPlayerList(playerList);
-        this.updateEngine.setBulletList(bulletList);
-        this.updateEngine.setDefeatList(defeatMsgList);
-        defeatMsgList.clear();
+        this.updateEngine.setBulletList(this.bulletList);
+        this.updateEngine.setDefeatList(this.defeatMsgList);
+        this.defeatMsgList.clear();
+        this.updateEngine.setUpdatedDummyPlayerList(this.dummyList);
+        this.updateEngine.setUpdatedPlayerList(this.playerList);
     }
 
     public List<Player> getPlayerList() {

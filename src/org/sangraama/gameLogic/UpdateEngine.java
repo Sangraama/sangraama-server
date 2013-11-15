@@ -3,6 +3,7 @@ package org.sangraama.gameLogic;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,8 @@ public enum UpdateEngine implements Runnable {
     }
 
     public void pushUpdate() {
-        playerDelta = new HashMap<Long, PlayerDelta>();
+        this.playerDelta = new HashMap<Long, PlayerDelta>();
+        
         // Make a clone of Updates which need to send
         this.playerList = this.updatedPlayerList;
         for (Player player : playerList) {
@@ -194,7 +196,7 @@ public enum UpdateEngine implements Runnable {
      *            Player want to get updates
      * @return true if added to the list, false otherwise
      */
-    public boolean addToDummyQueue(DummyPlayer player) {
+    /*public boolean addToDummyQueue(DummyPlayer player) {
         player.sendTileSizeInfo();
         return this.dummyList.add(player);
     }
@@ -209,7 +211,7 @@ public enum UpdateEngine implements Runnable {
     public boolean addToRemoveDummyQueue(DummyPlayer player) {
         
         return this.dummyList.remove(player);
-    }
+    }*/
 
     public synchronized boolean setStop() {
         this.playerList.clear();
@@ -228,6 +230,10 @@ public enum UpdateEngine implements Runnable {
          */
         this.updatedPlayerList = playerList;
         this.isUpdate = true;
+    }
+    
+    public void setUpdatedDummyPlayerList(List<DummyPlayer> dummyList){
+        this.dummyList = dummyList;
     }
 
     public void setDefeatList(List<Player> playerList) {

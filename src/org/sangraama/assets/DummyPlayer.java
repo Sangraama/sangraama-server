@@ -13,6 +13,7 @@ import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.gameLogic.queue.BulletQueue;
+import org.sangraama.gameLogic.queue.DummyQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,8 @@ public class DummyPlayer extends AbsPlayer {
     // Local Debug or logs
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
     private static final String TAG = "DummyPlayer : ";
+
+    private DummyQueue dummyQueue;
 
     public boolean isUpdate() {
         return this.isUpdate;
@@ -47,7 +50,8 @@ public class DummyPlayer extends AbsPlayer {
         super(userID, 0.0f, 0.0f, w, h);
         isPlayer = 2;
         this.con = con;
-        UpdateEngine.INSTANCE.addToDummyQueue(this);
+        this.dummyQueue = DummyQueue.INSTANCE;
+        this.dummyQueue.addToDummyQueue(this);
     }
 
     /*
@@ -121,13 +125,13 @@ public class DummyPlayer extends AbsPlayer {
             try {
                 this.con.sendUpdate(deltaList);
             } catch (IOException e) {
-                UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+                this.dummyQueue.addToRemoveDummyQueue(this);
                 this.isPlayer = 0;
                 e.printStackTrace();
             }
 
         } else if (this.isPlayer == 2) {
-            UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+            this.dummyQueue.addToRemoveDummyQueue(this);
             this.isPlayer = 0;
             System.out.println(TAG + "Unable to send updates,coz con :" + con
                     + ". Add to remove queue.");
@@ -147,7 +151,7 @@ public class DummyPlayer extends AbsPlayer {
             transferReqList.add(transferReq);
             this.con.sendNewConnection(transferReqList);
         } else if (isPlayer == 2) {
-            UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+            this.dummyQueue.addToRemoveDummyQueue(this);
             this.isPlayer = 0;
             System.out.println(TAG + "Unable to send new connection,coz con :" + con
                     + ". Add to remove queue.");
@@ -161,12 +165,12 @@ public class DummyPlayer extends AbsPlayer {
             try {
                 this.con.sendUpdate(syncData);
             } catch (IOException e) {
-                UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+                this.dummyQueue.addToRemoveDummyQueue(this);
                 this.isPlayer = 0;
                 e.printStackTrace();
             }
         } else if (this.isPlayer == 2) {
-            UpdateEngine.INSTANCE.addToRemoveDummyQueue(this);
+            this.dummyQueue.addToRemoveDummyQueue(this);
             this.isPlayer = 0;
             System.out.println(TAG + "Unable to send syncdata,coz con :" + con
                     + ". Add to remove queue.");
@@ -185,27 +189,25 @@ public class DummyPlayer extends AbsPlayer {
          */
         System.out.println(TAG + " want to set vp x:" + x_vp + " y:" + y_vp);
 
-        if(this.x_virtual == x_vp && this.y_virtual == y_vp)
-            return false;
-        
         this.x_virtual = x_vp;
         this.y_virtual = y_vp;
 
         /**
-         * Check whether AOI is inside the map or not
+         * Check whether AOI is inside the map or not (4 corners are inside current map)
          */
         if (isInsideMap(x_vp - halfWidth, y_vp - halfHieght)
                 || isInsideMap(x_vp + halfWidth, y_vp - halfHieght)
                 || isInsideMap(x_vp - halfWidth, y_vp + halfHieght)
                 || isInsideMap(x_vp + halfWidth, y_vp + halfHieght)) {
-            // one of point is located in server, set virtual point
+            // if one of point is located in server, set virtual point
 
             List<SendProtocol> data = new ArrayList<SendProtocol>();
             // Send updates which are related/interest to dummy player
             data.add(new SyncPlayer(userID, x_virtual, y_virtual, screenWidth, screenHeight));
             System.out.println(TAG + " set Virtual point x" + x_vp + " y" + y_vp);
             this.sendSyncData(data);
-        } else { // Otherwise drop the connection for getting updates
+
+        } else { // Otherwise drop the connection of getting updates
             List<SendProtocol> data = new ArrayList<SendProtocol>();
             // Send updates which are related/interest to closing a dummy player
             data.add(new SyncPlayer(userID));
@@ -217,14 +219,14 @@ public class DummyPlayer extends AbsPlayer {
         return false;
     }
 
-    public void sendScoreChange(ScoreChangeTransferReq scoreChangeReq){
+    public void sendScoreChange(ScoreChangeTransferReq scoreChangeReq) {
         if (this.con != null) {
             ArrayList<SendProtocol> scoreChangeReqList = new ArrayList<SendProtocol>();
             scoreChangeReqList.add(scoreChangeReq);
             con.sendScoreChangeReq(scoreChangeReqList);
         }
     }
-    
+
     /**
      * Setter methods which are not relevant to dummy player (but inherits)
      */
@@ -267,13 +269,13 @@ public class DummyPlayer extends AbsPlayer {
     public float getY() {
         return this.y;
     }
-    
+
     /**
      * Add the bullet transferred from the neighbor server to the game world
      * 
      * @param bullet
      */
-    public void addBulletToGameWorld(Bullet bullet){
+    public void addBulletToGameWorld(Bullet bullet) {
         BulletQueue.INSTANCE.addToBulletQueue(bullet);
     }
 
