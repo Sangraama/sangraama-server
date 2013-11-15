@@ -41,7 +41,7 @@ public abstract class Player extends AbsPlayer {
 
     int a_rate = 2;
     float angularVelocity;
-    int type;// image type of the player
+    int imgType;// image type of the player
     int bulletType;// bullet type of the player
 
     /* Player moving parameters */
@@ -68,7 +68,7 @@ public abstract class Player extends AbsPlayer {
         this.health = health;
         this.score = score;
         PlayerQueue.INSTANCE.addToPlayerQueue(this);
-        this.type = type;
+        this.imgType = type;
         this.bulletType = bulletType;
     }
 
@@ -89,7 +89,7 @@ public abstract class Player extends AbsPlayer {
         // System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " health:" +
         // this.getHealth() + " Score:"+this.getScore());
         this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.userID, this.health, this.score, this.type);
+                this.body.getAngle(), this.userID, this.health, this.score, this.imgType);
         /*
          * for (Bullet bullet : this.removedBulletList) {
          * delta.getBulletDeltaList().add(bullet.getBulletDelta(2)); }
@@ -469,8 +469,8 @@ public abstract class Player extends AbsPlayer {
         } else {
             this.health = 0;
             this.setScore(-200);
-            this.gameEngine.addToDefaetList(this);
-            PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
+            PlayerQueue.INSTANCE.addToDefaetList(this);
+            //PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
         }
     }
 
@@ -490,7 +490,7 @@ public abstract class Player extends AbsPlayer {
     }
 
     public int getType() {
-        return type;
+        return imgType;
     }
 
     public void setScore(float scoreChange) {
@@ -502,8 +502,8 @@ public abstract class Player extends AbsPlayer {
     }
 
     public DefeatMsg getDefeatMsg() {
-        return new DefeatMsg(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.userID, this.score, 6, this.type);
+        return new DefeatMsg(this.userID,this.body.getPosition().x, this.body.getPosition().y,
+                this.body.getAngle(), this.score, this.imgType);
     }
 
 }

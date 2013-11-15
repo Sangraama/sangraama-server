@@ -4,8 +4,11 @@ public class DefeatMsg extends AbsDelta {
 
     private float score;
 
-    public DefeatMsg(float dx, float dy, float da, long userID, float score, int type, int imageType) {
-        super(type, userID, dx, dy, da, imageType);
+    public DefeatMsg(long userID,float dx, float dy, float da, float score, int imageType) {
+        /**
+         * If imageType is not using in client side, why is it using here ? #gihan
+         */
+        super(6, userID, dx, dy, da, imageType);
         this.score = score;
     }
 

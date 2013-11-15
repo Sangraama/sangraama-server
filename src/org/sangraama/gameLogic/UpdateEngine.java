@@ -19,6 +19,7 @@ import org.sangraama.controller.clientprotocol.BulletDelta;
 import org.sangraama.controller.clientprotocol.PlayerDelta;
 import org.sangraama.controller.clientprotocol.SangraamaTile;
 import org.sangraama.controller.clientprotocol.SendProtocol;
+import org.sangraama.gameLogic.queue.PlayerQueue;
 
 public enum UpdateEngine implements Runnable {
     INSTANCE;
@@ -32,9 +33,9 @@ public enum UpdateEngine implements Runnable {
     private List<Bullet> bulletList;
     private List<DummyPlayer> dummyList;
     /* Should be atomic operation. */
-    private volatile List<Player> updatedPlayerList;
+    private List<Player> updatedPlayerList;
     private Map<Long, PlayerDelta> playerDelta;
-    private List<Player> defeatMsgList;
+    private List<Player> defeatedPlayerList;
 
     UpdateEngine() {
         System.out.println(TAG + "Init Update Engine ...");
@@ -42,7 +43,7 @@ public enum UpdateEngine implements Runnable {
         this.bulletList = new ArrayList<>();
         this.dummyList = new Vector<DummyPlayer>();
         this.updatedPlayerList = new ArrayList<>();
-        this.defeatMsgList = new ArrayList<>();
+        this.defeatedPlayerList = new ArrayList<>();
     }
 
     @Override
@@ -60,11 +61,10 @@ public enum UpdateEngine implements Runnable {
 
     public void pushUpdate() {
         this.playerDelta = new HashMap<Long, PlayerDelta>();
-        
+
         // Make a clone of Updates which need to send
         this.playerList = this.updatedPlayerList;
         for (Player player : playerList) {
-
             playerDelta.put(player.getUserID(), player.getPlayerDelta());
         }
 
@@ -76,10 +76,14 @@ public enum UpdateEngine implements Runnable {
             // Send updates for Dummy Player
             for (DummyPlayer dummy : dummyList) {
                 List<SendProtocol> deltaList = this.getAreaOfInterest(dummy);
-                if (deltaList.size() > 0) {
-                    dummy.sendUpdate(deltaList);
-                }
+                dummy.sendUpdate(deltaList);
             }
+            // Remove defeated Players (Once run this list, it'll clear by GameEngine)
+            for (Player defeatedPlayer : this.defeatedPlayerList) {
+                PlayerQueue.INSTANCE.addToRemovePlayerQueue(defeatedPlayer);
+            }
+            this.defeatedPlayerList.clear();
+            this.isUpdate = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,19 +98,16 @@ public enum UpdateEngine implements Runnable {
     private List<SendProtocol> getAreaOfInterest(Player p) {
         List<SendProtocol> delta = new ArrayList<>();
 
-        delta.add(p.getPlayerDelta());
         for (Player player : playerList) {
             if (p.getXVirtualPoint() - p.getAOIWidth() <= player.getX()
                     && player.getX() <= p.getXVirtualPoint() + p.getAOIWidth()
                     && p.getYVirtualPoint() - p.getAOIHeight() <= player.getY()
                     && player.getY() <= p.getYVirtualPoint() + p.getAOIHeight()) {
-                if (player.getUserID() != p.getUserID()) {
-                    delta.add(this.playerDelta.get(player.getUserID()));
-                }
+                delta.add(this.playerDelta.get(player.getUserID()));
             }
         }
-        for (Bullet bullet : bulletList) {
 
+        for (Bullet bullet : bulletList) {
             BulletDelta bulletDelta = bullet.getBulletDelta();
             if (p.getXVirtualPoint() - p.getAOIWidth() <= bulletDelta.getDx()
                     && bulletDelta.getDx() <= p.getXVirtualPoint() + p.getAOIWidth()
@@ -115,14 +116,12 @@ public enum UpdateEngine implements Runnable {
                 delta.add(bullet.getBulletDelta());
             }
         }
-        for (Player player : defeatMsgList) {
+        for (Player player : defeatedPlayerList) {
             if (p.getXVirtualPoint() - p.getAOIWidth() <= player.getX()
                     && player.getX() <= p.getXVirtualPoint() + p.getAOIWidth()
                     && p.getYVirtualPoint() - p.getAOIHeight() <= player.getY()
                     && player.getY() <= p.getYVirtualPoint() + p.getAOIHeight()) {
-                if (player.getUserID() != p.getUserID()) {
-                    delta.add(player.getDefeatMsg());
-                }
+                delta.add(player.getDefeatMsg());
             }
         }
         return delta;
@@ -142,13 +141,11 @@ public enum UpdateEngine implements Runnable {
                     && player.getX() <= d.getXVirtualPoint() + d.getAOIWidth()
                     && d.getYVirtualPoint() - d.getAOIHeight() <= player.getY()
                     && player.getY() <= d.getYVirtualPoint() + d.getAOIHeight()) {
-                if (player.getUserID() != d.getUserID()) {
-                    delta.add(this.playerDelta.get(player.getUserID()));
-                }
+                delta.add(this.playerDelta.get(player.getUserID()));
             }
         }
-        for (Bullet bullet : bulletList) {
 
+        for (Bullet bullet : bulletList) {
             BulletDelta bulletDelta = bullet.getBulletDelta();
             if (d.getXVirtualPoint() - d.getAOIWidth() <= bulletDelta.getDx()
                     && bulletDelta.getDx() <= d.getXVirtualPoint() + d.getAOIWidth()
@@ -158,14 +155,12 @@ public enum UpdateEngine implements Runnable {
             }
         }
 
-        for (Player player : defeatMsgList) {
+        for (Player player : defeatedPlayerList) {
             if (d.getXVirtualPoint() - d.getAOIWidth() <= player.getX()
                     && player.getX() <= d.getXVirtualPoint() + d.getAOIWidth()
                     && d.getYVirtualPoint() - d.getAOIHeight() <= player.getY()
                     && player.getY() <= d.getYVirtualPoint() + d.getAOIHeight()) {
-                if (player.getUserID() != d.getUserID()) {
-                    delta.add(player.getDefeatMsg());
-                }
+                delta.add(player.getDefeatMsg());
             }
         }
 
@@ -196,22 +191,17 @@ public enum UpdateEngine implements Runnable {
      *            Player want to get updates
      * @return true if added to the list, false otherwise
      */
-    /*public boolean addToDummyQueue(DummyPlayer player) {
-        player.sendTileSizeInfo();
-        return this.dummyList.add(player);
-    }
-
-    public boolean addToRemoveDummyQueue(long player) {
-        for(DummyPlayer d : dummyList){
-            if(d.getUserID() == player) this.dummyList.remove(d);
-        }
-        return true;
-    }
-    
-    public boolean addToRemoveDummyQueue(DummyPlayer player) {
-        
-        return this.dummyList.remove(player);
-    }*/
+    /*
+     * public boolean addToDummyQueue(DummyPlayer player) { player.sendTileSizeInfo(); return
+     * this.dummyList.add(player); }
+     * 
+     * public boolean addToRemoveDummyQueue(long player) { for(DummyPlayer d : dummyList){
+     * if(d.getUserID() == player) this.dummyList.remove(d); } return true; }
+     * 
+     * public boolean addToRemoveDummyQueue(DummyPlayer player) {
+     * 
+     * return this.dummyList.remove(player); }
+     */
 
     public synchronized boolean setStop() {
         this.playerList.clear();
@@ -231,20 +221,20 @@ public enum UpdateEngine implements Runnable {
         this.updatedPlayerList = playerList;
         this.isUpdate = true;
     }
-    
-    public void setUpdatedDummyPlayerList(List<DummyPlayer> dummyList){
+
+    public void setUpdatedDummyPlayerList(List<DummyPlayer> dummyList) {
         this.dummyList = dummyList;
     }
 
     public void setDefeatList(List<Player> playerList) {
-        this.defeatMsgList = playerList;
+        this.defeatedPlayerList = playerList;
     }
 
     public void setBulletList(List<Bullet> bulletList) {
         this.bulletList = bulletList;
     }
-    
-    public List<DummyPlayer> getDummyList(){
+
+    public List<DummyPlayer> getDummyList() {
         return this.dummyList;
     }
 

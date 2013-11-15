@@ -16,28 +16,39 @@ public enum PlayerQueue {
     
     ConcurrentLinkedQueue<Player> newPlayerQueue;
     ConcurrentLinkedQueue<Player> removePlayerQueue;
+    ConcurrentLinkedQueue<Player> defeatedPlayerQueue;
     
     private PlayerQueue() {
         log.info(TAG, " Init Player queue ... ");
     }
     
-    public void init(ConcurrentLinkedQueue<Player> newQueue,ConcurrentLinkedQueue<Player> removeQueue) {
+    public void init(ConcurrentLinkedQueue<Player> newQueue,ConcurrentLinkedQueue<Player> removeQueue,ConcurrentLinkedQueue<Player> defeatedQueue) {
         this.newPlayerQueue = newQueue;
         this.removePlayerQueue = removeQueue;
+        this.defeatedPlayerQueue = defeatedQueue;
     }
 
-    public void addToPlayerQueue(Player ship) {
+    public void addToPlayerQueue(Player player) {
         try{
-        this.newPlayerQueue.add(ship);
+        this.newPlayerQueue.add(player);
         }catch(Exception e){
             log.error(TAG, e);
             e.printStackTrace();
         }
     }
 
-    public void addToRemovePlayerQueue(Player ship) {
+    public void addToRemovePlayerQueue(Player removePlayer) {
         try{
-            this.removePlayerQueue.add(ship);
+            this.removePlayerQueue.add(removePlayer);
+            }catch(Exception e){
+                log.error(TAG, e);
+                e.printStackTrace();
+            }
+    }
+    
+    public void addToDefaetList(Player player) {
+        try{
+            this.defeatedPlayerQueue.add(player);
             }catch(Exception e){
                 log.error(TAG, e);
                 e.printStackTrace();

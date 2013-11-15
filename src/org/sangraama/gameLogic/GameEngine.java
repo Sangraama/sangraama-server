@@ -39,6 +39,8 @@ public enum GameEngine implements Runnable {
     private List<Player> playerList;
     private ConcurrentLinkedQueue<Player> newPlayerQueue;
     private ConcurrentLinkedQueue<Player> removePlayerQueue;
+    private List<Player> defeatedList;
+    private ConcurrentLinkedQueue<Player> defeatedPlayerQueue;
     // list of dummy players details
     private List<DummyPlayer> dummyList;
     private ConcurrentLinkedQueue<DummyPlayer> newDummyQueue;
@@ -48,7 +50,6 @@ public enum GameEngine implements Runnable {
     private ConcurrentLinkedQueue<Bullet> newBulletQueue;
     private ConcurrentLinkedQueue<Bullet> removeBulletQueue;
 
-    private List<Player> defeatMsgList;
     private CollisionDetector sangraamaCollisionDet;
     private List<Wall> wallList;
 
@@ -68,7 +69,10 @@ public enum GameEngine implements Runnable {
         this.playerList = new ArrayList<>();
         this.newPlayerQueue = new ConcurrentLinkedQueue<Player>();
         this.removePlayerQueue = new ConcurrentLinkedQueue<Player>();
-        PlayerQueue.INSTANCE.init(this.newPlayerQueue, this.removePlayerQueue);
+        this.defeatedList = new ArrayList<>();
+        this.defeatedPlayerQueue = new ConcurrentLinkedQueue<Player>();
+        PlayerQueue.INSTANCE.init(this.newPlayerQueue, this.removePlayerQueue,
+                this.defeatedPlayerQueue);
         /**
          * Dummy Player Details
          */
@@ -85,7 +89,6 @@ public enum GameEngine implements Runnable {
         BulletQueue.INSTANCE.init(this.newBulletQueue, this.removeBulletQueue);
 
         this.wallList = new ArrayList<>();
-        this.defeatMsgList = new ArrayList<>();
         this.updateEngine = UpdateEngine.INSTANCE;
     }
 
@@ -148,10 +151,10 @@ public enum GameEngine implements Runnable {
             // System.out.println(TAG + "Removing players");
             if (this.playerList.remove(rmPlayer)) { // True if player contains
                 this.world.destroyBody(rmPlayer.getBody());
+                System.out.print(TAG + " Removed player :" + rmPlayer.getUserID());
             }
             if (this.playerList.size() > maxPlayers)
                 maxPlayers = this.playerList.size();
-            System.out.print(TAG + " Removed player :" + rmPlayer.getUserID());
             System.out.println("=>> number of remained players : " + this.playerList.size() + "/"
                     + maxPlayers + " #################");
             rmPlayer = null; // free the memory @need to add to garbage collector
@@ -173,6 +176,13 @@ public enum GameEngine implements Runnable {
 
         for (Player player : playerList) {
             player.applyUpdate();
+        }
+
+        // Add defeated player to the list
+        Player deafetedPlayer;
+        while ((deafetedPlayer = this.defeatedPlayerQueue.poll()) != null) {
+            this.defeatedList.add(deafetedPlayer);
+            System.out.print(TAG + " add Defeated player :" + deafetedPlayer.getUserID());
         }
     }
 
@@ -249,8 +259,8 @@ public enum GameEngine implements Runnable {
 
     public void pushUpdate() {
         this.updateEngine.setBulletList(this.bulletList);
-        this.updateEngine.setDefeatList(this.defeatMsgList);
-        this.defeatMsgList.clear();
+        this.updateEngine.setDefeatList(this.defeatedList);
+        this.defeatedPlayerQueue.clear(); // Should clear this list
         this.updateEngine.setUpdatedDummyPlayerList(this.dummyList);
         this.updateEngine.setUpdatedPlayerList(this.playerList);
     }
@@ -266,10 +276,6 @@ public enum GameEngine implements Runnable {
             // System.out.println("Adding wall " + wall.getFixtureDef().userData);
             this.world.createBody(wall.getBodyDef()).createFixture(wall.getFixtureDef());
         }
-    }
-
-    public void addToDefaetList(Player player) {
-        this.defeatMsgList.add(player);
     }
 
 }
