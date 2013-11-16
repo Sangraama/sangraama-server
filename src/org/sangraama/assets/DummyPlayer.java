@@ -195,10 +195,10 @@ public class DummyPlayer extends AbsPlayer {
         /**
          * Check whether AOI is inside the map or not (4 corners are inside current map)
          */
-        if (isInsideMap(x_vp - halfWidth, y_vp - halfHieght)
-                || isInsideMap(x_vp + halfWidth, y_vp - halfHieght)
-                || isInsideMap(x_vp - halfWidth, y_vp + halfHieght)
-                || isInsideMap(x_vp + halfWidth, y_vp + halfHieght)) {
+        if (isInsideMap(x_vp - halfAOIWidth, y_vp - halfAOIHieght)
+                || isInsideMap(x_vp + halfAOIWidth, y_vp - halfAOIHieght)
+                || isInsideMap(x_vp - halfAOIWidth, y_vp + halfAOIHieght)
+                || isInsideMap(x_vp + halfAOIWidth, y_vp + halfAOIHieght)) {
             // if one of point is located in server, set virtual point
 
             List<SendProtocol> data = new ArrayList<SendProtocol>();

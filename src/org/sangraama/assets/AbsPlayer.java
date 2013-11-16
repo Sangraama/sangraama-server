@@ -51,8 +51,8 @@ public abstract class AbsPlayer {
 
     // Area of Interest
     float screenWidth = 0.0f, screenHeight = 0.0f;
-    float halfWidth = 0.0f; // half width of AOI
-    float halfHieght = 0.0f; // half height of AOI
+    float halfAOIWidth = 0.0f; // half width of AOI
+    float halfAOIHieght = 0.0f; // half height of AOI
 
     // player current sub-tile information
     float currentSubTileOriginX = 0.0f;
@@ -195,21 +195,21 @@ public abstract class AbsPlayer {
         System.out.println(TAG + " set AOI as w:" + width + " h:" + height);
         this.screenWidth = width;
         this.screenHeight = height;
-        this.halfWidth = width / 2;
-        this.halfHieght = height / 2;
+        this.halfAOIWidth = width / 2;
+        this.halfAOIHieght = height / 2;
         // Set point which virtual point can holds
-        this.totOrgX = this.halfWidth + 0.2f;
-        this.totOrgY = this.halfHieght + 0.2f;
-        this.totEdgeX = SangraamaMap.INSTANCE.getMaxWidth() - (this.halfWidth + 0.2f);
-        this.totEdgeY = SangraamaMap.INSTANCE.getMaxHeight() - (this.halfHieght + 0.2f);
+        this.totOrgX = this.halfAOIWidth + 0.2f;
+        this.totOrgY = this.halfAOIHieght + 0.2f;
+        this.totEdgeX = SangraamaMap.INSTANCE.getMaxWidth() - (this.halfAOIWidth + 0.2f);
+        this.totEdgeY = SangraamaMap.INSTANCE.getMaxHeight() - (this.halfAOIHieght + 0.2f);
     }
 
     public float getAOIWidth() {
-        return this.halfWidth;
+        return this.halfAOIWidth;
     }
 
     public float getAOIHeight() {
-        return this.halfHieght;
+        return this.halfAOIHieght;
     }
 
     public float getScreenWidth() {
