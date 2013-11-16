@@ -1,4 +1,5 @@
-package org.sangraama.controller.clientprotocol;
+package org.sangraama.jsonprotocols;
+
 
 public abstract class AbsDelta extends SendProtocol {
     float dx, dy, da;

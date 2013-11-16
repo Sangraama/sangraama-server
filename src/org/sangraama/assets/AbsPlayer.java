@@ -6,11 +6,11 @@ import java.util.Random;
 
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
-import org.sangraama.controller.clientprotocol.SangraamaTile;
-import org.sangraama.controller.clientprotocol.SendProtocol;
-import org.sangraama.controller.clientprotocol.TileInfo;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
+import org.sangraama.jsonprotocols.SendProtocol;
+import org.sangraama.jsonprotocols.send.SangraamaTile;
+import org.sangraama.jsonprotocols.send.TileInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,6 @@
-package org.sangraama.controller.clientprotocol;
+package org.sangraama.jsonprotocols.send;
+
+import org.sangraama.jsonprotocols.AbsDelta;
 
 public class DefeatMsg extends AbsDelta {
 

@@ -1,4 +1,7 @@
-package org.sangraama.controller.clientprotocol;
+package org.sangraama.jsonprotocols.send;
+
+import org.sangraama.jsonprotocols.SendProtocol;
+
 
 public class SyncPlayer extends SendProtocol {
     private float x, y, x_vp, y_vp, a, w, h;
@@ -17,7 +20,8 @@ public class SyncPlayer extends SendProtocol {
      * @param w
      * @param h
      */
-    public SyncPlayer(long userID, float x, float y, float x_vp, float y_vp, float a, float w, float h) {
+    public SyncPlayer(long userID, float x, float y, float x_vp, float y_vp, float a, float w,
+            float h) {
         super(10, userID);
         this.x = x;
         this.y = y;
@@ -45,8 +49,9 @@ public class SyncPlayer extends SendProtocol {
         this.w = w;
         this.h = h;
     }
-    
-    public SyncPlayer(long userID){
+
+    public SyncPlayer(long userID) {
         super(4, userID);
     }
+
 }

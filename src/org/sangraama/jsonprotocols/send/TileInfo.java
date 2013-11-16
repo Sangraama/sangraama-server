@@ -1,8 +1,9 @@
-package org.sangraama.controller.clientprotocol;
+package org.sangraama.jsonprotocols.send;
 
 import java.util.ArrayList;
 
 import org.sangraama.coordination.staticPartition.TileCoordinator;
+import org.sangraama.jsonprotocols.SendProtocol;
 
 import com.google.gson.Gson;
 

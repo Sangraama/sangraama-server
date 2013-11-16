@@ -7,8 +7,8 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.controller.BulletPassHandler;
-import org.sangraama.controller.clientprotocol.BulletDelta;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
+import org.sangraama.jsonprotocols.send.BulletDelta;
 
 public class Bullet {
 

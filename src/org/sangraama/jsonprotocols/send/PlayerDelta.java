@@ -1,4 +1,6 @@
-package org.sangraama.controller.clientprotocol;
+package org.sangraama.jsonprotocols.send;
+
+import org.sangraama.jsonprotocols.AbsDelta;
 
 public class PlayerDelta extends AbsDelta {
     private float health;

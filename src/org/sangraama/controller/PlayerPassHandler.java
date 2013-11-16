@@ -10,12 +10,12 @@ import org.sangraama.assets.AbsPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.SangraamaMap;
 import org.sangraama.assets.Ship;
-import org.sangraama.controller.clientprotocol.ClientTransferReq;
-import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.coordination.ServerHandler;
 import org.sangraama.coordination.ServerLocation;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
+import org.sangraama.jsonprotocols.SendProtocol;
+import org.sangraama.jsonprotocols.transfer.ClientTransferReq;
 import org.sangraama.thrift.assets.TPlayer;
 import org.sangraama.thrift.client.ThriftClient;
 

@@ -6,14 +6,14 @@ import java.util.List;
 
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
-import org.sangraama.controller.clientprotocol.ScoreChangeTransferReq;
-import org.sangraama.controller.clientprotocol.SendProtocol;
-import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.DummyQueue;
+import org.sangraama.jsonprotocols.SendProtocol;
+import org.sangraama.jsonprotocols.send.SyncPlayer;
+import org.sangraama.jsonprotocols.transfer.ScoreChangeTransferReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

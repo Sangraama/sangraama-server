@@ -1,5 +1,6 @@
-package org.sangraama.controller.clientprotocol;
+package org.sangraama.jsonprotocols.transfer;
 
+import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.util.SignMsg;
 
 import com.google.gson.Gson;

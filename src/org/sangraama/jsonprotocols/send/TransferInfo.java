@@ -1,4 +1,4 @@
-package org.sangraama.controller.clientprotocol;
+package org.sangraama.jsonprotocols.send;
 
 public class TransferInfo {
 

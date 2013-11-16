@@ -12,13 +12,13 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
-import org.sangraama.controller.clientprotocol.DefeatMsg;
-import org.sangraama.controller.clientprotocol.PlayerDelta;
-import org.sangraama.controller.clientprotocol.SendProtocol;
-import org.sangraama.controller.clientprotocol.SyncPlayer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.PlayerQueue;
+import org.sangraama.jsonprotocols.SendProtocol;
+import org.sangraama.jsonprotocols.send.DefeatMsg;
+import org.sangraama.jsonprotocols.send.PlayerDelta;
+import org.sangraama.jsonprotocols.send.SyncPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

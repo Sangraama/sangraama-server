@@ -9,8 +9,8 @@ import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
-import org.sangraama.controller.clientprotocol.ScoreChangeTransferReq;
 import org.sangraama.gameLogic.queue.BulletQueue;
+import org.sangraama.jsonprotocols.transfer.ScoreChangeTransferReq;
 
 public enum CollisionManager implements Runnable {
     INSTANCE;

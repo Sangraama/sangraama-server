@@ -1,4 +1,4 @@
-package org.sangraama.controller.clientprotocol;
+package org.sangraama.jsonprotocols.send;
 
 public class SangraamaTile {
         private float x,y,w,h; // origin X, origin Y, width and height of the sub-tile

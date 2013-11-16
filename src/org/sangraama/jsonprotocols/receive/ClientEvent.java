@@ -1,4 +1,4 @@
-package org.sangraama.controller.clientprotocol;
+package org.sangraama.jsonprotocols.receive;
 
 import java.util.Arrays;
 

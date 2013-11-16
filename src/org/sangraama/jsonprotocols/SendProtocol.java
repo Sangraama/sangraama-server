@@ -1,9 +1,8 @@
-package org.sangraama.controller.clientprotocol;
+package org.sangraama.jsonprotocols;
 
 public abstract class SendProtocol {
-    int type = 1;
-
-    long userID;
+    protected int type = 1;
+    protected long userID;
 
     public SendProtocol(int type, long userID) {
         this.type = type;

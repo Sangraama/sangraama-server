@@ -4,10 +4,10 @@ import org.sangraama.assets.AbsPlayer;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
-import org.sangraama.controller.clientprotocol.BulletTransferReq;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.queue.BulletQueue;
+import org.sangraama.jsonprotocols.transfer.BulletTransferReq;
 
 public enum BulletPassHandler {
 

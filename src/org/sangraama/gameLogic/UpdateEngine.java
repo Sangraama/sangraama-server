@@ -15,11 +15,11 @@ import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.common.Constants;
-import org.sangraama.controller.clientprotocol.BulletDelta;
-import org.sangraama.controller.clientprotocol.PlayerDelta;
-import org.sangraama.controller.clientprotocol.SangraamaTile;
-import org.sangraama.controller.clientprotocol.SendProtocol;
 import org.sangraama.gameLogic.queue.PlayerQueue;
+import org.sangraama.jsonprotocols.SendProtocol;
+import org.sangraama.jsonprotocols.send.BulletDelta;
+import org.sangraama.jsonprotocols.send.PlayerDelta;
+import org.sangraama.jsonprotocols.send.SangraamaTile;
 
 public enum UpdateEngine implements Runnable {
     INSTANCE;

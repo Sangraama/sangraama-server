@@ -19,7 +19,7 @@ import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.coyote.http11.Http11Protocol;
 import org.sangraama.assets.SangraamaMap;
 import org.sangraama.assets.Ship;
-import org.sangraama.controller.clientprotocol.SangraamaTile;
+import org.sangraama.jsonprotocols.send.SangraamaTile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;

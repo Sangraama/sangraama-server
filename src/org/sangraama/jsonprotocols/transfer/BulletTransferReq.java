@@ -1,7 +1,8 @@
-package org.sangraama.controller.clientprotocol;
+package org.sangraama.jsonprotocols.transfer;
 
 import org.jbox2d.common.Vec2;
 import org.sangraama.assets.Bullet;
+import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.util.SignMsg;
 
 import com.google.gson.Gson;
