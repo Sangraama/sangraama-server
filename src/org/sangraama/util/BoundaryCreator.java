@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.sangraama.assets.Wall;
+import org.sangraama.common.Constants;
 
 public class BoundaryCreator {
 
@@ -29,12 +30,12 @@ public class BoundaryCreator {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        worldWidth = Float.parseFloat(prop.getProperty("maxlength"));
-        worldHeight = Float.parseFloat(prop.getProperty("maxheight"));
-        mapOriX = Float.parseFloat(prop.getProperty("maporiginx"));
-        mapOriY = Float.parseFloat(prop.getProperty("maporiginy"));
-        mapHeight = Float.parseFloat(prop.getProperty("mapwidth"));
-        mapWidth = Float.parseFloat(prop.getProperty("mapheight"));
+        worldWidth = Float.parseFloat(prop.getProperty("maxlength"))/Constants.scale;
+        worldHeight = Float.parseFloat(prop.getProperty("maxheight"))/Constants.scale;
+        mapOriX = Float.parseFloat(prop.getProperty("maporiginx"))/Constants.scale;
+        mapOriY = Float.parseFloat(prop.getProperty("maporiginy"))/Constants.scale;
+        mapHeight = Float.parseFloat(prop.getProperty("mapwidth"))/Constants.scale;
+        mapWidth = Float.parseFloat(prop.getProperty("mapheight"))/Constants.scale;
     }
 
     private void generateWalls() {
