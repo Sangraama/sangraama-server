@@ -44,8 +44,8 @@ public abstract class AbsPlayer {
     float x_virtual = 0.0f, y_virtual = 0.0f;
 
     /*
-     * To check whether virtual point is setting inside the total map. Total map origin x,y and
-     * total map edge x,y
+     * To check whether "virtual point" is setting inside the total map where it possible. Total map
+     * origin x,y and total map edge x,y
      */
     float totOrgX = 0.0f, totOrgY = 0.0f, totEdgeX = 0.0f, totEdgeY = 0.0f;
 
@@ -61,9 +61,9 @@ public abstract class AbsPlayer {
     public boolean isUpdate() {
         return this.isUpdate;
     }
-    
-    public boolean isPlayer(){
-        if(this.isPlayer == 1)
+
+    public boolean isPlayer() {
+        if (this.isPlayer == 1)
             return true;
         else
             return false;
@@ -107,34 +107,6 @@ public abstract class AbsPlayer {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Check whether player is inside current sub-tile
-     * 
-     * @param x
-     *            Player's current x coordination
-     * @param y
-     *            Player's current y coordination
-     * @return if inside sub-tile return true, else false
-     */
-    private boolean isInsideServerSubTile(float x, float y) {
-        boolean insideServerSubTile = true;
-        float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
-        float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-        // System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
-        // + subTileOriX + ":" + subTileOriY);
-        if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
-            currentSubTileOriginX = subTileOriX;
-            currentSubTileOriginY = subTileOriY;
-            if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                insideServerSubTile = false;
-                System.out.println(TAG + "player is not inside a subtile of "
-                        + sangraamaMap.getHost());
-            }
-        }
-
-        return insideServerSubTile;
     }
 
     /**
@@ -226,10 +198,10 @@ public abstract class AbsPlayer {
         this.halfWidth = width / 2;
         this.halfHieght = height / 2;
         // Set point which virtual point can holds
-        this.totOrgX = this.halfWidth + 1.0f;
-        this.totOrgY = this.halfHieght + 1.0f;
-        this.totEdgeX = SangraamaMap.INSTANCE.getMaxWidth() - (this.halfWidth + 1.0f);
-        this.totEdgeY = SangraamaMap.INSTANCE.getMaxHeight() - (this.halfHieght + 1.0f);
+        this.totOrgX = this.halfWidth + 0.2f;
+        this.totOrgY = this.halfHieght + 0.2f;
+        this.totEdgeX = SangraamaMap.INSTANCE.getMaxWidth() - (this.halfWidth + 0.2f);
+        this.totEdgeY = SangraamaMap.INSTANCE.getMaxHeight() - (this.halfHieght + 0.2f);
     }
 
     public float getAOIWidth() {

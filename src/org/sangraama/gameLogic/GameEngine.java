@@ -151,7 +151,7 @@ public enum GameEngine implements Runnable {
             // System.out.println(TAG + "Removing players");
             if (this.playerList.remove(rmPlayer)) { // True if player contains
                 this.world.destroyBody(rmPlayer.getBody());
-                System.out.print(TAG + " Removed player :" + rmPlayer.getUserID());
+                System.out.println(TAG + " Removed player :" + rmPlayer.getUserID());
             }
             if (this.playerList.size() > maxPlayers)
                 maxPlayers = this.playerList.size();
@@ -182,7 +182,7 @@ public enum GameEngine implements Runnable {
         Player deafetedPlayer;
         while ((deafetedPlayer = this.defeatedPlayerQueue.poll()) != null) {
             this.defeatedList.add(deafetedPlayer);
-            System.out.print(TAG + " add Defeated player :" + deafetedPlayer.getUserID());
+            System.out.println(TAG + " add Defeated player :" + deafetedPlayer.getUserID());
         }
     }
 
@@ -260,7 +260,6 @@ public enum GameEngine implements Runnable {
     public void pushUpdate() {
         this.updateEngine.setBulletList(this.bulletList);
         this.updateEngine.setDefeatList(this.defeatedList);
-        this.defeatedPlayerQueue.clear(); // Should clear this list
         this.updateEngine.setUpdatedDummyPlayerList(this.dummyList);
         this.updateEngine.setUpdatedPlayerList(this.playerList);
     }

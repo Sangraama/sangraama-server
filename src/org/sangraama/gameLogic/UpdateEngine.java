@@ -78,11 +78,11 @@ public enum UpdateEngine implements Runnable {
                 List<SendProtocol> deltaList = this.getAreaOfInterest(dummy);
                 dummy.sendUpdate(deltaList);
             }
-            // Remove defeated Players (Once run this list, it'll clear by GameEngine)
+
             for (Player defeatedPlayer : this.defeatedPlayerList) {
                 PlayerQueue.INSTANCE.addToRemovePlayerQueue(defeatedPlayer);
             }
-            this.defeatedPlayerList.clear();
+            this.defeatedPlayerList.clear(); // Remove defeated Players
             this.isUpdate = false;
         } catch (Exception e) {
             e.printStackTrace();
