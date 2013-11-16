@@ -19,6 +19,7 @@ import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.jsonprotocols.send.DefeatMsg;
 import org.sangraama.jsonprotocols.send.PlayerDelta;
 import org.sangraama.jsonprotocols.send.SyncPlayer;
+import org.sangraama.jsonprotocols.send.VirtualPointAccessLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -392,25 +393,35 @@ public abstract class Player extends AbsPlayer {
         /**
          * Check whether player is in permitted area [check by server]
          */
+        VirtualPointAccessLevel vp_al = new VirtualPointAccessLevel();
+
         if (!isInsideTotalMap(x_vp, y_vp)) {
             if (x_vp < totOrgX) {
-                x_virtual = totOrgX;
+                this.x_virtual = totOrgX;
+                /* X level restriction at origin Or left */
+                vp_al.setVirtualPointAccessLevel('x', 1);
             }
             if (y_vp < totOrgY) {
-                y_virtual = totOrgY;
+                this.y_virtual = totOrgY;
+                /* Y level restriction at origin or upper */
+                vp_al.setVirtualPointAccessLevel('y', 1);
             }
             if (totEdgeX < x_vp) {
-                x_virtual = totEdgeX;
+                this.x_virtual = totEdgeX;
+                /* X level restriction at edge Or right */
+                vp_al.setVirtualPointAccessLevel('x', 2);
             }
             if (totEdgeY < y_vp) {
-                y_virtual = totEdgeY;
+                this.y_virtual = totEdgeY;
+                /* Y level restriction at edge Or lower */
+                vp_al.setVirtualPointAccessLevel('y', 2);
             }
             System.out.println(TAG + userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
         }
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
         data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth,
-                screenHeight));
+                screenHeight, vp_al));
         // System.out.println(TAG + userID + " Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
 
@@ -470,7 +481,7 @@ public abstract class Player extends AbsPlayer {
             this.health = 0;
             this.setScore(-200);
             PlayerQueue.INSTANCE.addToDefaetList(this);
-            //PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
+            // PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
         }
     }
 
@@ -502,7 +513,7 @@ public abstract class Player extends AbsPlayer {
     }
 
     public DefeatMsg getDefeatMsg() {
-        return new DefeatMsg(this.userID,this.body.getPosition().x, this.body.getPosition().y,
+        return new DefeatMsg(this.userID, this.body.getPosition().x, this.body.getPosition().y,
                 this.body.getAngle(), this.score, this.imgType);
     }
 

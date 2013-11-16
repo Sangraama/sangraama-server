@@ -1,10 +1,14 @@
 package org.sangraama.jsonprotocols.send;
 
+import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.jsonprotocols.SendProtocol;
+
+import com.google.gson.Gson;
 
 
 public class SyncPlayer extends SendProtocol {
     private float x, y, x_vp, y_vp, a, w, h;
+    private String al; // Access Level
 
     /**
      * For player
@@ -21,7 +25,7 @@ public class SyncPlayer extends SendProtocol {
      * @param h
      */
     public SyncPlayer(long userID, float x, float y, float x_vp, float y_vp, float a, float w,
-            float h) {
+            float h, VirtualPointAccessLevel vp_al) {
         super(10, userID);
         this.x = x;
         this.y = y;
@@ -30,6 +34,7 @@ public class SyncPlayer extends SendProtocol {
         this.a = a;
         this.w = w;
         this.h = h;
+        this.al = new Gson().toJson(vp_al);
     }
 
     /**

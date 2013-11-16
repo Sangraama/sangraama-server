@@ -1,4 +1,4 @@
-package org.sangraama.jsonprotocols.send;
+package org.sangraama.jsonprotocols.transfer;
 
 public class TransferInfo {
 
