@@ -21,11 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 
 public class DummyWebScocketConnection extends MessageInbound {
-    // Local Debug or logs
-    private static boolean LL = true;
-    private static boolean LD = true;
-    private static final String TAG = "DummyWebSocketConnection : ";
-    public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
+    public static final Logger log = LoggerFactory.getLogger(DummyWebScocketConnection.class);
 
     private DummyPlayer dummyPlayer;
     private Gson gson;
@@ -47,13 +43,13 @@ public class DummyWebScocketConnection extends MessageInbound {
     @Override
     protected void onOpen(WsOutbound outbound) {
         // log.info("Open Connection");
-        System.out.println(TAG + " Open Connection");
+        log.info("Open Connection");
     }
 
     @Override
     protected void onClose(int status) {
         // log.info("Connection closed");
-        System.out.println(TAG + " Close connection");
+        log.info("Close connection");
         if (this.dummyPlayer != null) {
             this.dummyPlayer.removeWebSocketConnection();
         }
@@ -92,7 +88,7 @@ public class DummyWebScocketConnection extends MessageInbound {
                 // connection
                 // this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(), clientEvent.getX(),
                 // clientEvent.getY(), this);
-                System.out.println(TAG + " Add new dummy Player " + clientEvent.getUserID());
+                log.info("Add new dummy Player " + clientEvent.getUserID());
             } else if (clientEvent.getType() == 2) {
                 TransferInfo playerInfo;
                 String info = clientEvent.getInfo();
@@ -103,7 +99,7 @@ public class DummyWebScocketConnection extends MessageInbound {
                     // this.dummyPlayer = new DummyPlayer(clientEvent.getUserID(),
                     // playerInfo.getPositionX(),
                     // playerInfo.getPositionY(), this);
-                    System.out.println(TAG + "Adding player from another server to GameEngine.");
+                    log.info("Adding player from another server to GameEngine.");
                 }
             }
         }
@@ -121,9 +117,7 @@ public class DummyWebScocketConnection extends MessageInbound {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));
 
         } catch (IOException e) {
-            System.out.println(TAG + " Unable to send update ");
-            e.printStackTrace();
-            log.error(TAG, e);
+            log.info("Unable to send update {}", e);
         }
     }
 
@@ -137,10 +131,9 @@ public class DummyWebScocketConnection extends MessageInbound {
     public void sendNewConnection(ArrayList<ClientTransferReq> transferReq) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
-            System.out.println(TAG + " new con details " + gson.toJson(transferReq));
+            log.info("new con details " + gson.toJson(transferReq));
         } catch (IOException e) {
-            System.out.println(TAG + " Unable to send new connnection information");
-            log.error(TAG, e);
+            log.error("Unable to send new connnection information {}", e);
         }
     }
 
@@ -153,10 +146,9 @@ public class DummyWebScocketConnection extends MessageInbound {
     public void sendTileSizeInfo(ArrayList<TileInfo> tilesInfo) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tilesInfo)));
-            System.out.println(TAG + " send size of tile " + gson.toJson(tilesInfo));
+            log.info("send size of tile " + gson.toJson(tilesInfo));
         } catch (IOException e) {
-            System.out.println(TAG + " Unable to send tile size information");
-            log.error(TAG, e);
+            log.error("Unable to send tile size information {}", e);
         }
     }
 
@@ -182,8 +174,7 @@ public class DummyWebScocketConnection extends MessageInbound {
             getWsOutbound().flush();
             getWsOutbound().close(1, null);
         } catch (IOException e) {
-            System.out.println(TAG + " Unable to close connnection ");
-            log.error(TAG, e);
+            log.error("Unable to close connnection {}", e);
         }
     }
 }

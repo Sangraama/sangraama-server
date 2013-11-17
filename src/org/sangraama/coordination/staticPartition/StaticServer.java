@@ -1,8 +1,11 @@
 package org.sangraama.coordination.staticPartition;
 
 import org.sangraama.coordination.ServerLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StaticServer {
+    public static final Logger log = LoggerFactory.getLogger(StaticServer.class);
     private Tile[] tiles;
 
     public StaticServer() {
@@ -80,7 +83,7 @@ public class StaticServer {
 
         public ServerLocation getServerLocation(int tileID) {
             if (this.tileID == tileID) {
-                System.out.println(" Get server loc :" + " port:" + this.serverPort);
+                log.info("Get server loc :" + " port:" + this.serverPort);
                 return new ServerLocation(this.URL, this.serverPort, this.dir);
             } else {
                 return null;
@@ -89,7 +92,7 @@ public class StaticServer {
 
         public ServerLocation getThriftServerLocation(int tileID) {
             if (this.tileID == tileID) {
-                System.out.println(" Get thrift server loc :" + " port:" + this.thriftPort);
+                log.info("Get thrift server loc :" + " port:" + this.thriftPort);
                 return new ServerLocation(this.URL, this.thriftPort);
             } else {
                 return null;

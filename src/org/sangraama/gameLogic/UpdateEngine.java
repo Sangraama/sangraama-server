@@ -3,7 +3,6 @@ package org.sangraama.gameLogic;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,11 +19,11 @@ import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.jsonprotocols.send.BulletDelta;
 import org.sangraama.jsonprotocols.send.PlayerDelta;
 import org.sangraama.jsonprotocols.send.SangraamaTile;
+import org.slf4j.*;
 
 public enum UpdateEngine implements Runnable {
     INSTANCE;
-    // Debug
-    private String TAG = "Update Engine :";
+    public static final Logger log = LoggerFactory.getLogger(GameEngine.class);
 
     private volatile boolean isRun = true;
     private volatile boolean isUpdate = false;
@@ -38,10 +37,9 @@ public enum UpdateEngine implements Runnable {
     private List<Player> defeatedPlayerList;
 
     UpdateEngine() {
-        System.out.println(TAG + "Init Update Engine ...");
         this.playerList = new ArrayList<>();
         this.bulletList = new ArrayList<>();
-        this.dummyList = new Vector<DummyPlayer>();
+        this.dummyList = new Vector<>();
         this.updatedPlayerList = new ArrayList<>();
         this.defeatedPlayerList = new ArrayList<>();
     }

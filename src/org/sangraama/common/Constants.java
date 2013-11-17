@@ -8,9 +8,8 @@ public final class Constants {
     public static final boolean D = true;
 
     /**
-     * JBox2D World configurations
-     * Warning !!!. Don't change if you don't know exactly their meanings
-     * More details about JBox2D physics engine refer to : http://box2d.org/manual.pdf
+     * JBox2D World configurations Warning !!!. Don't change if you don't know exactly their
+     * meanings More details about JBox2D physics engine refer to : http://box2d.org/manual.pdf
      */
     public static final float gravityHorizontal = 0.0f;
     public static final float gavityVertical = 0.0f;
@@ -18,7 +17,7 @@ public final class Constants {
     public static final int velocityIterations = 8; // Default 6
     public static final int positionIterations = 3; // Defaults 2
     public static final int fps = 20; // Default 20 ( 20 < fps < 30 ) refer : section 2.4 in manual
-    
+
     /**
      * Auto calculated
      */

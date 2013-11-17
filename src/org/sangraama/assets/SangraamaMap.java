@@ -1,10 +1,12 @@
 package org.sangraama.assets;
 
 import org.sangraama.common.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public enum SangraamaMap {
     INSTANCE;
-    private String TAG = "SangraamaMap : ";
+    private static final Logger log = LoggerFactory.getLogger(SangraamaMap.class);
     private float originX = 0.0f;
     private float originY = 0.0f;
     private float edgeX = 0.0f; // Store value of originX + mapWidth
@@ -35,14 +37,14 @@ public enum SangraamaMap {
 
         this.edgeX = this.originX + this.mapWidth;
         this.edgeY = this.originY + this.mapHeight;
-        System.out.println(TAG + " created with x:" + this.originX + " y:" + this.originY + "  x':" + edgeX
-                + " y':" + edgeY);
+        log.info("created with x:" + this.originX + " y:" + this.originY + "  x':" + edgeX + " y':"
+                + edgeY);
     }
 
     public void setSubTileProperties(float width, float height) {
         this.subTileWidth = width / Constants.scale;
         this.subTileHeight = height / Constants.scale;
-        System.out.println(TAG + " subtile w:" + subTileWidth + " h:" + subTileHeight);
+        log.info("subtile w:" + subTileWidth + " h:" + subTileHeight);
     }
 
     public float getMapWidth() {

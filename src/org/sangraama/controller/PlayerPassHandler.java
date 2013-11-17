@@ -13,28 +13,27 @@ import org.sangraama.assets.Ship;
 import org.sangraama.coordination.ServerHandler;
 import org.sangraama.coordination.ServerLocation;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
-import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.jsonprotocols.transfer.ClientTransferReq;
 import org.sangraama.thrift.assets.TPlayer;
 import org.sangraama.thrift.client.ThriftClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public enum PlayerPassHandler {
     INSTANCE;
-    private static final String TAG = "PlayerPassHandler :";
+    public static final Logger log = LoggerFactory.getLogger(PlayerPassHandler.class);
     private List<AbsPlayer> passPlayerList;
     private Map<Long, Player> passPlayerHash;
     private Map<String, Player> connectionHash;
     private volatile boolean isPass;
     private ServerHandler sHandler;
-    private GameEngine gameEngine;
 
     private PlayerPassHandler() {
         this.passPlayerList = new ArrayList<>();
         this.passPlayerHash = new Hashtable<>();
         this.connectionHash = new Hashtable<>();
         this.sHandler = ServerHandler.INSTANCE;
-        this.gameEngine = GameEngine.INSTANCE;
     }
 
     public synchronized void run() {
@@ -101,7 +100,7 @@ public enum PlayerPassHandler {
         // this.passPlayerList.add(ship);
         this.passPlayerHash.put(ship.getUserID(), ship);
         isPass = true;
-        System.out.println(TAG + "Added passed player");
+        log.info("Added passed player");
         this.run();
     }
 
@@ -115,7 +114,7 @@ public enum PlayerPassHandler {
         // this.connectionList.add(ship);
         this.connectionHash.put(Float.toString(x) + ":" + Float.toString(y), ship);
         this.isPass = true;
-        System.out.println(TAG + " added to Pass Connection details");
+        log.info("added to Pass Connection details");
         this.run();
     }
 
@@ -135,8 +134,8 @@ public enum PlayerPassHandler {
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(ship.getX(), ship.getY());
         SendProtocol transferReq = new ClientTransferReq(30, ship.getUserID(), ship.getX(),
                 ship.getY(), ship.getHealth(), ship.getScore(), newHost, ship.getType());
-        System.out.println(TAG + " new player pass server url " + newHost + " for x:" + ship.getX()
-                + " y:" + ship.getY());
+        log.info("new player pass server url " + newHost + " for x:" + ship.getX() + " y:"
+                + ship.getY());
         ship.sendPassConnectionInfo(transferReq);
     }
 
@@ -150,8 +149,8 @@ public enum PlayerPassHandler {
         String[] s = key.split(":");
         String updateHost = (String) TileCoordinator.INSTANCE.getSubTileHost(
                 Float.parseFloat(s[0]), Float.parseFloat(s[1]));
-        System.out.println(TAG + " new update server url " + updateHost + " for x:" + dummy.getX()
-                + " y:" + dummy.getY());
+        log.info("new update server url " + updateHost + " for x:" + dummy.getX() + " y:"
+                + dummy.getY());
         SendProtocol transferReq = new ClientTransferReq(31, dummy.getUserID(), dummy.getX(),
                 dummy.getY(), dummy.getHealth(), dummy.getScore(), updateHost, dummy.getType());
         dummy.sendUpdateConnectionInfo(transferReq);

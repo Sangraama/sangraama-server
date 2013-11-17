@@ -1,7 +1,7 @@
 package org.sangraama.coordination.staticPartition;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -18,12 +18,9 @@ import org.apache.coyote.http11.Http11AprProtocol;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.coyote.http11.Http11Protocol;
 import org.sangraama.assets.SangraamaMap;
-import org.sangraama.assets.Ship;
 import org.sangraama.jsonprotocols.send.SangraamaTile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
@@ -31,9 +28,6 @@ import com.hazelcast.core.HazelcastInstance;
 
 public enum TileCoordinator {
     INSTANCE;
-    private String TAG = "TileCoordinator : ";
-    private boolean D = true;
-    private Marker subTile = MarkerFactory.getMarker("Sub Tile: ");
     private Logger log = LoggerFactory.getLogger(TileCoordinator.class);
 
     private HazelcastInstance hazelcastInstance;
@@ -44,7 +38,7 @@ public enum TileCoordinator {
     private SangraamaMap sangraamaMap;
     private String serverURL;
     private int serverPort = 8080;
-    private ArrayList<SangraamaTile> tileInfo;
+    private List<SangraamaTile> tileInfo;
 
     TileCoordinator() {
         hazelcastInstance = Hazelcast.newHazelcastInstance(new Config());
@@ -146,8 +140,7 @@ public enum TileCoordinator {
                         this.subTileWidth, this.subTileHeight));
             }
         }
-        if (D)
-            System.out.println(TAG + " calculated size of tile (subtiles)");
+        log.info("calculated size of tile (subtiles)");
         return tiles;
     }
 
@@ -156,20 +149,9 @@ public enum TileCoordinator {
      * 
      * @return ArrayList<SangraamaTile> about coordinations of sub-tiles
      */
-    public ArrayList<SangraamaTile> getSubTilesCoordinations() {
+    public List<SangraamaTile> getSubTilesCoordinations() {
         this.tileInfo = this.calSubTilesCoordinations();
         return this.tileInfo;
-    }
-
-    public void printEntriesInSubtileMap() {
-        Collection<String> values = subtileMap.values();
-        for (String value : values) {
-            System.out.println(TAG + value);
-        }
-        Set<String> keyset = subtileMap.keySet();
-        for (String key : keyset) {
-            System.out.println(TAG + key);
-        }
     }
 
     public HazelcastInstance getHazelcastInstance() {

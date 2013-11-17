@@ -1,9 +1,7 @@
 package org.sangraama.controller;
 
-import org.sangraama.assets.AbsPlayer;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.Player;
-import org.sangraama.assets.Ship;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.queue.BulletQueue;

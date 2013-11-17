@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sangraama.assets.Ship;
-import org.sangraama.assets.SangraamaMap;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.thrift.assets.TPlayer;
 

@@ -13,7 +13,6 @@ import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
-import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.gameLogic.queue.DummyQueue;
 import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.jsonprotocols.receive.ClientEvent;
@@ -26,10 +25,6 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 
 public class WebSocketConnection extends MessageInbound {
-    // Local Debug or logs
-    private static boolean LL = true;
-    private static boolean LD = true;
-    private static final String TAG = "WebSocketConnection : ";
     public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
 
     private AbsPlayer player = null;
@@ -48,19 +43,19 @@ public class WebSocketConnection extends MessageInbound {
     public void setPlayer(Ship player) {
         this.player = null;
         this.player = player;
-        System.out.println(TAG + " created a PLAYER conection...");
+        log.info("created a PLAYER conection...");
     }
 
     public void setDummyPlayer(DummyPlayer dummyPlayer) {
         this.player = null;
         this.player = dummyPlayer;
-        System.out.println(TAG + " created a DUMMY PLAYER conection...");
+        log.info("created a DUMMY PLAYER conection...");
     }
 
     @Override
     protected void onOpen(WsOutbound outbound) {
         // log.info("Open Connection");
-        System.out.println(TAG + " Open Connection");
+        log.info("Open Connection");
     }
 
     @Override
@@ -70,7 +65,7 @@ public class WebSocketConnection extends MessageInbound {
         this.player.removeWebSocketConnection();
         this.player = null;
 
-        System.out.println(TAG + " Close connection");
+        log.info("Close connection");
     }
 
     @Override
@@ -87,11 +82,9 @@ public class WebSocketConnection extends MessageInbound {
 
         // Avoid checking whether player is created every time access it.
         try {
-            // System.out.println(TAG + " player event call " + event.getType());
             this.playerEvents(event);
         } catch (Exception e) {
-            System.out.println(TAG + " create new player call " + event.getType());
-            e.printStackTrace();
+            log.error("Error occured while processing message {}", e);
         }
     }
 
@@ -122,7 +115,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setV(0, 0);
                 this.player.setAngle(0);
                 this.player.shoot(0);
-                System.out.println(TAG + T + " RESET user events ");
+                log.info(T + " RESET user events ");
                 break;
 
             case 5: // Set Virtual point as the center of AOI in order to get updates
@@ -175,7 +168,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setAngle(event.getA());
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
 
-                System.out.println(TAG + T + " add new Player " + event.toString());
+                log.info(T + " add new Player " + event.toString());
                 /*
                  * AOI and Virtual point will add to the player after creation of it NOTE: These
                  * player details should retrieved via a encrypted message. To create player type:
@@ -197,7 +190,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getW(), event.getH(),
                         this));
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
-                System.out.println(TAG + T + " add new dummy player: " + event.toString());
+                log.info(T + " add new dummy player: " + event.toString());
                 break;
 
             default:
@@ -232,8 +225,7 @@ public class WebSocketConnection extends MessageInbound {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
             // System.out.println(TAG + " new con details " + gson.toJson(transferReq));
         } catch (IOException e) {
-            System.out.println(TAG + " Unable to send new connnection information");
-            log.error(TAG, e);
+            log.error("Unable to send new connnection information {}", e);
         }
     }
 
@@ -248,8 +240,7 @@ public class WebSocketConnection extends MessageInbound {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tilesInfo)));
             // System.out.println(TAG + " send size of tile " + gson.toJson(tilesInfo));
         } catch (IOException e) {
-            System.out.println(TAG + " Unable to send tile size information");
-            log.error(TAG, e);
+            log.error("Unable to send tile size information {}", e);
         }
     }
 
@@ -273,11 +264,9 @@ public class WebSocketConnection extends MessageInbound {
     public void sendPassGameObjInfo(List<SendProtocol> tranferReqList) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tranferReqList)));
-            System.out.println(TAG + " send bullet transfer message : "
-                    + gson.toJson(tranferReqList));
+            log.info("send bullet transfer message : " + gson.toJson(tranferReqList));
         } catch (IOException e) {
-            System.out.println(TAG + " Unable to send passing game objects information");
-            log.error(TAG, e);
+            log.error("Unable to send passing game objects information {}", e);
         }
     }
 
@@ -289,11 +278,9 @@ public class WebSocketConnection extends MessageInbound {
     public void sendScoreChangeReq(List<SendProtocol> scoreChangeReq) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(scoreChangeReq)));
-            System.out.println(TAG + " send score change to player : "
-                    + gson.toJson(scoreChangeReq));
+            log.info("send score change to player : " + gson.toJson(scoreChangeReq));
         } catch (IOException e) {
-            System.out.println(TAG + " Unable to send score change information");
-            log.error(TAG, e);
+            log.error("Unable to send score change information {}", e);
         }
     }
 
@@ -309,8 +296,7 @@ public class WebSocketConnection extends MessageInbound {
             getWsOutbound().flush();
             getWsOutbound().close(1, null);
         } catch (IOException e) {
-            System.out.println(TAG + " Unable to close connnection ");
-            log.error(TAG, e);
+            log.error("Unable to close connnection ");
         }
     }
 }

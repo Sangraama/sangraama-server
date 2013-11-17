@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.Timer;
@@ -24,12 +22,13 @@ import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.DummyQueue;
 import org.sangraama.gameLogic.queue.PlayerQueue;
 import org.sangraama.util.BoundaryCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public enum GameEngine implements Runnable {
 
     INSTANCE;
-    // Debug
-    private String TAG = "Game Engine :";
+    public static final Logger log = LoggerFactory.getLogger(GameEngine.class);
 
     private volatile boolean isRun = true;
 
@@ -61,7 +60,6 @@ public enum GameEngine implements Runnable {
 
     // this method only access via class
     GameEngine() {
-        System.out.println(TAG + "Init GameEngine...");
         this.world = new World(new Vec2(0.0f, 0.0f));
         /**
          * Player Details
@@ -99,7 +97,7 @@ public enum GameEngine implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(TAG + "GameEngine Start running.. fps:" + Constants.fps + " timesteps:"
+        log.info("GameEngine Start running.. fps:" + Constants.fps + " timesteps:"
                 + Constants.timeStep);
         init();
         Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
@@ -131,7 +129,7 @@ public enum GameEngine implements Runnable {
         PhysicsAPI physicsAPI = new PhysicsAPI();
         physicsAPI.applyPhysics(g.getStaticObjects(), world);// apply physics to the static objects,
                                                              // and add them to the game world.
-        System.out.println("Static Game Objects added to the game world!!");
+        log.info("Static Game Objects added to the game world!!");
         this.sangraamaCollisionDet = new CollisionDetector();
         world.setContactListener(sangraamaCollisionDet);
         addWalls();
@@ -151,11 +149,12 @@ public enum GameEngine implements Runnable {
             // System.out.println(TAG + "Removing players");
             if (this.playerList.remove(rmPlayer)) { // True if player contains
                 this.world.destroyBody(rmPlayer.getBody());
-                System.out.println(TAG + " Removed player :" + rmPlayer.getUserID());
+                log.info("Removed player :" + rmPlayer.getUserID());
+
             }
             if (this.playerList.size() > maxPlayers)
                 maxPlayers = this.playerList.size();
-            System.out.println("=>> number of remained players : " + this.playerList.size() + "/"
+            log.info("=>> number of remained players : " + this.playerList.size() + "/"
                     + maxPlayers + " #################");
             rmPlayer = null; // free the memory @need to add to garbage collector
         }
@@ -167,11 +166,12 @@ public enum GameEngine implements Runnable {
             newPlayerBody.createFixture(newPlayer.getFixtureDef());
             newPlayer.setBody(newPlayerBody);
             this.playerList.add(newPlayer);
-            System.out.print(TAG + "Added new player :" + newPlayer.getUserID());
-            System.out.println("=>> number of remained players : " + this.playerList.size() + "/"
+            log.info("Added new player :" + newPlayer.getUserID());
+            log.info("=>> number of remained players : " + this.playerList.size() + "/"
                     + maxPlayers + " #################");
             // Send size of the tile
             newPlayer.sendTileSizeInfo();
+
         }
 
         for (Player player : playerList) {
@@ -182,7 +182,7 @@ public enum GameEngine implements Runnable {
         Player deafetedPlayer;
         while ((deafetedPlayer = this.defeatedPlayerQueue.poll()) != null) {
             this.defeatedList.add(deafetedPlayer);
-            System.out.println(TAG + " add Defeated player :" + deafetedPlayer.getUserID());
+            log.info("add Defeated player :" + deafetedPlayer.getUserID());
         }
     }
 
@@ -193,9 +193,10 @@ public enum GameEngine implements Runnable {
             if (this.dummyList.remove(rmDummy)) { // True if player contains
                 if (this.dummyList.size() > maxDummies)
                     maxDummies = this.dummyList.size();
-                System.out.print(TAG + " remove Dummy player :" + rmDummy.getUserID());
-                System.out.println("=>> number of remained dummies : " + this.dummyList.size()
-                        + "/" + maxDummies + " ^^^^^^^^^^^^^^^^^^^^");
+                log.info("remove Dummy player :" + rmDummy.getUserID());
+                log.info("=>> number of remained dummies : " + this.dummyList.size() + "/"
+                        + maxDummies + " ^^^^^^^^^^^^^^^^^^^^");
+
             }
             rmDummy = null; // free the memory @need to add to garbage collector
         }
@@ -204,9 +205,9 @@ public enum GameEngine implements Runnable {
         DummyPlayer newDummy;
         while ((newDummy = this.newDummyQueue.poll()) != null) {
             this.dummyList.add(newDummy);
-            System.out.print(TAG + " add Dummy player :" + newDummy.getUserID());
-            System.out.println("=>> number of remained dummies : " + this.dummyList.size() + "/"
-                    + maxDummies + " ^^^^^^^^^^^^^^^^^^^^");
+            log.info("add Dummy player :" + newDummy.getUserID());
+            log.info("=>> number of remained dummies : " + this.dummyList.size() + "/" + maxDummies
+                    + " ^^^^^^^^^^^^^^^^^^^^");
             // Send size of the tile
             newDummy.sendTileSizeInfo();
         }
@@ -217,8 +218,9 @@ public enum GameEngine implements Runnable {
         while ((rmvBullet = this.removeBulletQueue.poll()) != null) {
             if (this.bulletList.remove(rmvBullet)) {
                 this.world.destroyBody(rmvBullet.getBody());
+
             }
-            System.out.println(TAG + "Removed bullet :" + rmvBullet.getId());
+            log.info("Removed bullet :" + rmvBullet.getId());
             rmvBullet = null;
         }
 

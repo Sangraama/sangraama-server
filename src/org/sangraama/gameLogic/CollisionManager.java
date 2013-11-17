@@ -4,18 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jbox2d.dynamics.contacts.Contact;
-import org.sangraama.assets.AbsPlayer;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.jsonprotocols.transfer.ScoreChangeTransferReq;
+import org.slf4j.*;
 
 public enum CollisionManager implements Runnable {
     INSTANCE;
-    // Debug
-    private String TAG = "Collision Manager :";
+    public static final Logger log = LoggerFactory.getLogger(CollisionManager.class);
     private GameEngine gameEngine;
     private BulletQueue bulletQueue;
     private volatile boolean isRun = true;
@@ -26,7 +25,6 @@ public enum CollisionManager implements Runnable {
         this.gameEngine = GameEngine.INSTANCE;
         this.bulletQueue = BulletQueue.INSTANCE;
         this.collisionList = new ArrayList<>();
-        System.out.println(TAG + " init ... ");
     }
 
     public synchronized boolean setStop() {
@@ -59,7 +57,6 @@ public enum CollisionManager implements Runnable {
     }
 
     private void processCollisions(Contact collision) {
-        int i = 0;
         // System.out.println(TAG + "Processing collisions ## ## ");
         if (collision.getFixtureA().getUserData().getClass() == Ship.class
                 && collision.getFixtureB().getUserData().getClass() == Ship.class) {
@@ -137,7 +134,7 @@ public enum CollisionManager implements Runnable {
             }
         }
         this.bulletQueue.addToRemoveBulletQueue(bullet);
-        if(!playerInServer){
+        if (!playerInServer) {
             sendScoreChangeEventFromDummy(shooterUserID, 10);
         }
     }
@@ -150,12 +147,13 @@ public enum CollisionManager implements Runnable {
             }
         }
     }
-    
-    private void sendScoreChangeEventFromDummy(long shipID,int scoreChange){
+
+    private void sendScoreChangeEventFromDummy(long shipID, int scoreChange) {
         List<DummyPlayer> dummyList = UpdateEngine.INSTANCE.getDummyList();
-        for(DummyPlayer dummyPlayer : dummyList){
-            if(dummyPlayer.getUserID() == shipID){
-                ScoreChangeTransferReq scoreChangeReq = new ScoreChangeTransferReq(21, shipID, scoreChange);
+        for (DummyPlayer dummyPlayer : dummyList) {
+            if (dummyPlayer.getUserID() == shipID) {
+                ScoreChangeTransferReq scoreChangeReq = new ScoreChangeTransferReq(21, shipID,
+                        scoreChange);
                 dummyPlayer.sendScoreChange(scoreChangeReq);
             }
         }

@@ -1,6 +1,8 @@
 package org.sangraama.serverstart;
 
 import java.util.Properties;
+
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.sangraama.assets.SangraamaMap;
@@ -9,17 +11,22 @@ import org.sangraama.gameLogic.CollisionManager;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.thrift.server.ThriftServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.servlet.ServletContextListener;
 
 import com.hazelcast.core.Hazelcast;
 
 public class ServerStarter implements ServletContextListener {
+    private Logger log = LoggerFactory.getLogger(ServerStarter.class);
     private ThriftServer thriftServer = null;
     private Thread gameEngine = null;
     private Thread updateEngine = null;
     private Thread collisionManager = null;
     private Thread thriftServerThread = null;
     private Properties prop;
+    public static ServletContext context;
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
@@ -36,7 +43,7 @@ public class ServerStarter implements ServletContextListener {
         try {
             this.prop.load(getClass().getResourceAsStream("/conf/sangraamaserver.properties"));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error occured while reading property file {}", e);
         }
         SangraamaMap.INSTANCE.setMap(Float.parseFloat(prop.getProperty("maporiginx")),
                 Float.parseFloat(prop.getProperty("maporiginy")),
@@ -51,17 +58,15 @@ public class ServerStarter implements ServletContextListener {
                 Float.parseFloat(prop.getProperty("subtileheight")));
         this.updateEngine = new Thread(UpdateEngine.INSTANCE);
         this.updateEngine.start();
-        // System.out.println("AAAAAAAAAAA");
         this.gameEngine = new Thread(GameEngine.INSTANCE);
         this.gameEngine.start();
         this.collisionManager = new Thread(CollisionManager.INSTANCE);
         this.collisionManager.start();
         TileCoordinator.INSTANCE.generateSubtiles();
-        TileCoordinator.INSTANCE.printEntriesInSubtileMap();
 
         // thriftServer = new ThriftServer(Integer.parseInt(prop.getProperty("thriftserverport")));
         // thriftServerThread = new Thread(thriftServer);
         // thriftServerThread.start();
-        System.out.println("SANGRAAMA STARTED");
+        log.info("SANGRAAMA STARTED");
     }
 }

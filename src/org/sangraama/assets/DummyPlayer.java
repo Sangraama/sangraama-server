@@ -4,11 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
-import org.sangraama.gameLogic.GameEngine;
-import org.sangraama.gameLogic.UpdateEngine;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.DummyQueue;
 import org.sangraama.jsonprotocols.SendProtocol;
@@ -19,10 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class DummyPlayer extends AbsPlayer {
 
-    // Debug
-    // Local Debug or logs
-    public static final Logger log = LoggerFactory.getLogger(Ship.class);
-    private static final String TAG = "DummyPlayer : ";
+    public static final Logger log = LoggerFactory.getLogger(DummyPlayer.class);
 
     private DummyQueue dummyQueue;
 
@@ -74,14 +68,14 @@ public class DummyPlayer extends AbsPlayer {
         // System.out.println(TAG + "is inside "+x+":"+y);
         if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
                 && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
-            System.out.println(TAG + " x:" + x + " y:" + y + " inside of map x: "
-                    + sangraamaMap.getOriginX() + ":" + sangraamaMap.getOriginY() + " y:"
-                    + sangraamaMap.getEdgeX() + ":" + sangraamaMap.getEdgeY());
+            log.info(" x:" + x + " y:" + y + " inside of map x: " + sangraamaMap.getOriginX() + ":"
+                    + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":"
+                    + sangraamaMap.getEdgeY());
             return true;
         } else {
-            System.out.println(TAG + " x:" + x + " y:" + y + "Outside of map x: "
-                    + sangraamaMap.getOriginX() + ":" + sangraamaMap.getOriginY() + " y:"
-                    + sangraamaMap.getEdgeX() + ":" + sangraamaMap.getEdgeY());
+            log.info(" x:" + x + " y:" + y + "Outside of map x: " + sangraamaMap.getOriginX() + ":"
+                    + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":"
+                    + sangraamaMap.getEdgeY());
             return false;
         }
     }
@@ -106,8 +100,7 @@ public class DummyPlayer extends AbsPlayer {
             currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 insideServerSubTile = false;
-                System.out.println(TAG + "player is not inside a subtile of "
-                        + sangraamaMap.getHost());
+                log.info("player is not inside a subtile of " + sangraamaMap.getHost());
             }
         }
 
@@ -133,10 +126,9 @@ public class DummyPlayer extends AbsPlayer {
         } else if (this.isPlayer == 2) {
             this.dummyQueue.addToRemoveDummyQueue(this);
             this.isPlayer = 0;
-            System.out.println(TAG + "Unable to send updates,coz con :" + con
-                    + ". Add to remove queue.");
+            log.info("Unable to send updates,coz con :" + con + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + " waiting for remove");
+            log.info("waiting for remove");
         }
     }
 
@@ -153,10 +145,9 @@ public class DummyPlayer extends AbsPlayer {
         } else if (isPlayer == 2) {
             this.dummyQueue.addToRemoveDummyQueue(this);
             this.isPlayer = 0;
-            System.out.println(TAG + "Unable to send new connection,coz con :" + con
-                    + ". Add to remove queue.");
+            log.info("Unable to send new connection,coz con :" + con + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + " waiting for remove");
+            log.info("waiting for remove");
         }
     }
 
@@ -172,10 +163,9 @@ public class DummyPlayer extends AbsPlayer {
         } else if (this.isPlayer == 2) {
             this.dummyQueue.addToRemoveDummyQueue(this);
             this.isPlayer = 0;
-            System.out.println(TAG + "Unable to send syncdata,coz con :" + con
-                    + ". Add to remove queue.");
+            log.info("Unable to send syncdata,coz con :" + con + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + " waiting for remove");
+            log.info("waiting for remove");
         }
     }
 
@@ -187,8 +177,10 @@ public class DummyPlayer extends AbsPlayer {
          * map (the map which divide into sub tiles) with having half of the size of AOI. Then
          * possible virtual point setting will validate by server side. #gihan
          */
-        System.out.println(TAG + " want to set vp x:" + x_vp + " y:" + y_vp);
+        log.info("want to set vp x:" + x_vp + " y:" + y_vp);
 
+        if (this.x_virtual == x_vp && this.y_virtual == y_vp)
+            return false;
         this.x_virtual = x_vp;
         this.y_virtual = y_vp;
 
@@ -204,15 +196,14 @@ public class DummyPlayer extends AbsPlayer {
             List<SendProtocol> data = new ArrayList<SendProtocol>();
             // Send updates which are related/interest to dummy player
             data.add(new SyncPlayer(userID, x_virtual, y_virtual, screenWidth, screenHeight));
-            System.out.println(TAG + " set Virtual point x" + x_vp + " y" + y_vp);
+            log.info("set Virtual point x" + x_vp + " y" + y_vp);
             this.sendSyncData(data);
 
         } else { // Otherwise drop the connection of getting updates
             List<SendProtocol> data = new ArrayList<SendProtocol>();
             // Send updates which are related/interest to closing a dummy player
             data.add(new SyncPlayer(userID));
-            System.out.println(TAG + "Virtual point x" + x_vp + " y" + y_vp
-                    + " is out from this map. Closing ... ");
+            log.info("Virtual point x" + x_vp + " y" + y_vp + " is out from this map. Closing ... ");
             this.sendSyncData(data);
             con.closeConnection();
         }
@@ -278,5 +269,4 @@ public class DummyPlayer extends AbsPlayer {
     public void addBulletToGameWorld(Bullet bullet) {
         BulletQueue.INSTANCE.addToBulletQueue(bullet);
     }
-
 }

@@ -25,10 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class Player extends AbsPlayer {
 
-    // Debug
-    // Local Debug or logs
-    private static final Logger log = LoggerFactory.getLogger(Ship.class);
-    private static final String TAG = "player : ";
+    private static final Logger log = LoggerFactory.getLogger(Player.class);
     static Random generator = new Random();
     Body body;
 
@@ -108,7 +105,7 @@ public abstract class Player extends AbsPlayer {
         // }
         if (!isInsideServerSubTile(this.x, this.y)) {
             PlayerPassHandler.INSTANCE.setPassPlayer(this);
-            System.out.println(TAG + userID + " outside of the subtile detected");
+            log.info(userID + " outside of the subtile detected");
         }
         return this.delta;
     }
@@ -146,7 +143,7 @@ public abstract class Player extends AbsPlayer {
                 && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
             return true;
         } else {
-            System.out.println(TAG + userID + " Outside of map : " + sangraamaMap.getEdgeX() + ":"
+            log.info(userID + " Outside of map : " + sangraamaMap.getEdgeX() + ":"
                     + sangraamaMap.getEdgeY());
             return false;
         }
@@ -173,8 +170,7 @@ public abstract class Player extends AbsPlayer {
             currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 insideServerSubTile = false;
-                System.out.println(TAG + userID + " player is not inside a subtile of "
-                        + sangraamaMap.getHost());
+                log.info(userID + " player is not inside a subtile of " + sangraamaMap.getHost());
             }
         }
 
@@ -193,8 +189,7 @@ public abstract class Player extends AbsPlayer {
             this.setSubtileEgdeValues(); // update edge values
             // check whether players coordinates are in current map
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                System.out.println(TAG + userID + " player is not inside a subtile of "
-                        + sangraamaMap.getHost());
+                log.info(userID + " player is not inside a subtile of " + sangraamaMap.getHost());
                 return false;
             }
             return true;
@@ -230,12 +225,14 @@ public abstract class Player extends AbsPlayer {
         } else if (this.isPlayer == 1) {
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             this.isPlayer = 0;
-            System.out.println(TAG + userID + " Unable to send updates,coz con :" + this.con
+            log.info(userID + " Unable to send updates,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + userID + "  waiting for remove (1) id:" + userID
-                    + " player type:" + super.isPlayer);
+
+            log.info(userID + "  waiting for remove (1) id:" + userID + " player type:"
+                    + super.isPlayer);
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
+
         }
     }
 
@@ -256,11 +253,11 @@ public abstract class Player extends AbsPlayer {
         } else if (super.isPlayer == 1) {
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + userID + " Unable to send new connection,coz con :"
-                    + super.con + ". Add to remove queue.");
+            log.info(userID + " Unable to send new connection,coz con :" + super.con
+                    + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + userID + "  waiting for remove (2) id:" + userID
-                    + " player type:" + super.isPlayer);
+            log.info(userID + "  waiting for remove (2) id:" + userID + " player type:"
+                    + super.isPlayer);
         }
     }
 
@@ -278,11 +275,11 @@ public abstract class Player extends AbsPlayer {
         } else if (super.isPlayer == 1) {
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            System.out.println(TAG + userID + " Unable to send new connection,coz con :"
-                    + super.con + ". Add to remove queue.");
+            log.info(userID + " Unable to send new connection,coz con :" + super.con
+                    + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + userID + "  waiting for remove (3) id:" + userID
-                    + " player type:" + super.isPlayer);
+            log.info(userID + "  waiting for remove (3) id:" + userID + " player type:"
+                    + super.isPlayer);
         }
     }
 
@@ -313,11 +310,11 @@ public abstract class Player extends AbsPlayer {
         } else if (super.isPlayer == 1) {
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             this.isPlayer = 0;
-            System.out.println(TAG + userID + " Unable to send syncdata,coz con :" + this.con
+            log.info(userID + " Unable to send syncdata,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
-            System.out.println(TAG + userID + "  waiting for remove (4) id:" + userID
-                    + " player type:" + super.isPlayer);
+            log.info(userID + "  waiting for remove (4) id:" + userID + " player type:"
+                    + super.isPlayer);
         }
     }
 
@@ -361,7 +358,8 @@ public abstract class Player extends AbsPlayer {
                     this.body.getPosition().x, this.body.getPosition().y, this.getScreenWidth(),
                     this.getScreenHeight(), this.bulletType);
             BulletQueue.INSTANCE.addToBulletQueue(bullet);
-            System.out.println(TAG + userID + " : Added a new bullet");
+            log.info(userID + " : Added a new bullet");
+
         }
     }
 
@@ -416,7 +414,7 @@ public abstract class Player extends AbsPlayer {
                 /* Y level restriction at edge Or lower */
                 vp_al.setVirtualPointAccessLevel('y', 2);
             }
-            System.out.println(TAG + userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
+            log.info(userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
         }
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
