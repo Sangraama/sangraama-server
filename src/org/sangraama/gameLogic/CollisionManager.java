@@ -90,7 +90,7 @@ public enum CollisionManager implements Runnable {
             } else {
                 ship = (Player) collision.getFixtureB().getUserData();
             }
-            reduceShipHealth(ship.getUserID(), (float) -0.5);
+            reduceShipHealth(ship.getUserID(), (float) -0.1);
         } else if (("island".equals(collision.getFixtureA().getUserData()) && collision
                 .getFixtureB().getUserData().getClass() == Bullet.class)
                 || ("island".equals(collision.getFixtureB().getUserData()) && collision
@@ -118,7 +118,7 @@ public enum CollisionManager implements Runnable {
 
     private void processShipsCollision(Ship... ships) {
         for (Ship ship : ships) {
-            reduceShipHealth(ship.getUserID(), -10);
+            reduceShipHealth(ship.getUserID(), -2);
         }
     }
 
