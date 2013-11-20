@@ -45,7 +45,7 @@ public class BoundaryCreator {
                 wallList.add(new Wall(mapOriX,mapOriY,1,mapHeight));
             }
             else if(mapOriX == 0){
-                wallList.add(new Wall(0,mapOriY,mapWidth,1));
+                wallList.add(new Wall(0,mapOriY,1,mapHeight));
             }
             else if(mapOriY == 0){
                 wallList.add(new Wall(mapOriX,0,mapWidth,1));

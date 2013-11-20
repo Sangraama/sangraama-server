@@ -28,6 +28,7 @@ import com.hazelcast.core.HazelcastInstance;
 
 public enum TileCoordinator {
     INSTANCE;
+    private String TAG = "TileCoordinator: ";
     private Logger log = LoggerFactory.getLogger(TileCoordinator.class);
 
     private HazelcastInstance hazelcastInstance;
@@ -101,8 +102,10 @@ public enum TileCoordinator {
                 subTileOriginY = (j * subTileHeight) + sangraamaMap.getOriginY();
                 subTileOrigins = Float.toString(subTileOriginX) + ":"
                         + Float.toString(subTileOriginY);
-                System.out.println("subTileOrigins" + subTileOrigins);
                 subtileMap.put(subTileOrigins, serverURL);
+                String[] result = serverURL.split(":");
+                System.out.println(TAG + "host-" + result[0] + ", port-" + serverPort + ", origin_x-"
+                        + subTileOriginX + ", origin_y-" + subTileOriginY);
             }
         }
         /*
@@ -157,4 +160,5 @@ public enum TileCoordinator {
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
     }
+
 }
