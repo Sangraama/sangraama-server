@@ -143,7 +143,7 @@ public enum TileCoordinator {
                         this.subTileWidth, this.subTileHeight));
             }
         }
-        log.info("calculated size of tile (subtiles)");
+        // log.info("calculated size of tile (subtiles)");
         return tiles;
     }
 

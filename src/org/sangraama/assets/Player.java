@@ -105,7 +105,7 @@ public abstract class Player extends AbsPlayer {
         // }
         if (!isInsideServerSubTile(this.x, this.y)) {
             PlayerPassHandler.INSTANCE.setPassPlayer(this);
-            log.info(userID + " outside of the subtile detected");
+            // log.info(userID + " outside of the subtile detected");
         }
         return this.delta;
     }
@@ -170,7 +170,7 @@ public abstract class Player extends AbsPlayer {
             currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 insideServerSubTile = false;
-                log.info(userID + " player is not inside a subtile of " + sangraamaMap.getHost());
+                // log.info(userID + " player is not inside a subtile of " + sangraamaMap.getHost());
             }
         }
 
@@ -358,7 +358,7 @@ public abstract class Player extends AbsPlayer {
                     this.body.getPosition().x, this.body.getPosition().y, this.getScreenWidth(),
                     this.getScreenHeight(), this.bulletType);
             BulletQueue.INSTANCE.addToBulletQueue(bullet);
-            log.info(userID + " : Added a new bullet");
+            // log.info(userID + " : Added a new bullet");
 
         }
     }
@@ -414,7 +414,7 @@ public abstract class Player extends AbsPlayer {
                 /* Y level restriction at edge Or lower */
                 vp_al.setVirtualPointAccessLevel('y', 2);
             }
-            log.info(userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
+            // log.info(userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
         }
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
