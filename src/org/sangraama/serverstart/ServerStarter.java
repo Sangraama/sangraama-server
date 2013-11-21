@@ -38,7 +38,7 @@ public class ServerStarter implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent arg0) {
-
+        System.out.println("Sangraama Server Starting ... ");
         this.prop = new Properties();
         try {
             this.prop.load(getClass().getResourceAsStream("/conf/sangraamaserver.properties"));
@@ -68,5 +68,6 @@ public class ServerStarter implements ServletContextListener {
         // thriftServerThread = new Thread(thriftServer);
         // thriftServerThread.start();
         log.info("SANGRAAMA STARTED");
+        System.out.println("Sangraama Server Started ... ");
     }
 }

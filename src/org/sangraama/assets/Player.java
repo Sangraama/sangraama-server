@@ -419,7 +419,7 @@ public abstract class Player extends AbsPlayer {
         List<SendProtocol> data = new ArrayList<SendProtocol>();
         data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth,
                 screenHeight, vp_al));
-        // log.info(TAG + userID + " Virtual point x" + x_virtual + " y" + y_virtual);
+        log.info(userID + " set Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
 
         return true;

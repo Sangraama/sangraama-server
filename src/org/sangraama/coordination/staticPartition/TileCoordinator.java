@@ -104,7 +104,9 @@ public enum TileCoordinator {
                         + Float.toString(subTileOriginY);
                 subtileMap.put(subTileOrigins, serverURL);
                 String[] result = serverURL.split(":");
-                log.info(TAG + "host-" + result[0] + ", port-" + serverPort + ", origin_x-"
+                /*log.info(TAG + "host-" + result[0] + ", port-" + serverPort + ", origin_x-"
+                        + subTileOriginX + ", origin_y-" + subTileOriginY);*/
+                System.out.println(TAG + "host-" + result[0] + ", port-" + serverPort + ", origin_x-"
                         + subTileOriginX + ", origin_y-" + subTileOriginY);
             }
         }
