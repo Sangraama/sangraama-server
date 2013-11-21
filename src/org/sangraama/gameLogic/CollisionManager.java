@@ -1,13 +1,18 @@
 package org.sangraama.gameLogic;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.Timer;
 
 import org.jbox2d.dynamics.contacts.Contact;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
+import org.sangraama.common.Constants;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.jsonprotocols.transfer.ScoreChangeTransferReq;
 import org.slf4j.*;
@@ -39,21 +44,18 @@ public enum CollisionManager implements Runnable {
 
     @Override
     public void run() {
-        while (this.isRun) {
-            if (this.isUpdate) {
-                while (this.collisionList.size() > 0) {
-                    this.processCollisions(this.collisionList.get(0));
-                    this.collisionList.remove(0);
-                }
-                this.isUpdate = false;
-            } else {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                while (collisionList.size() > 0) {
+                    processCollisions(collisionList.get(0));
+                    collisionList.remove(0);
                 }
             }
-        }
+        });
+        timer.start();
+
     }
 
     private void processCollisions(Contact collision) {
