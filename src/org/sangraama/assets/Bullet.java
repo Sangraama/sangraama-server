@@ -119,11 +119,9 @@ public class Bullet {
     }
 
     public BulletDelta getBulletDelta() {
-        this.x = this.body.getPosition().x;
-        this.y = this.body.getPosition().y;
-        bulletDelta = new BulletDelta(this.x, this.y, this.body.getAngle(), this.playerId, this.id,
-                this.type);
-        if (!isInsideSeverSubTile(this.x, this.y)) {
+        bulletDelta = new BulletDelta(this.body.getPosition().x, this.body.getPosition().y,
+                this.body.getAngle(), this.playerId, this.id, this.type);
+        if (!isInsideSeverSubTile(this.body.getPosition().x, this.body.getPosition().y)) {
             BulletPassHandler.INSTANCE.passBullets(this);
         }
         return bulletDelta;

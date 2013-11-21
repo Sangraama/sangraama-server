@@ -13,4 +13,12 @@ public abstract class AbsDelta extends SendProtocol {
         this.it = imageType;
 
     }
+
+    public float getDx() {
+        return this.dx;
+    }
+
+    public float getDy() {
+        return this.dy;
+    }
 }

@@ -149,15 +149,13 @@ public enum GameEngine implements Runnable {
             // System.out.println(TAG + "Removing players");
             if (this.playerList.remove(rmPlayer)) { // True if player contains
                 this.world.destroyBody(rmPlayer.getBody());
-                // log.info("Removed player :" + rmPlayer.getUserID());
+                log.info("Removed player :" + rmPlayer.getUserID());
 
             }
             if (this.playerList.size() > maxPlayers)
                 maxPlayers = this.playerList.size();
-            /*
-             * log.info("=> remained:" + this.playerList.size() + "/ max:" + maxPlayers +
-             * " ########");
-             */
+            log.info("=>> number of remained players : " + this.playerList.size() + "/"
+                    + maxPlayers + " #################");
             rmPlayer = null; // free the memory @need to add to garbage collector
         }
 
@@ -168,10 +166,12 @@ public enum GameEngine implements Runnable {
             newPlayerBody.createFixture(newPlayer.getFixtureDef());
             newPlayer.setBody(newPlayerBody);
             this.playerList.add(newPlayer);
-            // log.info("Added new player :" + newPlayer.getUserID());
-            log.info("=> remained:" + this.playerList.size() + "/ max:" + maxPlayers + " ########");
+            log.info("Added new player :" + newPlayer.getUserID());
+            log.info("=>> number of remained players : " + this.playerList.size() + "/"
+                    + maxPlayers + " #################");
             // Send size of the tile
             newPlayer.sendTileSizeInfo();
+
         }
 
         for (Player player : playerList) {
@@ -182,7 +182,7 @@ public enum GameEngine implements Runnable {
         Player deafetedPlayer;
         while ((deafetedPlayer = this.defeatedPlayerQueue.poll()) != null) {
             this.defeatedList.add(deafetedPlayer);
-            // log.info("add Defeated player :" + deafetedPlayer.getUserID());
+            log.info("add Defeated player :" + deafetedPlayer.getUserID());
         }
     }
 
@@ -193,11 +193,9 @@ public enum GameEngine implements Runnable {
             if (this.dummyList.remove(rmDummy)) { // True if player contains
                 if (this.dummyList.size() > maxDummies)
                     maxDummies = this.dummyList.size();
-                // log.info("remove Dummy player :" + rmDummy.getUserID());
-                /*
-                 * log.info("=>> number of remained dummies : " + this.dummyList.size() + "/" +
-                 * maxDummies + " ^^^^^^^^^^^^^^^^^^^^");
-                 */
+                log.info("remove Dummy player :" + rmDummy.getUserID());
+                log.info("=>> number of remained dummies : " + this.dummyList.size() + "/"
+                        + maxDummies + " ^^^^^^^^^^^^^^^^^^^^");
 
             }
             rmDummy = null; // free the memory @need to add to garbage collector
@@ -207,11 +205,9 @@ public enum GameEngine implements Runnable {
         DummyPlayer newDummy;
         while ((newDummy = this.newDummyQueue.poll()) != null) {
             this.dummyList.add(newDummy);
-            // log.info("add Dummy player :" + newDummy.getUserID());
-            /*
-             * log.info("=>> number of remained dummies : " + this.dummyList.size() + "/" +
-             * maxDummies + " ^^^^^^^^^^^^^^^^^^^^");
-             */
+            log.info("add Dummy player :" + newDummy.getUserID());
+            log.info("=>> number of remained dummies : " + this.dummyList.size() + "/" + maxDummies
+                    + " ^^^^^^^^^^^^^^^^^^^^");
             // Send size of the tile
             newDummy.sendTileSizeInfo();
         }
@@ -224,7 +220,7 @@ public enum GameEngine implements Runnable {
                 this.world.destroyBody(rmvBullet.getBody());
 
             }
-            // log.info("Removed bullet :" + rmvBullet.getId());
+            log.info("Removed bullet :" + rmvBullet.getId());
             rmvBullet = null;
         }
 

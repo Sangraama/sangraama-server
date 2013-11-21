@@ -43,18 +43,19 @@ public class WebSocketConnection extends MessageInbound {
     public void setPlayer(Ship player) {
         this.player = null;
         this.player = player;
-        // log.info("created a PLAYER conection...");
+        log.info("created a PLAYER conection...");
     }
 
     public void setDummyPlayer(DummyPlayer dummyPlayer) {
         this.player = null;
         this.player = dummyPlayer;
-        // log.info("created a DUMMY PLAYER conection...");
+        log.info("created a DUMMY PLAYER conection...");
     }
 
     @Override
     protected void onOpen(WsOutbound outbound) {
         // log.info("Open Connection");
+        log.info("Open Connection");
     }
 
     @Override
@@ -64,7 +65,7 @@ public class WebSocketConnection extends MessageInbound {
         this.player.removeWebSocketConnection();
         this.player = null;
 
-        // log.info("Close connection");
+        log.info("Close connection");
     }
 
     @Override
@@ -114,7 +115,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setV(0, 0);
                 this.player.setAngle(0);
                 this.player.shoot(0);
-                // log.info(T + " RESET user events ");
+                log.info(T + " RESET user events ");
                 break;
 
             case 5: // Set Virtual point as the center of AOI in order to get updates
@@ -167,7 +168,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setAngle(event.getA());
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
 
-                // log.info(T + " add new Player " + event.toString());
+                log.info(T + " add new Player " + event.toString());
                 /*
                  * AOI and Virtual point will add to the player after creation of it NOTE: These
                  * player details should retrieved via a encrypted message. To create player type:
@@ -189,7 +190,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getW(), event.getH(),
                         this));
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
-                // log.info(T + " add new dummy player: " + event.toString());
+                log.info(T + " add new dummy player: " + event.toString());
                 break;
 
             default:
@@ -263,7 +264,7 @@ public class WebSocketConnection extends MessageInbound {
     public void sendPassGameObjInfo(List<SendProtocol> tranferReqList) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tranferReqList)));
-            // log.info("send bullet transfer message : " + gson.toJson(tranferReqList));
+            log.info("send bullet transfer message : " + gson.toJson(tranferReqList));
         } catch (IOException e) {
             log.error("Unable to send passing game objects information {}", e);
         }
@@ -277,7 +278,7 @@ public class WebSocketConnection extends MessageInbound {
     public void sendScoreChangeReq(List<SendProtocol> scoreChangeReq) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(scoreChangeReq)));
-            // log.info("send score change to player : " + gson.toJson(scoreChangeReq));
+            log.info("send score change to player : " + gson.toJson(scoreChangeReq));
         } catch (IOException e) {
             log.error("Unable to send score change information {}", e);
         }

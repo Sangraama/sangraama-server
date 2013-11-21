@@ -19,7 +19,7 @@ public class Ship extends Player {
 
     public BodyDef getBodyDef() {
         BodyDef bd = new BodyDef();
-        // log.info("create body def player x:" + this.x + " :" + this.y);
+        log.info("create body def player x:" + this.x + " :" + this.y);
         bd.position.set(this.x, this.y);
         bd.type = BodyType.DYNAMIC;
         // bd.fixedRotation = true;
