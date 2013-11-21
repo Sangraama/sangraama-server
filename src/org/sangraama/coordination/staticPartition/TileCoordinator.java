@@ -56,7 +56,7 @@ public enum TileCoordinator {
                     + prop.getProperty("dir") + "/sangraama/player";
             System.out.println(serverURL);
         } catch (Exception e) {
-            System.out.println("sangraamaserver.properties file not found.");
+            log.error("sangraamaserver.properties file not found.");
             e.printStackTrace();
         }
     }
@@ -85,7 +85,7 @@ public enum TileCoordinator {
                 if (protocolHandler instanceof Http11Protocol
                         || protocolHandler instanceof Http11AprProtocol
                         || protocolHandler instanceof Http11NioProtocol) {
-                    System.out.println("HTTP Port: " + connector.getPort());
+                    log.info("HTTP Port: " + connector.getPort());
                     hostPort = connector.getPort();
                 }
             }
@@ -104,7 +104,7 @@ public enum TileCoordinator {
                         + Float.toString(subTileOriginY);
                 subtileMap.put(subTileOrigins, serverURL);
                 String[] result = serverURL.split(":");
-                System.out.println(TAG + "host-" + result[0] + ", port-" + serverPort + ", origin_x-"
+                log.info(TAG + "host-" + result[0] + ", port-" + serverPort + ", origin_x-"
                         + subTileOriginX + ", origin_y-" + subTileOriginY);
             }
         }

@@ -68,14 +68,14 @@ public class DummyPlayer extends AbsPlayer {
         // System.out.println(TAG + "is inside "+x+":"+y);
         if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
                 && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
-            log.info(" x:" + x + " y:" + y + " inside of map x: " + sangraamaMap.getOriginX() + ":"
+            /*log.info(" x:" + x + " y:" + y + " inside of map x: " + sangraamaMap.getOriginX() + ":"
                     + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":"
-                    + sangraamaMap.getEdgeY());
+                    + sangraamaMap.getEdgeY());*/
             return true;
         } else {
-            log.info(" x:" + x + " y:" + y + "Outside of map x: " + sangraamaMap.getOriginX() + ":"
+            /*log.info(" x:" + x + " y:" + y + "Outside of map x: " + sangraamaMap.getOriginX() + ":"
                     + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":"
-                    + sangraamaMap.getEdgeY());
+                    + sangraamaMap.getEdgeY());*/
             return false;
         }
     }
@@ -100,7 +100,7 @@ public class DummyPlayer extends AbsPlayer {
             currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 insideServerSubTile = false;
-                log.info("player is not inside a subtile of " + sangraamaMap.getHost());
+                // log.info("player is not inside a subtile of " + sangraamaMap.getHost());
             }
         }
 
@@ -177,7 +177,7 @@ public class DummyPlayer extends AbsPlayer {
          * map (the map which divide into sub tiles) with having half of the size of AOI. Then
          * possible virtual point setting will validate by server side. #gihan
          */
-        log.info("want to set vp x:" + x_vp + " y:" + y_vp);
+        // log.info("want to set vp x:" + x_vp + " y:" + y_vp);
 
         if (this.x_virtual == x_vp && this.y_virtual == y_vp)
             return false;
@@ -196,14 +196,14 @@ public class DummyPlayer extends AbsPlayer {
             List<SendProtocol> data = new ArrayList<SendProtocol>();
             // Send updates which are related/interest to dummy player
             data.add(new SyncPlayer(userID, x_virtual, y_virtual, screenWidth, screenHeight));
-            log.info("set Virtual point x" + x_vp + " y" + y_vp);
+            // log.info("set Virtual point x" + x_vp + " y" + y_vp);
             this.sendSyncData(data);
 
         } else { // Otherwise drop the connection of getting updates
             List<SendProtocol> data = new ArrayList<SendProtocol>();
             // Send updates which are related/interest to closing a dummy player
             data.add(new SyncPlayer(userID));
-            log.info("Virtual point x" + x_vp + " y" + y_vp + " is out from this map. Closing ... ");
+            // log.info("Virtual point x" + x_vp + " y" + y_vp + " is out from this map. Closing ... ");
             this.sendSyncData(data);
             con.closeConnection();
         }

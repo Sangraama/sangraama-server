@@ -163,7 +163,7 @@ public abstract class Player extends AbsPlayer {
         // Note : Inefficient code. Is it necessary to calculate at each iteration.
         float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-        // System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
+        // log.info(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
         // + subTileOriX + ":" + subTileOriY);
         if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
             currentSubTileOriginX = subTileOriX;
@@ -189,7 +189,7 @@ public abstract class Player extends AbsPlayer {
             this.setSubtileEgdeValues(); // update edge values
             // check whether players coordinates are in current map
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                log.info(userID + " player is not inside a subtile of " + sangraamaMap.getHost());
+                // log.info(userID + " player is not inside a subtile of " + sangraamaMap.getHost());
                 return false;
             }
             return true;
@@ -225,11 +225,10 @@ public abstract class Player extends AbsPlayer {
         } else if (this.isPlayer == 1) {
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             this.isPlayer = 0;
-            log.info(userID + " Unable to send updates,coz con :" + this.con
+            log.warn(userID + " Unable to send updates,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
-
-            log.info(userID + "  waiting for remove (1) id:" + userID + " player type:"
+            log.warn(userID + "  waiting for remove (1) id:" + userID + " player type:"
                     + super.isPlayer);
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
 
@@ -253,10 +252,10 @@ public abstract class Player extends AbsPlayer {
         } else if (super.isPlayer == 1) {
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            log.info(userID + " Unable to send new connection,coz con :" + super.con
+            log.warn(userID + " Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
-            log.info(userID + "  waiting for remove (2) id:" + userID + " player type:"
+            log.warn(userID + "  waiting for remove (2) id:" + userID + " player type:"
                     + super.isPlayer);
         }
     }
@@ -275,10 +274,10 @@ public abstract class Player extends AbsPlayer {
         } else if (super.isPlayer == 1) {
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             super.isPlayer = 0;
-            log.info(userID + " Unable to send new connection,coz con :" + super.con
+            log.warn(userID + " Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
-            log.info(userID + "  waiting for remove (3) id:" + userID + " player type:"
+            log.warn(userID + "  waiting for remove (3) id:" + userID + " player type:"
                     + super.isPlayer);
         }
     }
@@ -310,10 +309,10 @@ public abstract class Player extends AbsPlayer {
         } else if (super.isPlayer == 1) {
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             this.isPlayer = 0;
-            log.info(userID + " Unable to send syncdata,coz con :" + this.con
+            log.warn(userID + " Unable to send syncdata,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
-            log.info(userID + "  waiting for remove (4) id:" + userID + " player type:"
+            log.warn(userID + "  waiting for remove (4) id:" + userID + " player type:"
                     + super.isPlayer);
         }
     }
@@ -420,7 +419,7 @@ public abstract class Player extends AbsPlayer {
         List<SendProtocol> data = new ArrayList<SendProtocol>();
         data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth,
                 screenHeight, vp_al));
-        // System.out.println(TAG + userID + " Virtual point x" + x_virtual + " y" + y_virtual);
+        // log.info(TAG + userID + " Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
 
         return true;
@@ -454,17 +453,17 @@ public abstract class Player extends AbsPlayer {
     public void setV(float x, float y) {
         // Fixed: if client send x value greater than 1
         this.v.set(x % 2 * v_rate, y % 2 * v_rate);
-        // System.out.println(TAG + userID + "  set V :" + this.v.x + ":" + this.v.y);
+        // log.info(TAG + userID + "  set V :" + this.v.x + ":" + this.v.y);
     }
 
     public void setAngle(float a) {
         this.angle = a;
-        // System.out.println(TAG + userID + "  set angle : " + a + " > " + this.angle);
+        // log.info(TAG + userID + "  set angle : " + a + " > " + this.angle);
     }
 
     public void setAngularVelocity(float da) {
         this.angularVelocity = da % 2 * a_rate;
-        // System.out.println(TAG + userID + "  set angular velocity : " + da + " > "
+        // log.info(TAG + userID + "  set angular velocity : " + da + " > "
         // + this.angularVelocity);
     }
 
@@ -479,7 +478,6 @@ public abstract class Player extends AbsPlayer {
             this.health = 0;
             this.setScore(-200);
             PlayerQueue.INSTANCE.addToDefaetList(this);
-            // PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
         }
     }
 
