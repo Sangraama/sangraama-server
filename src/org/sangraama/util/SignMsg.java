@@ -15,7 +15,7 @@ public enum SignMsg {
     public byte[] signMessage(String messsage) {
 
         try {
-            InputStream keyfis = this.getClass().getResourceAsStream("/PrivateKey.txt");
+            InputStream keyfis = this.getClass().getResourceAsStream("key/PrivateKey.txt");
             // FileInputStream keyfis = new
             // FileInputStream("/sangraama-server/WebContent/WEB-INF/sign/PrivateKey.txt");
             byte[] encKey = new byte[keyfis.available()];

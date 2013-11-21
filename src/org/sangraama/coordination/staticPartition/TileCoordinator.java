@@ -104,10 +104,12 @@ public enum TileCoordinator {
                         + Float.toString(subTileOriginY);
                 subtileMap.put(subTileOrigins, serverURL);
                 String[] result = serverURL.split(":");
-                /*log.info(TAG + "host-" + result[0] + ", port-" + serverPort + ", origin_x-"
-                        + subTileOriginX + ", origin_y-" + subTileOriginY);*/
-                System.out.println(TAG + "host-" + result[0] + ", port-" + serverPort + ", origin_x-"
-                        + subTileOriginX + ", origin_y-" + subTileOriginY);
+                /*
+                 * log.info(TAG + "host-" + result[0] + ", port-" + serverPort + ", origin_x-" +
+                 * subTileOriginX + ", origin_y-" + subTileOriginY);
+                 */
+                System.out.println(TAG + "host-" + result[0] + ", port-" + serverPort
+                        + ", origin_x-" + subTileOriginX + ", origin_y-" + subTileOriginY);
             }
         }
         /*
@@ -145,7 +147,7 @@ public enum TileCoordinator {
                         this.subTileWidth, this.subTileHeight));
             }
         }
-        log.info("calculated size of tile (subtiles)");
+        // log.info("calculated size of tile (subtiles)");
         return tiles;
     }
 

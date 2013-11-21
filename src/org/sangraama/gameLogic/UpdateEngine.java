@@ -34,6 +34,7 @@ public enum UpdateEngine implements Runnable {
     /* Should be atomic operation. */
     private List<Player> updatedPlayerList;
     private Map<Long, PlayerDelta> playerDelta;
+    private Map<Long, BulletDelta> bulletDelta;
     private List<Player> defeatedPlayerList;
 
     UpdateEngine() {
@@ -59,11 +60,16 @@ public enum UpdateEngine implements Runnable {
 
     public void pushUpdate() {
         this.playerDelta = new HashMap<Long, PlayerDelta>();
+        this.bulletDelta = new HashMap<Long, BulletDelta>();
 
         // Make a clone of Updates which need to send
         this.playerList = this.updatedPlayerList;
         for (Player player : playerList) {
             playerDelta.put(player.getUserID(), player.getPlayerDelta());
+        }
+        // Update bullet data
+        for (Bullet bullet : this.bulletList) {
+            this.bulletDelta.put(bullet.getId(), bullet.getBulletDelta());
         }
 
         try {
@@ -106,12 +112,11 @@ public enum UpdateEngine implements Runnable {
         }
 
         for (Bullet bullet : bulletList) {
-            BulletDelta bulletDelta = bullet.getBulletDelta();
-            if (p.getXVirtualPoint() - p.getAOIWidth() <= bulletDelta.getDx()
-                    && bulletDelta.getDx() <= p.getXVirtualPoint() + p.getAOIWidth()
-                    && p.getYVirtualPoint() - p.getAOIHeight() <= bulletDelta.getDy()
-                    && bulletDelta.getDy() <= p.getYVirtualPoint() + p.getAOIHeight()) {
-                delta.add(bullet.getBulletDelta());
+            if (p.getXVirtualPoint() - p.getAOIWidth() <= bullet.getX()
+                    && bullet.getX() <= p.getXVirtualPoint() + p.getAOIWidth()
+                    && p.getYVirtualPoint() - p.getAOIHeight() <= bullet.getY()
+                    && bullet.getY() <= p.getYVirtualPoint() + p.getAOIHeight()) {
+                delta.add(this.bulletDelta.get(bullet.getId()));
             }
         }
         for (Player player : defeatedPlayerList) {
@@ -144,12 +149,11 @@ public enum UpdateEngine implements Runnable {
         }
 
         for (Bullet bullet : bulletList) {
-            BulletDelta bulletDelta = bullet.getBulletDelta();
-            if (d.getXVirtualPoint() - d.getAOIWidth() <= bulletDelta.getDx()
-                    && bulletDelta.getDx() <= d.getXVirtualPoint() + d.getAOIWidth()
-                    && d.getYVirtualPoint() - d.getAOIHeight() <= bulletDelta.getDy()
-                    && bulletDelta.getDy() <= d.getYVirtualPoint() + d.getAOIHeight()) {
-                delta.add(bullet.getBulletDelta());
+            if (d.getXVirtualPoint() - d.getAOIWidth() <= bullet.getX()
+                    && bullet.getX() <= d.getXVirtualPoint() + d.getAOIWidth()
+                    && d.getYVirtualPoint() - d.getAOIHeight() <= bullet.getY()
+                    && bullet.getY() <= d.getYVirtualPoint() + d.getAOIHeight()) {
+                delta.add(this.bulletDelta.get(bullet.getId()));
             }
         }
 

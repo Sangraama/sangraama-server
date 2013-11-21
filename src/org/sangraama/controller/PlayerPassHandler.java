@@ -100,7 +100,7 @@ public enum PlayerPassHandler {
         // this.passPlayerList.add(ship);
         this.passPlayerHash.put(ship.getUserID(), ship);
         isPass = true;
-        log.info("Added passed player");
+//        log.info("Added passed player");
         this.run();
     }
 
@@ -114,7 +114,7 @@ public enum PlayerPassHandler {
         // this.connectionList.add(ship);
         this.connectionHash.put(Float.toString(x) + ":" + Float.toString(y), ship);
         this.isPass = true;
-        log.info("added to Pass Connection details");
+//        log.info("added to Pass Connection details");
         this.run();
     }
 
@@ -134,8 +134,8 @@ public enum PlayerPassHandler {
         String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(ship.getX(), ship.getY());
         SendProtocol transferReq = new ClientTransferReq(30, ship.getUserID(), ship.getX(),
                 ship.getY(), ship.getHealth(), ship.getScore(), newHost, ship.getType());
-        log.info("new player pass server url " + newHost + " for x:" + ship.getX() + " y:"
-                + ship.getY());
+        /*log.info("new player pass server url " + newHost + " for x:" + ship.getX() + " y:"
+                + ship.getY());*/
         ship.sendPassConnectionInfo(transferReq);
     }
 
@@ -149,8 +149,10 @@ public enum PlayerPassHandler {
         String[] s = key.split(":");
         String updateHost = (String) TileCoordinator.INSTANCE.getSubTileHost(
                 Float.parseFloat(s[0]), Float.parseFloat(s[1]));
-        log.info("new update server url " + updateHost + " for x:" + dummy.getX() + " y:"
-                + dummy.getY());
+        /*
+         * log.info("new update server url " + updateHost + " for x:" + dummy.getX() + " y:" +
+         * dummy.getY());
+         */
         SendProtocol transferReq = new ClientTransferReq(31, dummy.getUserID(), dummy.getX(),
                 dummy.getY(), dummy.getHealth(), dummy.getScore(), updateHost, dummy.getType());
         dummy.sendUpdateConnectionInfo(transferReq);
