@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.Timer;
 
@@ -26,7 +27,7 @@ public enum UpdateEngine implements Runnable {
     public static final Logger log = LoggerFactory.getLogger(GameEngine.class);
 
     private volatile boolean isRun = true;
-    private volatile boolean isUpdate = false;
+    private AtomicBoolean isUpdate;
 
     private List<Player> playerList; // don't modify;read only
     private List<Bullet> bulletList;
@@ -38,6 +39,7 @@ public enum UpdateEngine implements Runnable {
     private List<Player> defeatedPlayerList;
 
     UpdateEngine() {
+        this.isUpdate = new AtomicBoolean(false);
         this.playerList = new ArrayList<>();
         this.bulletList = new ArrayList<>();
         this.dummyList = new Vector<>();
@@ -50,7 +52,7 @@ public enum UpdateEngine implements Runnable {
         Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                if (isUpdate) {
+                if (isUpdate.compareAndSet(true, true)) {
                     pushUpdate();
                 }
             }
@@ -87,7 +89,7 @@ public enum UpdateEngine implements Runnable {
                 PlayerQueue.INSTANCE.addToRemovePlayerQueue(defeatedPlayer);
             }
             this.defeatedPlayerList.clear(); // Remove defeated Players
-            this.isUpdate = false;
+            this.isUpdate.set(false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -221,7 +223,7 @@ public enum UpdateEngine implements Runnable {
          * update sent.
          */
         this.updatedPlayerList = playerList;
-        this.isUpdate = true;
+        this.isUpdate.lazySet(true);
     }
 
     public void setUpdatedDummyPlayerList(List<DummyPlayer> dummyList) {
