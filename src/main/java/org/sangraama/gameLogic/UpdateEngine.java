@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.Timer;
 
@@ -26,7 +27,7 @@ public enum UpdateEngine implements Runnable {
     public static final Logger log = LoggerFactory.getLogger(GameEngine.class);
 
     private volatile boolean isRun = true;
-    private volatile boolean isUpdate = false;
+    private AtomicBoolean isUpdate;
 
     private List<Player> playerList; // don't modify;read only
     private List<Bullet> bulletList;
@@ -34,9 +35,11 @@ public enum UpdateEngine implements Runnable {
     /* Should be atomic operation. */
     private List<Player> updatedPlayerList;
     private Map<Long, PlayerDelta> playerDelta;
+    private Map<Long, BulletDelta> bulletDelta;
     private List<Player> defeatedPlayerList;
 
     UpdateEngine() {
+        this.isUpdate = new AtomicBoolean(false);
         this.playerList = new ArrayList<>();
         this.bulletList = new ArrayList<>();
         this.dummyList = new Vector<>();
@@ -49,7 +52,7 @@ public enum UpdateEngine implements Runnable {
         Timer timer = new Timer(Constants.simulatingDelay, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                if (isUpdate) {
+                if (isUpdate.compareAndSet(true, true)) {
                     pushUpdate();
                 }
             }
@@ -59,11 +62,16 @@ public enum UpdateEngine implements Runnable {
 
     public void pushUpdate() {
         this.playerDelta = new HashMap<Long, PlayerDelta>();
+        this.bulletDelta = new HashMap<Long, BulletDelta>();
 
         // Make a clone of Updates which need to send
         this.playerList = this.updatedPlayerList;
         for (Player player : playerList) {
             playerDelta.put(player.getUserID(), player.getPlayerDelta());
+        }
+        // Update bullet data
+        for (Bullet bullet : this.bulletList) {
+            this.bulletDelta.put(bullet.getId(), bullet.getBulletDelta());
         }
 
         try {
@@ -81,7 +89,7 @@ public enum UpdateEngine implements Runnable {
                 PlayerQueue.INSTANCE.addToRemovePlayerQueue(defeatedPlayer);
             }
             this.defeatedPlayerList.clear(); // Remove defeated Players
-            this.isUpdate = false;
+            this.isUpdate.set(false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,12 +114,11 @@ public enum UpdateEngine implements Runnable {
         }
 
         for (Bullet bullet : bulletList) {
-            BulletDelta bulletDelta = bullet.getBulletDelta();
-            if (p.getXVirtualPoint() - p.getAOIWidth() <= bulletDelta.getDx()
-                    && bulletDelta.getDx() <= p.getXVirtualPoint() + p.getAOIWidth()
-                    && p.getYVirtualPoint() - p.getAOIHeight() <= bulletDelta.getDy()
-                    && bulletDelta.getDy() <= p.getYVirtualPoint() + p.getAOIHeight()) {
-                delta.add(bullet.getBulletDelta());
+            if (p.getXVirtualPoint() - p.getAOIWidth() <= bullet.getX()
+                    && bullet.getX() <= p.getXVirtualPoint() + p.getAOIWidth()
+                    && p.getYVirtualPoint() - p.getAOIHeight() <= bullet.getY()
+                    && bullet.getY() <= p.getYVirtualPoint() + p.getAOIHeight()) {
+                delta.add(this.bulletDelta.get(bullet.getId()));
             }
         }
         for (Player player : defeatedPlayerList) {
@@ -144,12 +151,11 @@ public enum UpdateEngine implements Runnable {
         }
 
         for (Bullet bullet : bulletList) {
-            BulletDelta bulletDelta = bullet.getBulletDelta();
-            if (d.getXVirtualPoint() - d.getAOIWidth() <= bulletDelta.getDx()
-                    && bulletDelta.getDx() <= d.getXVirtualPoint() + d.getAOIWidth()
-                    && d.getYVirtualPoint() - d.getAOIHeight() <= bulletDelta.getDy()
-                    && bulletDelta.getDy() <= d.getYVirtualPoint() + d.getAOIHeight()) {
-                delta.add(bullet.getBulletDelta());
+            if (d.getXVirtualPoint() - d.getAOIWidth() <= bullet.getX()
+                    && bullet.getX() <= d.getXVirtualPoint() + d.getAOIWidth()
+                    && d.getYVirtualPoint() - d.getAOIHeight() <= bullet.getY()
+                    && bullet.getY() <= d.getYVirtualPoint() + d.getAOIHeight()) {
+                delta.add(this.bulletDelta.get(bullet.getId()));
             }
         }
 
@@ -217,7 +223,7 @@ public enum UpdateEngine implements Runnable {
          * update sent.
          */
         this.updatedPlayerList = playerList;
-        this.isUpdate = true;
+        this.isUpdate.lazySet(true);
     }
 
     public void setUpdatedDummyPlayerList(List<DummyPlayer> dummyList) {

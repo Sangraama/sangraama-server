@@ -39,7 +39,7 @@
           <version>2.3</version>
           <configuration>
             <!-- Set the path to the tomcat webapps directory -->
-            <!--<outputDirectory>/home/gihan/Programs/apache-tomcat-7.0.47.1/webapps/</outputDirectory> -->
+            <!-- <outputDirectory>/home/gihan/Programs/apache-tomcat-7.0.47.1/webapps/</outputDirectory> -->
           </configuration>
         </plugin>
       </plugins>

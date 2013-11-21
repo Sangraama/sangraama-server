@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class DummyPlayer extends AbsPlayer {
 
-    public static final Logger log = LoggerFactory.getLogger(DummyPlayer.class);
+    private static final Logger log = LoggerFactory.getLogger(DummyPlayer.class);
 
     private DummyQueue dummyQueue;
 
@@ -68,14 +68,18 @@ public class DummyPlayer extends AbsPlayer {
         // System.out.println(TAG + "is inside "+x+":"+y);
         if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
                 && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
-            /*log.info(" x:" + x + " y:" + y + " inside of map x: " + sangraamaMap.getOriginX() + ":"
-                    + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":"
-                    + sangraamaMap.getEdgeY());*/
+            /*
+             * log.info(" x:" + x + " y:" + y + " inside of map x: " + sangraamaMap.getOriginX() +
+             * ":" + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":" +
+             * sangraamaMap.getEdgeY());
+             */
             return true;
         } else {
-            /*log.info(" x:" + x + " y:" + y + "Outside of map x: " + sangraamaMap.getOriginX() + ":"
-                    + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":"
-                    + sangraamaMap.getEdgeY());*/
+            /*
+             * log.info(" x:" + x + " y:" + y + "Outside of map x: " + sangraamaMap.getOriginX() +
+             * ":" + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":" +
+             * sangraamaMap.getEdgeY());
+             */
             return false;
         }
     }
@@ -126,9 +130,9 @@ public class DummyPlayer extends AbsPlayer {
         } else if (this.isPlayer == 2) {
             this.dummyQueue.addToRemoveDummyQueue(this);
             this.isPlayer = 0;
-            log.info("Unable to send updates,coz con :" + con + ". Add to remove queue.");
+            log.warn("Unable to send updates,coz con :" + con + ". Add to remove queue.");
         } else {
-            log.info("waiting for remove");
+            log.error("waiting for remove");
         }
     }
 
@@ -145,9 +149,9 @@ public class DummyPlayer extends AbsPlayer {
         } else if (isPlayer == 2) {
             this.dummyQueue.addToRemoveDummyQueue(this);
             this.isPlayer = 0;
-            log.info("Unable to send new connection,coz con :" + con + ". Add to remove queue.");
+            log.warn("Unable to send new connection,coz con :" + con + ". Add to remove queue.");
         } else {
-            log.info("waiting for remove");
+            log.error("waiting for remove");
         }
     }
 
@@ -163,9 +167,9 @@ public class DummyPlayer extends AbsPlayer {
         } else if (this.isPlayer == 2) {
             this.dummyQueue.addToRemoveDummyQueue(this);
             this.isPlayer = 0;
-            log.info("Unable to send syncdata,coz con :" + con + ". Add to remove queue.");
+            log.warn("Unable to send syncdata,coz con :" + con + ". Add to remove queue.");
         } else {
-            log.info("waiting for remove");
+            log.error("waiting for remove");
         }
     }
 
@@ -203,7 +207,8 @@ public class DummyPlayer extends AbsPlayer {
             List<SendProtocol> data = new ArrayList<SendProtocol>();
             // Send updates which are related/interest to closing a dummy player
             data.add(new SyncPlayer(userID));
-            // log.info("Virtual point x" + x_vp + " y" + y_vp + " is out from this map. Closing ... ");
+            // log.info("Virtual point x" + x_vp + " y" + y_vp +
+            // " is out from this map. Closing ... ");
             this.sendSyncData(data);
             con.closeConnection();
         }

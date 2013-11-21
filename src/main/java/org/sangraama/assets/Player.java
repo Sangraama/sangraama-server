@@ -105,7 +105,7 @@ public abstract class Player extends AbsPlayer {
         // }
         if (!isInsideServerSubTile(this.x, this.y)) {
             PlayerPassHandler.INSTANCE.setPassPlayer(this);
-            log.info(userID + " outside of the subtile detected");
+            // log.info(userID + " outside of the subtile detected");
         }
         return this.delta;
     }
@@ -170,7 +170,8 @@ public abstract class Player extends AbsPlayer {
             currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 insideServerSubTile = false;
-                log.info(userID + " player is not inside a subtile of " + sangraamaMap.getHost());
+                // log.info(userID + " player is not inside a subtile of " +
+                // sangraamaMap.getHost());
             }
         }
 
@@ -189,7 +190,8 @@ public abstract class Player extends AbsPlayer {
             this.setSubtileEgdeValues(); // update edge values
             // check whether players coordinates are in current map
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                // log.info(userID + " player is not inside a subtile of " + sangraamaMap.getHost());
+                // log.info(userID + " player is not inside a subtile of " +
+                // sangraamaMap.getHost());
                 return false;
             }
             return true;
@@ -226,12 +228,11 @@ public abstract class Player extends AbsPlayer {
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
             this.isPlayer = 0;
             log.warn(userID + " Unable to send updates,coz con :" + this.con
-                    + ". Add to remove queue.");
+                    + ". waiting for remove.");
         } else {
-            log.warn(userID + "  waiting for remove (1) id:" + userID + " player type:"
+            log.error(userID + "  waiting for remove (1) id:" + userID + " player type:"
                     + super.isPlayer);
             PlayerQueue.INSTANCE.addToRemovePlayerQueue(this);
-
         }
     }
 
@@ -255,7 +256,7 @@ public abstract class Player extends AbsPlayer {
             log.warn(userID + " Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
-            log.warn(userID + "  waiting for remove (2) id:" + userID + " player type:"
+            log.error(userID + "  waiting for remove (2) id:" + userID + " player type:"
                     + super.isPlayer);
         }
     }
@@ -277,7 +278,7 @@ public abstract class Player extends AbsPlayer {
             log.warn(userID + " Unable to send new connection,coz con :" + super.con
                     + ". Add to remove queue.");
         } else {
-            log.warn(userID + "  waiting for remove (3) id:" + userID + " player type:"
+            log.error(userID + "  waiting for remove (3) id:" + userID + " player type:"
                     + super.isPlayer);
         }
     }
@@ -312,7 +313,7 @@ public abstract class Player extends AbsPlayer {
             log.warn(userID + " Unable to send syncdata,coz con :" + this.con
                     + ". Add to remove queue.");
         } else {
-            log.warn(userID + "  waiting for remove (4) id:" + userID + " player type:"
+            log.error(userID + "  waiting for remove (4) id:" + userID + " player type:"
                     + super.isPlayer);
         }
     }
@@ -357,7 +358,7 @@ public abstract class Player extends AbsPlayer {
                     this.body.getPosition().x, this.body.getPosition().y, this.getScreenWidth(),
                     this.getScreenHeight(), this.bulletType);
             BulletQueue.INSTANCE.addToBulletQueue(bullet);
-            log.info(userID + " : Added a new bullet");
+            // log.info(userID + " : Added a new bullet");
 
         }
     }
@@ -413,13 +414,13 @@ public abstract class Player extends AbsPlayer {
                 /* Y level restriction at edge Or lower */
                 vp_al.setVirtualPointAccessLevel('y', 2);
             }
-            log.info(userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
+            // log.info(userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
         }
 
         List<SendProtocol> data = new ArrayList<SendProtocol>();
         data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth,
                 screenHeight, vp_al));
-        log.info(userID + " set Virtual point x" + x_virtual + " y" + y_virtual);
+        // log.info(userID + " set Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
 
         return true;

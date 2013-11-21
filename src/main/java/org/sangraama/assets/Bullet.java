@@ -9,9 +9,13 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.controller.BulletPassHandler;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.jsonprotocols.send.BulletDelta;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Bullet {
-
+    // Debug
+    // Local Debug or logs
+    private static final Logger log = LoggerFactory.getLogger(Bullet.class);
     private String TAG = "Bullet : ";
     private long playerId;
 
@@ -119,9 +123,11 @@ public class Bullet {
     }
 
     public BulletDelta getBulletDelta() {
-        bulletDelta = new BulletDelta(this.body.getPosition().x, this.body.getPosition().y,
-                this.body.getAngle(), this.playerId, this.id, this.type);
-        if (!isInsideSeverSubTile(this.body.getPosition().x, this.body.getPosition().y)) {
+        this.x = this.body.getPosition().x;
+        this.y = this.body.getPosition().y;
+        this.bulletDelta = new BulletDelta(this.x, this.y, this.body.getAngle(), this.playerId,
+                this.id, this.type);
+        if (!isInsideSeverSubTile(this.x, this.y)) {
             BulletPassHandler.INSTANCE.passBullets(this);
         }
         return bulletDelta;
@@ -152,8 +158,9 @@ public class Bullet {
             currentSubTileEndY = (y - (y % sangraamaMap.getSubTileHeight()))
                     + sangraamaMap.getSubTileHeight();
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                System.out.println(TAG + "Bullet is not inside a subtile of "
-                        + sangraamaMap.getHost());
+                /*
+                 * log.info(TAG + "Bullet is not inside a subtile of " + sangraamaMap.getHost());
+                 */
                 return false;
             }
             return true;

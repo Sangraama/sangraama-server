@@ -43,19 +43,18 @@ public class WebSocketConnection extends MessageInbound {
     public void setPlayer(Ship player) {
         this.player = null;
         this.player = player;
-        log.info("created a PLAYER conection...");
+        //log.info("created a PLAYER conection...");
     }
 
     public void setDummyPlayer(DummyPlayer dummyPlayer) {
         this.player = null;
         this.player = dummyPlayer;
-        log.info("created a DUMMY PLAYER conection...");
+//        log.info("created a DUMMY PLAYER conection...");
     }
 
     @Override
     protected void onOpen(WsOutbound outbound) {
         // log.info("Open Connection");
-        log.info("Open Connection");
     }
 
     @Override
@@ -115,7 +114,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setV(0, 0);
                 this.player.setAngle(0);
                 this.player.shoot(0);
-                log.info(T + " RESET user events ");
+//                log.info(T + " RESET user events ");
                 break;
 
             case 5: // Set Virtual point as the center of AOI in order to get updates
@@ -168,7 +167,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setAngle(event.getA());
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
 
-                log.info(T + " add new Player " + event.toString());
+//                log.info(T + " add new Player " + event.toString());
                 /*
                  * AOI and Virtual point will add to the player after creation of it NOTE: These
                  * player details should retrieved via a encrypted message. To create player type:
@@ -190,7 +189,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.setDummyPlayer(new DummyPlayer(event.getUserID(), event.getW(), event.getH(),
                         this));
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
-                log.info(T + " add new dummy player: " + event.toString());
+//                log.info(T + " add new dummy player: " + event.toString());
                 break;
 
             default:
