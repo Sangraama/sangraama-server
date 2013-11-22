@@ -54,6 +54,7 @@ public abstract class AbsPlayer {
 	float screenWidth = 0.0f, screenHeight = 0.0f;
 	float halfAOIWidth = 0.0f; // half width of AOI
 	float halfAOIHieght = 0.0f; // half height of AOI
+	List<SendProtocol> deltaList; // Store delta list
 
 	// player current sub-tile information
 	float currentSubTileOriginX = 0.0f;
@@ -232,6 +233,14 @@ public abstract class AbsPlayer {
 
 	public float getHealth() {
 		return health;
+	}
+	
+	public void setDeltaList(List<SendProtocol> deltaList){
+	    this.deltaList = deltaList;
+	}
+	
+	public List<SendProtocol> getDeltaList(){
+	    return this.deltaList;
 	}
 
 }

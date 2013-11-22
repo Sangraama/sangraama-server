@@ -33,7 +33,7 @@ public enum GameEngine implements Runnable {
     private volatile boolean isRun = true;
 
     private World world;
-    private UpdateEngine updateEngine;
+    private AOIEngine updateEngine;
     // list of players details
     private List<Player> playerList;
     private ConcurrentLinkedQueue<Player> newPlayerQueue;
@@ -87,7 +87,7 @@ public enum GameEngine implements Runnable {
         BulletQueue.INSTANCE.init(this.newBulletQueue, this.removeBulletQueue);
 
         this.wallList = new ArrayList<>();
-        this.updateEngine = UpdateEngine.INSTANCE;
+        this.updateEngine = AOIEngine.INSTANCE;
     }
 
     public synchronized boolean setStop() {
