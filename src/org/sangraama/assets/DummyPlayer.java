@@ -183,8 +183,8 @@ public class DummyPlayer extends AbsPlayer {
          */
         // log.info("want to set vp x:" + x_vp + " y:" + y_vp);
 
-        if (this.x_virtual == x_vp && this.y_virtual == y_vp)
-            return false;
+        /*if (this.x_virtual == x_vp && this.y_virtual == y_vp)
+            return false;*/
         this.x_virtual = x_vp;
         this.y_virtual = y_vp;
 
@@ -202,6 +202,12 @@ public class DummyPlayer extends AbsPlayer {
             data.add(new SyncPlayer(userID, x_virtual, y_virtual, screenWidth, screenHeight));
             // log.info("set Virtual point x" + x_vp + " y" + y_vp);
             this.sendSyncData(data);
+
+            // Update values
+            this.x_vp_l = x_virtual - halfAOIWidth;
+            this.x_vp_r = x_virtual + halfAOIWidth;
+            this.y_vp_u = y_virtual - halfAOIHieght;
+            this.y_vp_d = y_virtual + halfAOIHieght;
 
         } else { // Otherwise drop the connection of getting updates
             List<SendProtocol> data = new ArrayList<SendProtocol>();

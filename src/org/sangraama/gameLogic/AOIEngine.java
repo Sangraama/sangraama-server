@@ -119,27 +119,21 @@ public enum AOIEngine implements Runnable {
         List<SendProtocol> delta = new ArrayList<>();
 
         for (Player player : playerList) {
-            if (p.getXVirtualPoint() - p.getAOIWidth() <= player.getX()
-                    && player.getX() <= p.getXVirtualPoint() + p.getAOIWidth()
-                    && p.getYVirtualPoint() - p.getAOIHeight() <= player.getY()
-                    && player.getY() <= p.getYVirtualPoint() + p.getAOIHeight()) {
+            if (p.getXVPLeft() <= player.getX() && player.getX() <= p.getXVPRight()
+                    && p.getYVPUp() <= player.getY() && player.getY() <= p.getYVPDown()) {
                 delta.add(this.playerDelta.get(player.getUserID()));
             }
         }
 
         for (Bullet bullet : bulletList) {
-            if (p.getXVirtualPoint() - p.getAOIWidth() <= bullet.getX()
-                    && bullet.getX() <= p.getXVirtualPoint() + p.getAOIWidth()
-                    && p.getYVirtualPoint() - p.getAOIHeight() <= bullet.getY()
-                    && bullet.getY() <= p.getYVirtualPoint() + p.getAOIHeight()) {
+            if (p.getXVPLeft() <= bullet.getX() && bullet.getX() <= p.getXVPRight()
+                    && p.getYVPUp() <= bullet.getY() && bullet.getY() <= p.getYVPDown()) {
                 delta.add(this.bulletDelta.get(bullet.getId()));
             }
         }
         for (Player player : defeatedPlayerList) {
-            if (p.getXVirtualPoint() - p.getAOIWidth() <= player.getX()
-                    && player.getX() <= p.getXVirtualPoint() + p.getAOIWidth()
-                    && p.getYVirtualPoint() - p.getAOIHeight() <= player.getY()
-                    && player.getY() <= p.getYVirtualPoint() + p.getAOIHeight()) {
+            if (p.getXVPLeft() <= player.getX() && player.getX() <= p.getXVPRight()
+                    && p.getYVPUp() <= player.getY() && player.getY() <= p.getYVPDown()) {
                 delta.add(player.getDefeatMsg());
             }
         }
@@ -156,28 +150,22 @@ public enum AOIEngine implements Runnable {
         List<SendProtocol> delta = new ArrayList<>();
 
         for (Player player : playerList) {
-            if (d.getXVirtualPoint() - d.getAOIWidth() <= player.getX()
-                    && player.getX() <= d.getXVirtualPoint() + d.getAOIWidth()
-                    && d.getYVirtualPoint() - d.getAOIHeight() <= player.getY()
-                    && player.getY() <= d.getYVirtualPoint() + d.getAOIHeight()) {
+            if (d.getXVPLeft() <= player.getX() && player.getX() <= d.getXVPRight()
+                    && d.getYVPUp() <= player.getY() && player.getY() <= d.getYVPDown()) {
                 delta.add(this.playerDelta.get(player.getUserID()));
             }
         }
 
         for (Bullet bullet : bulletList) {
-            if (d.getXVirtualPoint() - d.getAOIWidth() <= bullet.getX()
-                    && bullet.getX() <= d.getXVirtualPoint() + d.getAOIWidth()
-                    && d.getYVirtualPoint() - d.getAOIHeight() <= bullet.getY()
-                    && bullet.getY() <= d.getYVirtualPoint() + d.getAOIHeight()) {
+            if (d.getXVPLeft() <= bullet.getX() && bullet.getX() <= d.getXVPRight()
+                    && d.getYVPUp() <= bullet.getY() && bullet.getY() <= d.getYVPDown()) {
                 delta.add(this.bulletDelta.get(bullet.getId()));
             }
         }
 
         for (Player player : defeatedPlayerList) {
-            if (d.getXVirtualPoint() - d.getAOIWidth() <= player.getX()
-                    && player.getX() <= d.getXVirtualPoint() + d.getAOIWidth()
-                    && d.getYVirtualPoint() - d.getAOIHeight() <= player.getY()
-                    && player.getY() <= d.getYVirtualPoint() + d.getAOIHeight()) {
+            if (d.getXVPLeft() <= player.getX() && player.getX() <= d.getXVPRight()
+                    && d.getYVPUp() <= player.getY() && player.getY() <= d.getYVPDown()) {
                 delta.add(player.getDefeatMsg());
             }
         }
