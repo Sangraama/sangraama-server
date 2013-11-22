@@ -43,6 +43,10 @@ public abstract class AbsPlayer {
 	 * having a center view). #gihan
 	 */
 	float x_virtual = 0.0f, y_virtual = 0.0f;
+	/*
+	 * Store Left and right along x and up and down along y corners values for efficient retrieve.
+	 */
+	float x_vp_l,x_vp_r,y_vp_u,y_vp_d;
 
 	/*
 	 * To check whether "virtual point" is setting inside the total map where it
@@ -54,6 +58,7 @@ public abstract class AbsPlayer {
 	float screenWidth = 0.0f, screenHeight = 0.0f;
 	float halfAOIWidth = 0.0f; // half width of AOI
 	float halfAOIHieght = 0.0f; // half height of AOI
+	List<SendProtocol> deltaList; // Store delta list
 
 	// player current sub-tile information
 	float currentSubTileOriginX = 0.0f;
@@ -186,10 +191,26 @@ public abstract class AbsPlayer {
 	public float getXVirtualPoint() {
 		return this.x_virtual;
 	}
+	
+	public float getXVPLeft(){
+	    return this.x_vp_l;
+	}
+	
+	public float getXVPRight(){
+        return this.x_vp_r;
+    }
 
 	public float getYVirtualPoint() {
 		return this.y_virtual;
 	}
+	
+	public float getYVPUp(){
+        return this.y_vp_u;
+    }
+	
+	public float getYVPDown(){
+        return this.y_vp_d;
+    }
 
 	public long getUserID() {
 		return this.userID;
@@ -233,5 +254,13 @@ public abstract class AbsPlayer {
 	public float getHealth() {
 		return health;
 	}
+	
+	public void setDeltaList(List<SendProtocol> deltaList){
+	    this.deltaList = deltaList;
+	}
+	
+	public List<SendProtocol> getDeltaList(){
+        return this.deltaList;
+    }
 
 }

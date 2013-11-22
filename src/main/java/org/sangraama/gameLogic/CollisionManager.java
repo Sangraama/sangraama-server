@@ -151,7 +151,7 @@ public enum CollisionManager implements Runnable {
     }
 
     private void sendScoreChangeEventFromDummy(long shipID, int scoreChange) {
-        List<DummyPlayer> dummyList = UpdateEngine.INSTANCE.getDummyList();
+        List<DummyPlayer> dummyList = AOIEngine.INSTANCE.getDummyList();
         for (DummyPlayer dummyPlayer : dummyList) {
             if (dummyPlayer.getUserID() == shipID) {
                 ScoreChangeTransferReq scoreChangeReq = new ScoreChangeTransferReq(21, shipID,

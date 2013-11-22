@@ -9,7 +9,7 @@ import org.sangraama.assets.SangraamaMap;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.CollisionManager;
 import org.sangraama.gameLogic.GameEngine;
-import org.sangraama.gameLogic.UpdateEngine;
+import org.sangraama.gameLogic.AOIEngine;
 import org.sangraama.thrift.server.ThriftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class ServerStarter implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent arg0) {
         GameEngine.INSTANCE.setStop();
         CollisionManager.INSTANCE.setStop();
-        UpdateEngine.INSTANCE.setStop();
+        AOIEngine.INSTANCE.setStop();
         Hazelcast.shutdownAll();
     }
 
@@ -56,7 +56,7 @@ public class ServerStarter implements ServletContextListener {
         SangraamaMap.INSTANCE.setSubTileProperties(
                 Float.parseFloat(prop.getProperty("subtilewidth")),
                 Float.parseFloat(prop.getProperty("subtileheight")));
-        this.updateEngine = new Thread(UpdateEngine.INSTANCE);
+        this.updateEngine = new Thread(AOIEngine.INSTANCE);
         this.updateEngine.start();
         this.gameEngine = new Thread(GameEngine.INSTANCE);
         this.gameEngine.start();

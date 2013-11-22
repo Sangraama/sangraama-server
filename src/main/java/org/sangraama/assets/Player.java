@@ -382,8 +382,8 @@ public abstract class Player extends AbsPlayer {
         /*
          * If asking for same virtual point, then ignore it
          */
-        if (this.x_virtual == x_vp && this.y_virtual == y_vp)
-            return false;
+        /*if (this.x_virtual == x_vp && this.y_virtual == y_vp)
+            return false;*/
 
         this.x_virtual = x_vp;
         this.y_virtual = y_vp;
@@ -423,6 +423,11 @@ public abstract class Player extends AbsPlayer {
         // log.info(userID + " set Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
 
+        // Update values
+        this.x_vp_l = x_virtual - halfAOIWidth;
+        this.x_vp_r = x_virtual + halfAOIWidth;
+        this.y_vp_u = y_virtual - halfAOIHieght;
+        this.y_vp_d = y_virtual + halfAOIHieght;
         return true;
     }
 
