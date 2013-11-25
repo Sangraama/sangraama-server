@@ -12,12 +12,15 @@ public enum SignMsg {
     private byte[] signature;
     private String TAG = "SignMsg : ";
 
-    public byte[] signMessage(String messsage) {
+    /**
+     * Sign the message using a private key
+     * @param message message to be signed
+     * @return signature of the message
+     */
+    public byte[] signMessage(String message) {
 
         try {
-            InputStream keyfis = this.getClass().getResourceAsStream("key/PrivateKey.txt");
-            // FileInputStream keyfis = new
-            // FileInputStream("/sangraama-server/WebContent/WEB-INF/sign/PrivateKey.txt");
+            InputStream keyfis = this.getClass().getResourceAsStream("/key/PrivateKey.txt");
             byte[] encKey = new byte[keyfis.available()];
             keyfis.read(encKey);
             keyfis.close();
@@ -26,7 +29,7 @@ public enum SignMsg {
             PrivateKey priKey = keyFactory.generatePrivate(privKeySpec);
             Signature dsa = Signature.getInstance("SHA1withDSA", "SUN");
             dsa.initSign(priKey);
-            dsa.update(messsage.getBytes());
+            dsa.update(message.getBytes());
             signature = dsa.sign();
             // System.out.println(TAG + "Done signing the message");
 

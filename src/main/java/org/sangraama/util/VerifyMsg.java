@@ -12,12 +12,17 @@ public enum VerifyMsg {
     private boolean verifyResult = false;
     private String TAG = "VerifyMsg : ";
 
+    /**
+     * Verify the signature of the message
+     * @param message original message
+     * @param signature signature of the message
+     * @return true if the message verification is successful
+     */
     public boolean verifyMessage(String message, byte[] signature) {
 
         try {
 
-            InputStream keyfis = this.getClass().getResourceAsStream("/PublicKey.txt");
-            // FileInputStream keyfis = new FileInputStream("src/PublicKey.txt");
+            InputStream keyfis = this.getClass().getResourceAsStream("/key/PublicKey.txt");
             byte[] encKey = new byte[keyfis.available()];
             keyfis.read(encKey);
             keyfis.close();
@@ -28,7 +33,7 @@ public enum VerifyMsg {
             sig.initVerify(pubKey);
             sig.update(message.getBytes());
             verifyResult = sig.verify(signature);
-            System.out.println(TAG + "Message verification - " + verifyResult);
+            //System.out.println(TAG + "Message verification - " + verifyResult);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -53,6 +53,7 @@ public class DummyPlayer extends AbsPlayer {
      */
     public void removeWebSocketConnection() {
         this.con = null;
+        this.dummyQueue.addToRemoveDummyQueue(this);
     }
 
     /**
