@@ -218,6 +218,7 @@ public class DummyPlayer extends AbsPlayer {
             // " is out from this map. Closing ... ");
             this.sendSyncData(data);
             con.closeConnection();
+            this.dummyQueue.addToRemoveDummyQueue(this);
         }
         return false;
     }
