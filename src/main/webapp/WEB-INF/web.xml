@@ -21,15 +21,15 @@
 		<filter-name>CORS</filter-name>
 		<filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
 	</filter>
-	<!-- <servlet>
+	 <servlet>
 		<servlet-name>sangraama</servlet-name>
 		<servlet-class>org.sangraama.controller.PlayerConnectionHandlerServlet</servlet-class>
 		<init-param>
 			<param-name>log4j-properties-location</param-name>
-			<param-value>WEB-INF/log4j.properties</param-value>
+			<param-value>WEB-INF/classes/conf/log4j.properties</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
-	</servlet> -->
+	</servlet>
 	<listener>
 		<listener-class>org.sangraama.serverstart.ServerStarter</listener-class>
 	</listener>
