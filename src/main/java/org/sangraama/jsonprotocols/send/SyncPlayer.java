@@ -43,7 +43,6 @@ public class SyncPlayer extends SendProtocol {
      * @param userID
      * @param x_vp
      * @param y_vp
-     * @param a
      * @param w
      * @param h
      */

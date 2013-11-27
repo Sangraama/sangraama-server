@@ -28,7 +28,7 @@ import org.slf4j.*;
 
 public enum AOIEngine implements Runnable {
     INSTANCE;
-    public static final Logger log = LoggerFactory.getLogger(GameEngine.class);
+    private static final Logger log = LoggerFactory.getLogger(GameEngine.class);
 
     private volatile boolean isRun = true;
     private AtomicBoolean isUpdate;
@@ -112,7 +112,7 @@ public enum AOIEngine implements Runnable {
     /**
      * This method can replace with region query in 4.14 box2D manual
      * 
-     * @param player
+     * @param p
      * @return ArrayList<PlayerDelta>
      */
     private List<SendProtocol> getAreaOfInterest(Player p) {
@@ -143,7 +143,7 @@ public enum AOIEngine implements Runnable {
     /**
      * This method can replace with region query in 4.14 box2D manual
      * 
-     * @param player
+     * @param d
      * @return ArrayList<PlayerDelta>
      */
     private List<SendProtocol> getAreaOfInterest(DummyPlayer d) {
@@ -186,28 +186,6 @@ public enum AOIEngine implements Runnable {
             player.sendTileSizeInfo(tiles);
         }
     }
-
-    /**
-     * Add a player in order to get updates
-     * 
-     * @NOTE : {@linkGameEngine} dummies have to add via GameEngine if there are multiple Update
-     *       Engines @author gihan
-     * 
-     * @param player
-     *            Player want to get updates
-     * @return true if added to the list, false otherwise
-     */
-    /*
-     * public boolean addToDummyQueue(DummyPlayer player) { player.sendTileSizeInfo(); return
-     * this.dummyList.add(player); }
-     * 
-     * public boolean addToRemoveDummyQueue(long player) { for(DummyPlayer d : dummyList){
-     * if(d.getUserID() == player) this.dummyList.remove(d); } return true; }
-     * 
-     * public boolean addToRemoveDummyQueue(DummyPlayer player) {
-     * 
-     * return this.dummyList.remove(player); }
-     */
 
     public void setUpdatedPlayerList(List<Player> playerList) {
         /*
