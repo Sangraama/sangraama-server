@@ -6,6 +6,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.sangraama.assets.SangraamaMap;
+import org.sangraama.coordination.dynamicPartition.TileLoadBalancer;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.CollisionManager;
 import org.sangraama.gameLogic.GameEngine;
@@ -27,6 +28,7 @@ public class ServerStarter implements ServletContextListener {
     private Thread thriftServerThread = null;
     private Properties prop;
     public static ServletContext context;
+    private Thread loadBalancer;
 
     @Override
     public void contextDestroyed(ServletContextEvent arg0) {
@@ -49,8 +51,8 @@ public class ServerStarter implements ServletContextListener {
                 Float.parseFloat(prop.getProperty("maporiginy")),
                 Float.parseFloat(prop.getProperty("mapwidth")),
                 Float.parseFloat(prop.getProperty("mapheight")), prop.getProperty("host") + ":"
-                        + prop.getProperty("port") + "/" + prop.getProperty("dir")
-                        + "/sangraama/player", Float.parseFloat(prop.getProperty("maxlength")),
+                + prop.getProperty("port") + "/" + prop.getProperty("dir")
+                + "/sangraama/player", Float.parseFloat(prop.getProperty("maxlength")),
                 Float.parseFloat(prop.getProperty("maxheight")));
 
         SangraamaMap.INSTANCE.setSubTileProperties(
@@ -62,8 +64,9 @@ public class ServerStarter implements ServletContextListener {
         this.gameEngine.start();
         this.collisionManager = new Thread(CollisionManager.INSTANCE);
         this.collisionManager.start();
-        TileCoordinator.INSTANCE.generateSubtiles();
-
+        TileCoordinator.INSTANCE.generateHazelcastMaps();
+        loadBalancer = new Thread(TileLoadBalancer.INSTANCE);
+        loadBalancer.start();
         // thriftServer = new ThriftServer(Integer.parseInt(prop.getProperty("thriftserverport")));
         // thriftServerThread = new Thread(thriftServer);
         // thriftServerThread.start();

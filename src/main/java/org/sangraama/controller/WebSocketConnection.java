@@ -60,7 +60,7 @@ public class WebSocketConnection extends MessageInbound {
     @Override
     protected void onClose(int status) {
         // log.info("Connection closed");
-        this.player.removeWebSocketConnection();
+//        this.player.removeWebSocketConnection();
         this.player = null;
 
         log.info("Close connection");

@@ -34,6 +34,8 @@ public enum TileCoordinator {
     private HazelcastInstance hazelcastInstance;
 
     Map<String, String> subtileMap;
+    Map<String, Integer> playersCountByServerMap;
+    Map<String, List<String>> subtilesByUrlMap;
     private float subTileHeight;
     private float subTileWidth;
     private SangraamaMap sangraamaMap;
@@ -44,6 +46,8 @@ public enum TileCoordinator {
     TileCoordinator() {
         hazelcastInstance = Hazelcast.newHazelcastInstance(new Config());
         this.subtileMap = hazelcastInstance.getMap("subtile");
+        this.playersCountByServerMap = hazelcastInstance.getMap("playersCountByServerMap");
+        this.subtilesByUrlMap = hazelcastInstance.getMap("subtilesByUrlMap");
         this.sangraamaMap = SangraamaMap.INSTANCE;
         this.subTileHeight = sangraamaMap.getSubTileWidth();
         this.subTileWidth = sangraamaMap.getSubTileHeight();
@@ -93,8 +97,9 @@ public enum TileCoordinator {
         return hostPort;
     }
 
-    public void generateSubtiles() {
+    public void generateHazelcastMaps() {
         String subTileOrigins;
+        List<String> subTileOriginList = new ArrayList<>();
         float subTileOriginX, subTileOriginY;
         for (int i = 0; i < sangraamaMap.getMapWidth() / subTileWidth; i++) {
             for (int j = 0; j < sangraamaMap.getMapHeight() / subTileHeight; j++) {
@@ -104,14 +109,14 @@ public enum TileCoordinator {
                         + Float.toString(subTileOriginY);
                 subtileMap.put(subTileOrigins, serverURL);
                 String[] result = serverURL.split(":");
-                /*
-                 * log.info(TAG + "host-" + result[0] + ", port-" + serverPort + ", origin_x-" +
-                 * subTileOriginX + ", origin_y-" + subTileOriginY);
-                 */
                 System.out.println(TAG + "host-" + result[0] + ", port-" + serverPort
                         + ", origin_x-" + subTileOriginX + ", origin_y-" + subTileOriginY);
+
+                subTileOriginList.add(subTileOrigins);
             }
         }
+        playersCountByServerMap.put(serverURL, 0);
+        subtilesByUrlMap.put(serverURL,subTileOriginList);
         /*
          * Calculate and store coordination details of sub-tiles. Rationale : Changing/moving of
          * sub-tiles negligible with compared to game engine updating
@@ -164,5 +169,25 @@ public enum TileCoordinator {
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
     }
+
+    public Map<String,Integer> getPlayersCountByServerMap(){
+        return playersCountByServerMap;
+    }
+    public String getServerURL(){
+        return this.serverURL;
+    }
+    public List<String> getSubtilesInServer(){
+     return subtilesByUrlMap.get(serverURL);
+    }
+
+    public Map<String,List<String>> getSubtilesInServerMap(){
+        return subtilesByUrlMap;
+    }
+
+    public Map<String,String> getSubtileMap(){
+        return subtileMap;
+    }
+
+
 
 }

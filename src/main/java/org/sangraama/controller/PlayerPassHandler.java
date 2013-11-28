@@ -139,6 +139,13 @@ public enum PlayerPassHandler {
         ship.sendPassConnectionInfo(transferReq);
     }
 
+    public void passPlayerToNewServer(Player player, String serverUrl){
+        SendProtocol transferReq = new ClientTransferReq(30, player.getUserID(), player.getX(),
+                player.getY(), player.getHealth(), player.getScore(), serverUrl, player.getType());
+
+        player.sendPassConnectionInfo(transferReq);
+    }
+
     /**
      * Send the connection details about new server that player needs to get updates
      * 

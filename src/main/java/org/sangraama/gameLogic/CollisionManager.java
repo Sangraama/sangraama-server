@@ -126,7 +126,7 @@ public enum CollisionManager implements Runnable {
 
     private void processBulletShipCollition(Player ship, Bullet bullet) {
         boolean playerInServer = false;
-        reduceShipHealth(ship.getUserID(), -1f);
+        reduceShipHealth(ship.getUserID(), -0.01f);
         long shooterUserID = bullet.getPlayerId();
         for (Player player : gameEngine.getPlayerList()) {
             if (player.getUserID() == shooterUserID) {
