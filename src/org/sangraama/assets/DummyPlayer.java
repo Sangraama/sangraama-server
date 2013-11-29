@@ -53,6 +53,7 @@ public class DummyPlayer extends AbsPlayer {
      */
     public void removeWebSocketConnection() {
         this.con = null;
+        this.dummyQueue.addToRemoveDummyQueue(this);
     }
 
     /**
@@ -217,6 +218,7 @@ public class DummyPlayer extends AbsPlayer {
             // " is out from this map. Closing ... ");
             this.sendSyncData(data);
             con.closeConnection();
+            this.dummyQueue.addToRemoveDummyQueue(this);
         }
         return false;
     }
