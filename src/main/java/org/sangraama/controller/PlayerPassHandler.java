@@ -1,17 +1,9 @@
 package org.sangraama.controller;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.sangraama.assets.AbsPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.SangraamaMap;
 import org.sangraama.assets.Ship;
-import org.sangraama.coordination.ServerHandler;
-import org.sangraama.coordination.ServerLocation;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.jsonprotocols.transfer.ClientTransferReq;
@@ -20,6 +12,8 @@ import org.sangraama.thrift.client.ThriftClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.*;
+
 public enum PlayerPassHandler {
     INSTANCE;
     public static final Logger log = LoggerFactory.getLogger(PlayerPassHandler.class);
@@ -27,13 +21,11 @@ public enum PlayerPassHandler {
     private Map<Long, Player> passPlayerHash;
     private Map<String, Player> connectionHash;
     private volatile boolean isPass;
-    private ServerHandler sHandler;
 
     private PlayerPassHandler() {
         this.passPlayerList = new ArrayList<>();
         this.passPlayerHash = new Hashtable<>();
         this.connectionHash = new Hashtable<>();
-        this.sHandler = ServerHandler.INSTANCE;
     }
 
     public synchronized void run() {
@@ -76,7 +68,7 @@ public enum PlayerPassHandler {
 
     public void callThriftServer(Ship ship) {
         TPlayer tPlayer = new TPlayer();
-        ServerLocation serverLoc = sHandler.getThriftServerLocation(ship.getX(), ship.getY());
+        String serverLoc = TileCoordinator.INSTANCE.getSubTileHost(ship.getX(), ship.getY());
 
         tPlayer.id = ship.getUserID();
         tPlayer.x = (int) (ship.getX() + SangraamaMap.INSTANCE.getOriginX());
@@ -84,17 +76,15 @@ public enum PlayerPassHandler {
         tPlayer.v_x = ship.getV().x;
         tPlayer.v_y = ship.getV().y;
         if (serverLoc != null) {
-            ThriftClient thriftClient = new ThriftClient(tPlayer, serverLoc.getServerURL(),
-                    serverLoc.getServerPort());
+            ThriftClient thriftClient = new ThriftClient(tPlayer, serverLoc);
             thriftClient.invoke();
         }
     }
 
     /**
      * Send parameters of the new server which player is going to locate
-     * 
-     * @param ship
-     *            Player who need to transfer into new server
+     *
+     * @param ship Player who need to transfer into new server
      */
     public synchronized void setPassPlayer(Player ship) {
         // this.passPlayerList.add(ship);
@@ -106,9 +96,8 @@ public enum PlayerPassHandler {
 
     /**
      * Send parameters of new connection to get server updates
-     * 
-     * @param ship
-     *            Player who need details about the server
+     *
+     * @param ship Player who need details about the server
      */
     public synchronized void setPassConnection(float x, float y, Player ship) {
         // this.connectionList.add(ship);
@@ -141,9 +130,8 @@ public enum PlayerPassHandler {
 
     /**
      * Send the connection details about new server that player needs to get updates
-     * 
-     * @param dummy
-     *            Player that needs updates
+     *
+     * @param dummy Player that needs updates
      */
     private void passNewConnectionInfo(String key, Player dummy) {
         String[] s = key.split(":");
