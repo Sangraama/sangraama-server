@@ -1,10 +1,5 @@
 package org.sangraama.assets;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -22,6 +17,11 @@ import org.sangraama.jsonprotocols.send.SyncPlayer;
 import org.sangraama.jsonprotocols.send.VirtualPointAccessLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public abstract class Player extends AbsPlayer {
 
@@ -54,7 +54,7 @@ public abstract class Player extends AbsPlayer {
     private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subtileHeight
 
     public Player(long userID, float x, float y, float w, float h, float health, float score,
-            WebSocketConnection con, int type, int bulletType) {
+                  WebSocketConnection con, int type, int bulletType) {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
         super.con = con;
@@ -130,11 +130,9 @@ public abstract class Player extends AbsPlayer {
 
     /**
      * Check whether player is inside current tile
-     * 
-     * @param x
-     *            Player's current x coordination
-     * @param y
-     *            Player's current y coordination
+     *
+     * @param x Player's current x coordination
+     * @param y Player's current y coordination
      * @return if inside tile return true, else false
      */
     private boolean isInsideMap(float x, float y) {
@@ -151,11 +149,9 @@ public abstract class Player extends AbsPlayer {
 
     /**
      * Check whether player is inside current sub-tile
-     * 
-     * @param x
-     *            Player's current x coordination
-     * @param y
-     *            Player's current y coordination
+     *
+     * @param x Player's current x coordination
+     * @param y Player's current y coordination
      * @return if inside sub-tile return true, else false
      */
     protected boolean isInsideServerSubTile(float x, float y) {
@@ -163,15 +159,13 @@ public abstract class Player extends AbsPlayer {
         // Note : Inefficient code. Is it necessary to calculate at each iteration.
         float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-        // log.info(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
-        // + subTileOriX + ":" + subTileOriY);
+        log.info(currentSubTileOriginX + ":" + currentSubTileOriginY + " with " + subTileOriX + ":" + subTileOriY);
         if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
             currentSubTileOriginX = subTileOriX;
             currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 insideServerSubTile = false;
-                // log.info(userID + " player is not inside a subtile of " +
-                // sangraamaMap.getHost());
+                log.info(userID + " player is not inside a sub tile of " + sangraamaMap.getHost());
             }
         }
 
@@ -187,7 +181,7 @@ public abstract class Player extends AbsPlayer {
             // Assign new sub tile origin coordinates
             currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
             currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-            this.setSubtileEgdeValues(); // update edge values
+            this.setSubTileEgdeValues(); // update edge values
             // check whether players coordinates are in current map
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 // log.info(userID + " player is not inside a subtile of " +
@@ -203,11 +197,9 @@ public abstract class Player extends AbsPlayer {
      * of Interest, it will ask for the updates of that area. This method checked in following
      * sequence, 1) check on own sub-tile 2) check whether location is inside current 3) check for
      * the server which own that location and send connection tag
-     * 
-     * @param x
-     *            x coordination of interest location
-     * @param y
-     *            y coordination of interest location
+     *
+     * @param x x coordination of interest location
+     * @param y y coordination of interest location
      */
     public void reqInterestIn(float x, float y) {
         if (!isInsideServerSubTile(x, y) && isInsideTotalMap(x, y)) {
@@ -238,13 +230,12 @@ public abstract class Player extends AbsPlayer {
 
     /**
      * Send New connection Address and other details to Client
-     * 
-     * @param transferReq
-     *            Object of Client transferring protocol
+     *
+     * @param transferReq Object of Client transferring protocol
      */
     public void sendPassConnectionInfo(SendProtocol transferReq) {
         if (super.con != null) {
-            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
+            ArrayList<SendProtocol> transferReqList = new ArrayList<>();
             transferReqList.add(transferReq);
             con.sendNewConnection(transferReqList);
             /* Changed player type into dummy player and remove from the world */
@@ -263,13 +254,12 @@ public abstract class Player extends AbsPlayer {
 
     /**
      * Send update server connection Address and other details to Client to fulfill the AOI
-     * 
-     * @param transferReq
-     *            Object of Client transferring protocol
+     *
+     * @param transferReq Object of Client transferring protocol
      */
     public void sendUpdateConnectionInfo(SendProtocol transferReq) {
         if (this.con != null) {
-            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
+            ArrayList<SendProtocol> transferReqList = new ArrayList<>();
             transferReqList.add(transferReq);
             con.sendNewConnection(transferReqList);
         } else if (super.isPlayer == 1) {
@@ -286,13 +276,12 @@ public abstract class Player extends AbsPlayer {
     /**
      * This method is used to send the information of the transferring object to the neighbor
      * server.
-     * 
-     * @param transferReq
-     *            message which contains the information of the transferring object
+     *
+     * @param transferReq message which contains the information of the transferring object
      */
     public void sendTransferringGameObjectInfo(SendProtocol transferReq) {
         if (this.con != null) {
-            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
+            ArrayList<SendProtocol> transferReqList = new ArrayList<>();
             transferReqList.add(transferReq);
             con.sendPassGameObjInfo(transferReqList);
         }
@@ -414,13 +403,13 @@ public abstract class Player extends AbsPlayer {
                 /* Y level restriction at edge Or lower */
                 vp_al.setVirtualPointAccessLevel('y', 2);
             }
-            // log.info(userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
+            log.info(userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
         }
 
-        List<SendProtocol> data = new ArrayList<SendProtocol>();
+        List<SendProtocol> data = new ArrayList<>();
         data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth,
                 screenHeight, vp_al));
-        // log.info(userID + " set Virtual point x" + x_virtual + " y" + y_virtual);
+        log.info(userID + " set Virtual point x" + x_virtual + " y" + y_virtual);
         this.sendSyncData(data);
 
         // Update values
@@ -431,13 +420,12 @@ public abstract class Player extends AbsPlayer {
         return true;
     }
 
-    private void setSubtileEgdeValues() {
+    private void setSubTileEgdeValues() {
         this.subTileEdgeX = currentSubTileOriginX + sangraamaMap.getSubTileWidth();
         this.subTileEdgeY = currentSubTileOriginY + sangraamaMap.getSubTileHeight();
     }
 
     /**
-     * 
      * @param body
      */
     public void setBody(Body body) {

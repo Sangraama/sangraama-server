@@ -38,7 +38,7 @@ public class WebSocketConnection extends MessageInbound {
     /**
      * Set the player who is own this web socket connection
      * 
-     * @param ship
+     * @param player
      *            the instance of player which is connect to client
      */
     public void setPlayer(Ship player) {
@@ -114,11 +114,12 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setV(0, 0);
                 this.player.setAngle(0);
                 this.player.shoot(0);
-//                log.info(T + " RESET user events ");
+                log.info(T + " RESET user events ");
                 break;
 
             case 5: // Set Virtual point as the center of AOI in order to get updates
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
+                log.info(T + " set virtual point x:" + event.getX_vp() + " y:" + event.getY_vp());
                 break;
 
             case 20: /*
