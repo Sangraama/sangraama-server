@@ -31,7 +31,7 @@ public final class Constants {
     // Scaling JBox2D units and client side pixels
     public static final float scale = 32.0f;
 
-    public static final int playersLimit = 20;
+    public static final int playersLimit = 200;
     /* Ex: 32 means 1 unit in JBox2D is showing as 32 pixels in client side */
 
 }

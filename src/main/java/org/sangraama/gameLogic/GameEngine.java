@@ -186,7 +186,9 @@ public enum GameEngine implements Runnable {
             // log.info("add Defeated player :" + deafetedPlayer.getUserID());
         }
     }
-
+    public World getWorld(){
+        return world;
+    }
     private void performDummyPlayerUpdates() {
         // Remove existing dummy players from the game world
         DummyPlayer rmDummy;
@@ -275,7 +277,7 @@ public enum GameEngine implements Runnable {
         BoundaryCreator wallGen = new BoundaryCreator();
         wallList = wallGen.calculateWallBoundary();
         for (Wall wall : wallList) {
-            // System.out.println("Adding wall " + wall.getFixtureDef().userData);
+            System.out.println("Adding wall " + wall.getFixtureDef().userData);
             this.world.createBody(wall.getBodyDef()).createFixture(wall.getFixtureDef());
         }
     }

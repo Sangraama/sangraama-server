@@ -18,6 +18,7 @@ import org.apache.coyote.http11.Http11AprProtocol;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.coyote.http11.Http11Protocol;
 import org.sangraama.assets.SangraamaMap;
+import org.sangraama.common.Constants;
 import org.sangraama.jsonprotocols.send.SangraamaTile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +68,7 @@ public enum TileCoordinator {
 
     /**
      * Get the port number of current running server
-     * 
+     *
      * @return hostPort integer
      */
     private int getHostPort() {
@@ -100,13 +101,20 @@ public enum TileCoordinator {
     public void generateHazelcastMaps() {
         String subTileOrigins;
         List<String> subTileOriginList = new ArrayList<>();
-        float subTileOriginX, subTileOriginY;
+        float subTileOriginX = 0, subTileOriginY = 0;
+        Float originX = sangraamaMap.getOriginX();
+        Float originY = sangraamaMap.getOriginY();
         for (int i = 0; i < sangraamaMap.getMapWidth() / subTileWidth; i++) {
             for (int j = 0; j < sangraamaMap.getMapHeight() / subTileHeight; j++) {
-                subTileOriginX = (i * subTileWidth) + sangraamaMap.getOriginX();
-                subTileOriginY = (j * subTileHeight) + sangraamaMap.getOriginY();
-                subTileOrigins = Float.toString(subTileOriginX) + ":"
-                        + Float.toString(subTileOriginY);
+                if (originX != null) {
+                    subTileOriginX = (i * subTileWidth) + originX;
+                    subTileOriginY = (j * subTileHeight) + originY;
+                    subTileOrigins = Float.toString(subTileOriginX) + ":"
+                            + Float.toString(subTileOriginY);
+                } else {
+                    subTileOrigins = " : ";
+
+                }
                 subtileMap.put(subTileOrigins, serverURL);
                 String[] result = serverURL.split(":");
                 System.out.println(TAG + "host-" + result[0] + ", port-" + serverPort
@@ -116,7 +124,7 @@ public enum TileCoordinator {
             }
         }
         playersCountByServerMap.put(serverURL, 0);
-        subtilesByUrlMap.put(serverURL,subTileOriginList);
+        subtilesByUrlMap.put(serverURL, subTileOriginList);
         /*
          * Calculate and store coordination details of sub-tiles. Rationale : Changing/moving of
          * sub-tiles negligible with compared to game engine updating
@@ -136,18 +144,18 @@ public enum TileCoordinator {
     /**
      * Calculate (for storing purpose) coordination details of sub-tiles. Rationale :
      * Changing/moving of sub-tiles negligible with compared to game engine updating
-     * 
+     *
      * @return ArrayList<SangraamaTile> about coordinations of sub-tiles
      */
     private ArrayList<SangraamaTile> calSubTilesCoordinations() {
+        List<String> subTiles = getSubtilesInServer();
         ArrayList<SangraamaTile> tiles = new ArrayList<SangraamaTile>();
-        Set<String> keySet = subtileMap.keySet();
 
         // Iterate though all keys
-        for (String key : keySet) {
+        for (String subTile : subTiles) {
             // If sub-tile is inside current server, add to list
-            if (this.serverURL.equals(subtileMap.get(key))) {
-                String[] s = key.split(":");
+            String[] s = subTile.split(":");
+            if (s[0] != null && !s[0].equals(" ")) {
                 tiles.add(new SangraamaTile(Float.parseFloat(s[0]), Float.parseFloat(s[1]),
                         this.subTileWidth, this.subTileHeight));
             }
@@ -158,7 +166,7 @@ public enum TileCoordinator {
 
     /**
      * Get details of sub-tiles coordinations
-     * 
+     *
      * @return ArrayList<SangraamaTile> about coordinations of sub-tiles
      */
     public List<SangraamaTile> getSubTilesCoordinations() {
@@ -170,24 +178,25 @@ public enum TileCoordinator {
         return hazelcastInstance;
     }
 
-    public Map<String,Integer> getPlayersCountByServerMap(){
+    public Map<String, Integer> getPlayersCountByServerMap() {
         return playersCountByServerMap;
     }
-    public String getServerURL(){
+
+    public String getServerURL() {
         return this.serverURL;
     }
-    public List<String> getSubtilesInServer(){
-     return subtilesByUrlMap.get(serverURL);
+
+    public List<String> getSubtilesInServer() {
+        return subtilesByUrlMap.get(serverURL);
     }
 
-    public Map<String,List<String>> getSubtilesInServerMap(){
+    public Map<String, List<String>> getSubtilesInServerMap() {
         return subtilesByUrlMap;
     }
 
-    public Map<String,String> getSubtileMap(){
+    public Map<String, String> getSubtileMap() {
         return subtileMap;
     }
-
 
 
 }

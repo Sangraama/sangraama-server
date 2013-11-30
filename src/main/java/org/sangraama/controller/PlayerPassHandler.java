@@ -79,8 +79,8 @@ public enum PlayerPassHandler {
         ServerLocation serverLoc = sHandler.getThriftServerLocation(ship.getX(), ship.getY());
 
         tPlayer.id = ship.getUserID();
-        tPlayer.x = (int) (ship.getX() + SangraamaMap.INSTANCE.getOriginX());
-        tPlayer.y = (int) (ship.getY() + SangraamaMap.INSTANCE.getOriginY());
+//        tPlayer.x = (int) (ship.getX() + SangraamaMap.INSTANCE.getOriginX());
+//        tPlayer.y = (int) (ship.getY() + SangraamaMap.INSTANCE.getOriginY());
         tPlayer.v_x = ship.getV().x;
         tPlayer.v_y = ship.getV().y;
         if (serverLoc != null) {

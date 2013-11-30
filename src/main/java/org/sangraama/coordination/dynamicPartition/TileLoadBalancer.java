@@ -47,8 +47,10 @@ public enum TileLoadBalancer implements Runnable {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                updateSubTilePlayerCount();
+                updateServerPlayerCount();
                 passPlayersToAnotherServer();
+                System.out.println("$$$ Body count" + gameEngine.getWorld().getBodyCount());
+
             }
 
 
@@ -58,7 +60,7 @@ public enum TileLoadBalancer implements Runnable {
 
     }
 
-    private void updateSubTilePlayerCount() {
+    private void updateServerPlayerCount() {
         countPlayersInServer();
     }
 
@@ -68,6 +70,7 @@ public enum TileLoadBalancer implements Runnable {
         for (String subTile : subTileList) {
             int subCount = countPlayersInSubTiles(subTile);
             totalCount += subCount;
+//            log.info("Sub tiles in server {}", subTile);
         }
         log.info("Total no of players in server : {}", totalNoOfPlayersInServer);
         totalNoOfPlayersInServer = totalCount;
@@ -75,21 +78,24 @@ public enum TileLoadBalancer implements Runnable {
 
     private int countPlayersInSubTiles(String subTile) {
         String[] s = subTile.split(":");
-        float subTileOriginX = Float.valueOf(s[0]);
-        float subTileOriginY = Float.valueOf(s[1]);
-        float subTileMarginX = subTileOriginX + sangraamaMap.getSubTileWidth();
-        float subTileMarginY = subTileOriginY + sangraamaMap.getSubTileHeight();
+        if (s[0] != null && !s[0].equals(" ")) {
+            float subTileOriginX = Float.valueOf(s[0]);
+            float subTileOriginY = Float.valueOf(s[1]);
+            float subTileMarginX = subTileOriginX + sangraamaMap.getSubTileWidth();
+            float subTileMarginY = subTileOriginY + sangraamaMap.getSubTileHeight();
 
-        int playerCount = 0;
-        List<Player> playerList = gameEngine.getPlayerList();
+            int playerCount = 0;
+            List<Player> playerList = gameEngine.getPlayerList();
 
-        for (Player player : playerList) {
-            if ((subTileOriginX < player.getX() && player.getX() < subTileMarginX) && (subTileOriginY < player.getY() && player.getY() < subTileMarginY)) {
-                playerCount++;
+            for (Player player : playerList) {
+                if ((subTileOriginX < player.getX() && player.getX() < subTileMarginX) && (subTileOriginY < player.getY() && player.getY() < subTileMarginY)) {
+                    playerCount++;
+                }
             }
+            playerCountInSubTiles.put(subTile, playerCount);
+            return playerCount;
         }
-        playerCountInSubTiles.put(subTile, playerCount);
-        return playerCount;
+        return 0;
     }
 
     private void passPlayersToAnotherServer() {
@@ -130,6 +136,9 @@ public enum TileLoadBalancer implements Runnable {
         str.remove(transferringTile);
         playerCountInSubTiles.remove(transferringTile);
         tileCoordinator.getSubtilesInServerMap().put(serverUrl, str);
+        for (Player player : gameEngine.getPlayerList()) {
+            player.sendTileSizeInfoAfterTilePass();
+        }
     }
 
     private String findAServerToTransform(int size) {
@@ -139,10 +148,10 @@ public enum TileLoadBalancer implements Runnable {
             int count = severs.get(svr);
             int maxCount = 0;
             if ((count + size) < Constants.playersLimit) {
-                /*if (count > maxCount) {
-                    maxCount = count;*/
-                return svr;
-//                }
+                if (count >= maxCount) {
+                    maxCount = count;
+                    serverUrl = svr;
+                }
             }
         }
         return serverUrl;

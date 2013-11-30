@@ -24,6 +24,7 @@ public abstract class AbsPlayer {
 
 	GameEngine gameEngine;
 	SangraamaMap sangraamaMap;
+    TileCoordinator tileCoordinator;
 	// WebSocket Connection
 	WebSocketConnection con;
 
@@ -82,6 +83,7 @@ public abstract class AbsPlayer {
 		this.setAOI(w, h);
 
 		this.sangraamaMap = SangraamaMap.INSTANCE;
+        this.tileCoordinator = TileCoordinator.INSTANCE;
 		/*
 		 * Note: this should replace by sangraama map method. Player shouldn't
 		 * responsible for Deciding it's sub-tile
@@ -159,8 +161,12 @@ public abstract class AbsPlayer {
 	 * 
 	 */
 	public void sendTileSizeInfo() {
-		this.con.sendTileSizeInfo(new TileInfo(this.userID));
+		this.con.sendTileSizeInfo(new TileInfo(16,this.userID));
 	}
+
+    public void sendTileSizeInfoAfterTilePass() {
+        this.con.sendTileSizeInfo(new TileInfo(17,this.userID));
+    }
 
 	/**
 	 * Abstract setter methods. Implementation will depends on whether it is a

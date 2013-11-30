@@ -129,27 +129,6 @@ public abstract class Player extends AbsPlayer {
     }
 
     /**
-     * Check whether player is inside current tile
-     * 
-     * @param x
-     *            Player's current x coordination
-     * @param y
-     *            Player's current y coordination
-     * @return if inside tile return true, else false
-     */
-    private boolean isInsideMap(float x, float y) {
-        // System.out.println(TAG + userID + " is inside "+x+":"+y);
-        if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
-                && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
-            return true;
-        } else {
-            log.info(userID + " Outside of map : " + sangraamaMap.getEdgeX() + ":"
-                    + sangraamaMap.getEdgeY());
-            return false;
-        }
-    }
-
-    /**
      * Check whether player is inside current sub-tile
      * 
      * @param x
@@ -166,12 +145,14 @@ public abstract class Player extends AbsPlayer {
         // log.info(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
         // + subTileOriX + ":" + subTileOriY);
         if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
+            log.info("$$$$$$$$$ My test 2 cu x"+ currentSubTileOriginX +"cu y"+currentSubTileOriginY+"sub x"+subTileOriX+"sub y"+subTileOriY);
             currentSubTileOriginX = subTileOriX;
             currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
+                log.info("$$$$$$$$$ My test 3 cu x"+ currentSubTileOriginX +"cu y"+currentSubTileOriginY+"sub x"+subTileOriX+"sub y"+subTileOriY);
                 insideServerSubTile = false;
-                // log.info(userID + " player is not inside a subtile of " +
-                // sangraamaMap.getHost());
+                log.info(userID + " player is not inside a subtile of " +
+                sangraamaMap.getHost());
             }
         }
 
@@ -211,6 +192,7 @@ public abstract class Player extends AbsPlayer {
      */
     public void reqInterestIn(float x, float y) {
         if (!isInsideServerSubTile(x, y) && isInsideTotalMap(x, y)) {
+            log.info("$$$$$$$$$ My test 1");
             PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }

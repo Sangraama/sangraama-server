@@ -47,8 +47,8 @@ public class ServerStarter implements ServletContextListener {
         } catch (Exception e) {
             log.error("Error occured while reading property file {}", e);
         }
-        SangraamaMap.INSTANCE.setMap(Float.parseFloat(prop.getProperty("maporiginx")),
-                Float.parseFloat(prop.getProperty("maporiginy")),
+        SangraamaMap.INSTANCE.setMap(prop.getProperty("maporiginx"),
+                prop.getProperty("maporiginy"),
                 Float.parseFloat(prop.getProperty("mapwidth")),
                 Float.parseFloat(prop.getProperty("mapheight")), prop.getProperty("host") + ":"
                 + prop.getProperty("port") + "/" + prop.getProperty("dir")

@@ -37,7 +37,7 @@ public class WebSocketConnection extends MessageInbound {
     /**
      * Set the player who is own this web socket connection
      * 
-     * @param ship
+     * @param player
      *            the instance of player which is connect to client
      */
     public void setPlayer(Ship player) {
@@ -59,7 +59,7 @@ public class WebSocketConnection extends MessageInbound {
 
     @Override
     protected void onClose(int status) {
-        // log.info("Connection closed");
+        log.info("Connection closed");
 //        this.player.removeWebSocketConnection();
         this.player = null;
 

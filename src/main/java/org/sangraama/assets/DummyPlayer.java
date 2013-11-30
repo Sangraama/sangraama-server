@@ -29,10 +29,6 @@ public class DummyPlayer extends AbsPlayer {
      * 
      * @param userID
      *            userID of the player in server side
-     * @param x
-     *            player's current location x coordinates
-     * @param y
-     *            player's current location y coordinates
      * @param w
      *            width of player's AOI
      * @param h
@@ -66,23 +62,20 @@ public class DummyPlayer extends AbsPlayer {
      * @return if inside tile return true, else false
      */
     private boolean isInsideMap(float x, float y) {
-        // System.out.println(TAG + "is inside "+x+":"+y);
-        if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
-                && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
-            /*
-             * log.info(" x:" + x + " y:" + y + " inside of map x: " + sangraamaMap.getOriginX() +
-             * ":" + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":" +
-             * sangraamaMap.getEdgeY());
-             */
-            return true;
-        } else {
-            /*
-             * log.info(" x:" + x + " y:" + y + "Outside of map x: " + sangraamaMap.getOriginX() +
-             * ":" + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":" +
-             * sangraamaMap.getEdgeY());
-             */
-            return false;
+        List<String> subTiles = tileCoordinator.getSubtilesInServer();
+        for(String subTile : subTiles){
+          String[] s = subTile.split(":");
+          if(s[0]!=null && !s[0].equals(" ")){
+              float subOriginX = Float.valueOf(s[0]);
+              float subOriginY = Float.valueOf(s[1]);
+              float subEdgeX = subOriginX + sangraamaMap.getSubTileWidth();
+              float subEdgeY = subOriginY + sangraamaMap.getSubTileHeight();
+              if( subOriginX<= x && x<=subEdgeX && subOriginY <=y && y<= subEdgeY){
+                  return true;
+              }
+          }
         }
+        return false;
     }
 
     /**

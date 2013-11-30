@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 public enum SangraamaMap {
     INSTANCE;
     private static final Logger log = LoggerFactory.getLogger(SangraamaMap.class);
-    private float originX = 0.0f;
-    private float originY = 0.0f;
+    private Float originX;
+    private Float originY;
     private float edgeX = 0.0f; // Store value of originX + mapWidth
     private float edgeY = 0.0f; // Store value of originY + mapHeight
     private float mapWidth;
@@ -24,19 +24,30 @@ public enum SangraamaMap {
 
     }
 
-    public void setMap(float originX, float originY, float width, float height, String host,
-            float maxWidth, float maxHeight) {
+    public void setMap(String originX, String originY, float width, float height, String host,
+                       float maxWidth, float maxHeight) {
         // Next milestone: map will load via DB
-        this.originX = originX / Constants.scale;
-        this.originY = originY / Constants.scale;
         this.mapWidth = width / Constants.scale;
         this.mapHeight = height / Constants.scale;
         this.host = host;
         this.maxWidth = maxWidth / Constants.scale;
         this.maxHeight = maxHeight / Constants.scale;
+        if (originX != null && !originX.equals("")) {
+            this.originX = Float.valueOf(originX) / Constants.scale;
+            this.edgeX = this.originX + this.mapWidth;
 
-        this.edgeX = this.originX + this.mapWidth;
-        this.edgeY = this.originY + this.mapHeight;
+        } else {
+            this.originX = null;
+            this.edgeX = this.mapWidth;
+        }
+        if (originY != null && !originY.equals("")) {
+            this.originY = Float.valueOf(originY) / Constants.scale;
+            this.edgeY =  this.originY+ this.mapHeight;
+
+        } else {
+            this.edgeY = this.mapHeight;
+            this.originY = null;
+        }
         log.info("created with x:" + this.originX + " y:" + this.originY + "  x':" + edgeX + " y':"
                 + edgeY);
     }
@@ -55,17 +66,17 @@ public enum SangraamaMap {
         return mapHeight;
     }
 
-    public float getOriginX() {
+    public Float getOriginX() {
         return originX;
     }
 
-    public float getOriginY() {
+    public Float getOriginY() {
         return originY;
     }
 
     /**
      * Get value of originX + mapWidth
-     * 
+     *
      * @return float (originX + mapWidth)
      */
     public float getEdgeX() {
@@ -74,7 +85,7 @@ public enum SangraamaMap {
 
     /**
      * Get value of originY + mapWidth
-     * 
+     *
      * @return float (originY + mapHeight)
      */
     public float getEdgeY() {
