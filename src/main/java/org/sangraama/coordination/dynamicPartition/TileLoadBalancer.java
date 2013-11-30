@@ -49,7 +49,7 @@ public enum TileLoadBalancer implements Runnable {
             public void actionPerformed(ActionEvent arg0) {
                 updateServerPlayerCount();
                 passPlayersToAnotherServer();
-                System.out.println("$$$ Body count" + gameEngine.getWorld().getBodyCount());
+//                System.out.println("$$$ Body count" + gameEngine.getWorld().getBodyCount());
 
             }
 
@@ -72,7 +72,7 @@ public enum TileLoadBalancer implements Runnable {
             totalCount += subCount;
 //            log.info("Sub tiles in server {}", subTile);
         }
-        log.info("Total no of players in server : {}", totalNoOfPlayersInServer);
+//        log.info("Total no of players in server : {}", totalNoOfPlayersInServer);
         totalNoOfPlayersInServer = totalCount;
     }
 

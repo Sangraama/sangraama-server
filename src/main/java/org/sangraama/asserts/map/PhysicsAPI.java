@@ -40,14 +40,11 @@ public class PhysicsAPI {
             polyline.createBodyDef(x, y);
             this.bodyDef = polyline.getBodyDef();
             Vec2[] vertices = new Vec2[staticObject.getCoordinates().size()];
-            //System.out.println(16.0/32.0);
             for (int i = 0; i < vertices.length; i++) {
 
                 vertices[i] = new Vec2();
                 float verticeX = scale(staticObject.getCoordinates().get(i).getX());
-                // System.out.println(staticObject.getCoordinates().get(i).getX()+":"+verticeX);
                 float verticeY = scale(staticObject.getCoordinates().get(i).getY());
-                // System.out.println(staticObject.getCoordinates().get(i).getY()+":"+verticeY);
                 vertices[i].set(verticeX, verticeY);
 
             }
@@ -60,52 +57,17 @@ public class PhysicsAPI {
     }
 
     public void applyPhysics(List<StaticObject> staticObjects, World world) {
-        Float originX = SangraamaMap.INSTANCE.getOriginX();
-        Float originY = SangraamaMap.INSTANCE.getOriginY();
-        float xLimit = 0;
-        float yLimit = 0;
-        if (originX != null) {
-            xLimit = originX + SangraamaMap.INSTANCE.getMapWidth();     //The limit in X-axis of the map related to the server.
+        for (StaticObject staticObject : staticObjects) { // for each static object
+            applyPhysics(staticObject); //apply the physics to that object.
+            Body newStaticObjectBody = world.createBody(this.getBodyDef()); // add the static object to the game world.
+            newStaticObjectBody.createFixture(this.getFixtureDef());
 
-        }
-        if (originY != null ) {
-            yLimit = originY + SangraamaMap.INSTANCE.getMapHeight();    //The limit in Y-axis of the map related to the server.
-
-        }
-        xLimit = xLimit * Constants.scale;
-        yLimit = yLimit * Constants.scale;
-        for (int i = 0; i < staticObjects.size(); i++) { // for each static object
-            int count = 0;
-            for (int k = 0; k < staticObjects.get(i).getCoordinates().size(); k++) { //for each coordinate of the object
-                if (staticObjects.get(i).getX() < xLimit && staticObjects.get(i).getY() < yLimit) { //if the x and y coordiantes of the object is within the map
-                    count++;
-                    applyPhysics(staticObjects.get(i)); //apply the physics to that object.
-                    Body newStaticObjectBody = world.createBody(this.getBodyDef()); // add the static object to the game world.
-                    newStaticObjectBody.createFixture(this.getFixtureDef());
-                }
-                if (count > 0)
-                    break;
-            }
 
         }
     }
 
     public float scale(int unitToBeScaled) {
         return unitToBeScaled / Constants.scale;
-    }
-
-    public void applyPhysics(Player player, World world) {
-        Body newPlayerBody = world.createBody(player.getBodyDef());
-        newPlayerBody.createFixture(player.getFixtureDef());
-        player.setBody(newPlayerBody);
-    }
-
-    public void applyPhysics(Bullet bullet, World world) {
-        Body newBulletBody = world.createBody(bullet.getBodyDef());
-
-		/*Body newPlayerBody = world.createBody(player.getBodyDef());
-        newPlayerBody.createFixture(player.getFixtureDef());
-        player.setBody(newPlayerBody);*/
     }
 
     public BodyDef getBodyDef() {
