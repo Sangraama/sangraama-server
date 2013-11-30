@@ -13,6 +13,7 @@ import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
+import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.DummyQueue;
 import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.jsonprotocols.receive.ClientEvent;
@@ -130,7 +131,8 @@ public class WebSocketConnection extends MessageInbound {
                     BulletTransferReq bulletTransReq = gson.fromJson(event.getInfo(),
                             BulletTransferReq.class);
                     Bullet bullet = bulletTransReq.reCreateBullet(event.getInfo());
-                    ((DummyPlayer) this.player).addBulletToGameWorld(bullet);
+                    // Add the bullet transferred from the neighbor server to the game world
+                    BulletQueue.INSTANCE.addToBulletQueue(bullet);
                 }
 
                 break;
@@ -166,7 +168,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setAngle(event.getA());
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
 
-//                log.info(T + " add new Player " + event.toString());
+                log.info(T + " add new Player " + event.toString());
                 /*
                  * AOI and Virtual point will add to the player after creation of it NOTE: These
                  * player details should retrieved via a encrypted message. To create player type:

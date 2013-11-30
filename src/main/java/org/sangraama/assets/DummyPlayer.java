@@ -274,12 +274,4 @@ public class DummyPlayer extends AbsPlayer {
         return this.y;
     }
 
-    /**
-     * Add the bullet transferred from the neighbor server to the game world
-     * 
-     * @param bullet
-     */
-    public void addBulletToGameWorld(Bullet bullet) {
-        BulletQueue.INSTANCE.addToBulletQueue(bullet);
-    }
 }
