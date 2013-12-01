@@ -29,7 +29,7 @@ public class ServerStarter implements ServletContextListener {
     private Logger log = LoggerFactory.getLogger(ServerStarter.class);
     private ThriftServer thriftServer = null;
     private Thread gameEngine = null;
-    private Thread updateEngine = null;
+    private Thread aoiEngine = null;
     private Thread collisionManager = null;
     private Thread thriftServerThread = null;
     private Properties prop;
@@ -61,8 +61,8 @@ public class ServerStarter implements ServletContextListener {
             SangraamaMap.INSTANCE.setSubTileProperties(
                     Float.parseFloat(prop.getProperty("subtilewidth")),
                     Float.parseFloat(prop.getProperty("subtileheight")));
-            this.updateEngine = new Thread(AOIEngine.INSTANCE);
-            this.updateEngine.start();
+            this.aoiEngine = new Thread(AOIEngine.INSTANCE);
+            this.aoiEngine.start();
             this.gameEngine = new Thread(GameEngine.INSTANCE);
             this.gameEngine.start();
             this.collisionManager = new Thread(CollisionManager.INSTANCE);

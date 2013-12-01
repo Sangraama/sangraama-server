@@ -155,25 +155,6 @@ public abstract class Player extends AbsPlayer {
      * @return if inside sub-tile return true, else false
      */
     protected boolean isInsideServerSubTile(float x, float y) {
-        boolean insideServerSubTile = true;
-        // Note : Inefficient code. Is it necessary to calculate at each iteration.
-        float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
-        float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-        // log.info(currentSubTileOriginX + ":" + currentSubTileOriginY + " with " + subTileOriX + ":" + subTileOriY);
-        if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
-            currentSubTileOriginX = subTileOriX;
-            currentSubTileOriginY = subTileOriY;
-            if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                insideServerSubTile = false;
-                // log.info(userID + " player is not inside a sub tile of " + sangraamaMap.getHost());
-            }
-        }
-
-        return insideServerSubTile;
-    }
-
-    // Need to check before use
-    protected boolean isInsideServerSubTiles(float x, float y) {
         if (currentSubTileOriginX <= x && x <= this.subTileEdgeX && currentSubTileOriginY <= y
                 && y <= this.subTileEdgeY) { // true if player is in current sub tile
             return true;
@@ -184,8 +165,7 @@ public abstract class Player extends AbsPlayer {
             this.setSubTileEgdeValues(); // update edge values
             // check whether players coordinates are in current map
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                // log.info(userID + " player is not inside a subtile of " +
-                // sangraamaMap.getHost());
+                log.info(userID + " player is not inside a sub tile of " + sangraamaMap.getHost());
                 return false;
             }
             return true;
