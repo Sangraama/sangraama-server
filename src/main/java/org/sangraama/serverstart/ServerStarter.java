@@ -8,9 +8,9 @@ import org.apache.coyote.ProtocolHandler;
 import org.apache.coyote.http11.Http11AprProtocol;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.coyote.http11.Http11Protocol;
-import org.sangraama.assets.SangraamaMap;
+import org.sangraama.coordination.SangraamaMap;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
-import org.sangraama.gameLogic.AOIEngine;
+import org.sangraama.gameLogic.aoi.AOIEngine;
 import org.sangraama.gameLogic.CollisionManager;
 import org.sangraama.gameLogic.GameEngine;
 import org.sangraama.thrift.server.ThriftServer;
@@ -68,7 +68,7 @@ public class ServerStarter implements ServletContextListener {
             this.collisionManager = new Thread(CollisionManager.INSTANCE);
             this.collisionManager.start();
             TileCoordinator.INSTANCE.init();// Should initialized after "SangraamaMap"
-            TileCoordinator.INSTANCE.generateSubtiles();
+            TileCoordinator.INSTANCE.generateSubTiles();
 
             // thriftServer = new ThriftServer(Integer.parseInt(prop.getProperty("thriftserverport")));
             // thriftServerThread = new Thread(thriftServer);

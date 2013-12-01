@@ -27,7 +27,8 @@ public enum BulletPassHandler {
      *            bullet which going to transferred to another server
      */
     public void passBullets(Bullet bullet) {
-        String newHost = (String) TileCoordinator.INSTANCE.getSubTileHost(bullet.getX(),
+        String newHost;
+        newHost = TileCoordinator.INSTANCE.getSubTileHost(bullet.getX(),
                 bullet.getY());
         BulletTransferReq bulletTransReq = new BulletTransferReq(20, bullet.getPlayerId(),
                 bullet.getId(), bullet.getX(), bullet.getY(), bullet.getVelocity(),

@@ -8,6 +8,7 @@ import org.sangraama.common.Constants;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
+import org.sangraama.gameLogic.aoi.subtile.SubTileHandler;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.PlayerQueue;
 import org.sangraama.jsonprotocols.SendProtocol;
@@ -33,7 +34,6 @@ public abstract class Player extends AbsPlayer {
     float angle;// actual angle
     float oldAngle;// actual angle
 
-    float v_x, v_y;
     float health;
     float score;
 
@@ -50,19 +50,28 @@ public abstract class Player extends AbsPlayer {
     Vec2 v = new Vec2(0.0f, 0.0f);
     PlayerDelta delta;
 
-    private float subTileEdgeX = 0.0f; // Store value of subTileOriginX + subtileWidth
-    private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subtileHeight
+    // player current sub-tile information
+    float currentSubTileOriginX = 0.0f;
+    float currentSubTileOriginY = 0.0f;
+    // Current subtile index at SubTileHandler: for efficient retrieval
+    float currentSubTileIndex;
+    private float subTileEdgeX = 0.0f; // Store value of subTileOriginX + subTileWidth
+    private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subTileHeight
 
     public Player(long userID, float x, float y, float w, float h, float health, float score,
                   WebSocketConnection con, int type, int bulletType) {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
         super.con = con;
-        /* Set sub tile edge values without method */
-        this.subTileEdgeX = (x - (x % sangraamaMap.getSubTileWidth()))
-                + sangraamaMap.getSubTileWidth();
-        this.subTileEdgeY = (y - (y % sangraamaMap.getSubTileHeight()))
-                + sangraamaMap.getSubTileHeight();
+        /*
+         * Note: this should replace by sangraama map method. Player shouldn't
+		 * responsible for Deciding it's sub-tile
+		 */
+        this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+        this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+        this.currentSubTileIndex =  this.currentSubTileOriginY * Constants.subTileHashFactor + this.currentSubTileOriginX;
+        this.setSubTileEgdeValues();
+
         this.health = health;
         this.score = score;
         PlayerQueue.INSTANCE.addToPlayerQueue(this);
@@ -159,6 +168,9 @@ public abstract class Player extends AbsPlayer {
                 && y <= this.subTileEdgeY) { // true if player is in current sub tile
             return true;
         } else { // execute when player isn't in the current sub tile
+            // Remove form previous subtile before assigning to another
+            SubTileHandler.INSTANCE.removePlayer(currentSubTileOriginX, currentSubTileOriginY, this);
+
             // Assign new sub tile origin coordinates
             currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
             currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
@@ -168,6 +180,8 @@ public abstract class Player extends AbsPlayer {
                 log.info(userID + " player is not inside a sub tile of " + sangraamaMap.getHost());
                 return false;
             }
+            this.currentSubTileIndex =  this.currentSubTileOriginY * Constants.subTileHashFactor + this.currentSubTileOriginX;
+            SubTileHandler.INSTANCE.addPlayer(this.currentSubTileIndex, this);
             return true;
         }
     }
@@ -392,14 +406,22 @@ public abstract class Player extends AbsPlayer {
         // log.info(userID + " set Virtual point x:" + x_virtual + " y:" + y_virtual);
         this.sendSyncData(data);
 
-        // Update values
-        this.x_vp_l = x_virtual - halfAOIWidth;
-        this.x_vp_r = x_virtual + halfAOIWidth;
-        this.y_vp_u = y_virtual - halfAOIHieght;
-        this.y_vp_d = y_virtual + halfAOIHieght;
+        calAOIBoxCorners();
         return true;
     }
 
+    public boolean addToSubTileHandler(){
+        calAOIBoxCorners();
+        return SubTileHandler.INSTANCE.addPlayer(this.currentSubTileIndex,this);
+    }
+
+    public boolean removeFromSubTileHandler(){
+        return SubTileHandler.INSTANCE.removePlayer(this.currentSubTileIndex,this);
+    }
+
+    /**
+     * Set sub tile edge values without method
+     */
     private void setSubTileEgdeValues() {
         this.subTileEdgeX = currentSubTileOriginX + sangraamaMap.getSubTileWidth();
         this.subTileEdgeY = currentSubTileOriginY + sangraamaMap.getSubTileHeight();

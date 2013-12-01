@@ -1,4 +1,4 @@
-package org.sangraama.assets;
+package org.sangraama.coordination;
 
 import org.sangraama.common.Constants;
 import org.slf4j.Logger;

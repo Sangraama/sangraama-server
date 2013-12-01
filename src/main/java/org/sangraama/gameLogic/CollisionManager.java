@@ -13,6 +13,7 @@ import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
 import org.sangraama.common.Constants;
+import org.sangraama.gameLogic.aoi.AOIEngine;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.jsonprotocols.transfer.ScoreChangeTransferReq;
 import org.slf4j.*;
@@ -124,6 +125,11 @@ public enum CollisionManager implements Runnable {
         }
     }
 
+    /**
+     * TODO: Optimize for loop, may use hash map
+     * @param ship
+     * @param bullet
+     */
     private void processBulletShipCollition(Player ship, Bullet bullet) {
         boolean playerInServer = false;
         reduceShipHealth(ship.getUserID(), -1f);
@@ -141,6 +147,11 @@ public enum CollisionManager implements Runnable {
         }
     }
 
+    /**
+     * TODO: Optimize for loop, may use hash map
+     * @param userID
+     * @param valChange
+     */
     private void reduceShipHealth(float userID, float valChange) {
         for (Player player : gameEngine.getPlayerList()) {
             if (player.getUserID() == userID) {
@@ -150,6 +161,11 @@ public enum CollisionManager implements Runnable {
         }
     }
 
+    /**
+     * TODO: Optimize for loop, may use hash map
+     * @param shipID
+     * @param scoreChange
+     */
     private void sendScoreChangeEventFromDummy(long shipID, int scoreChange) {
         List<DummyPlayer> dummyList = AOIEngine.INSTANCE.getDummyList();
         for (DummyPlayer dummyPlayer : dummyList) {

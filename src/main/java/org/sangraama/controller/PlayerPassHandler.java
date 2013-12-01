@@ -2,7 +2,7 @@ package org.sangraama.controller;
 
 import org.sangraama.assets.AbsPlayer;
 import org.sangraama.assets.Player;
-import org.sangraama.assets.SangraamaMap;
+import org.sangraama.coordination.SangraamaMap;
 import org.sangraama.assets.Ship;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.jsonprotocols.SendProtocol;
