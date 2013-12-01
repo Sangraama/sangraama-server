@@ -159,13 +159,13 @@ public abstract class Player extends AbsPlayer {
         // Note : Inefficient code. Is it necessary to calculate at each iteration.
         float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
         float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-        log.info(currentSubTileOriginX + ":" + currentSubTileOriginY + " with " + subTileOriX + ":" + subTileOriY);
+        // log.info(currentSubTileOriginX + ":" + currentSubTileOriginY + " with " + subTileOriX + ":" + subTileOriY);
         if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
             currentSubTileOriginX = subTileOriX;
             currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 insideServerSubTile = false;
-                log.info(userID + " player is not inside a sub tile of " + sangraamaMap.getHost());
+                // log.info(userID + " player is not inside a sub tile of " + sangraamaMap.getHost());
             }
         }
 
@@ -403,13 +403,13 @@ public abstract class Player extends AbsPlayer {
                 /* Y level restriction at edge Or lower */
                 vp_al.setVirtualPointAccessLevel('y', 2);
             }
-            log.info(userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
+            // log.info(userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
         }
 
         List<SendProtocol> data = new ArrayList<>();
         data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth,
                 screenHeight, vp_al));
-        log.info(userID + " set Virtual point x" + x_virtual + " y" + y_virtual);
+        // log.info(userID + " set Virtual point x:" + x_virtual + " y:" + y_virtual);
         this.sendSyncData(data);
 
         // Update values

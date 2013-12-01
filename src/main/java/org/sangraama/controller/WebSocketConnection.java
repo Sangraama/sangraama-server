@@ -114,12 +114,12 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setV(0, 0);
                 this.player.setAngle(0);
                 this.player.shoot(0);
-                log.info(T + " RESET user events ");
+                // log.info(T + " RESET user events ");
                 break;
 
             case 5: // Set Virtual point as the center of AOI in order to get updates
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
-                log.info(T + " set virtual point x:" + event.getX_vp() + " y:" + event.getY_vp());
+                // log.info(T + " set virtual point x:" + event.getX_vp() + " y:" + event.getY_vp());
                 break;
 
             case 20: /*
@@ -169,7 +169,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setAngle(event.getA());
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
 
-                log.info(T + " add new Player " + event.toString());
+                // log.info(T + " add new Player " + event.toString());
                 /*
                  * AOI and Virtual point will add to the player after creation of it NOTE: These
                  * player details should retrieved via a encrypted message. To create player type:

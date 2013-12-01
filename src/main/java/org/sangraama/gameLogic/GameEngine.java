@@ -152,7 +152,7 @@ public enum GameEngine implements Runnable {
                 // log.info("Removed player :" + rmPlayer.getUserID());
 
             }
-            log.info("=> player remained:" + this.playerList.size() + " /max:" + maxPlayers
+            log.info("=> (in rm) player remained:" + this.playerList.size() + " /max:" + maxPlayers
                     + " #############");
             rmPlayer = null; // free the memory @need to add to garbage collector
         }
@@ -168,7 +168,7 @@ public enum GameEngine implements Runnable {
             if (this.playerList.size() > maxPlayers)
                 maxPlayers = this.playerList.size();
             // log.info("Added new player :" + newPlayer.getUserID());
-            log.info("=> player remained:" + this.playerList.size() + " / max:" + maxPlayers
+            log.info("=> (in add) player remained:" + this.playerList.size() + " / max:" + maxPlayers
                     + " #############");
             // Send size of the tile
             newPlayer.sendTileSizeInfo();
@@ -195,7 +195,7 @@ public enum GameEngine implements Runnable {
                 if (this.dummyList.size() > maxDummies)
                     maxDummies = this.dummyList.size();
                 // log.info("remove Dummy player :" + rmDummy.getUserID());
-                log.info("=> DUMMY remained:" + this.dummyList.size() + " / max:" + maxDummies
+                log.info("=> (in rm) DUMMY remained:" + this.dummyList.size() + " / max:" + maxDummies
                         + " **************");
             }
             rmDummy = null; // free the memory @need to add to garbage collector
@@ -207,7 +207,7 @@ public enum GameEngine implements Runnable {
             this.dummyList.add(newDummy);
             
             // log.info("add Dummy player :" + newDummy.getUserID());
-            log.info("=> DUMMY remained:" + this.dummyList.size() + " / max:" + maxDummies
+            log.info("=> (in add) DUMMY remained:" + this.dummyList.size() + " / max:" + maxDummies
                     + " **************");
             // Send size of the tile
             newDummy.sendTileSizeInfo();
