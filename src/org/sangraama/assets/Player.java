@@ -1,10 +1,5 @@
 package org.sangraama.assets;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -13,6 +8,7 @@ import org.sangraama.common.Constants;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
+import org.sangraama.gameLogic.aoi.subtile.SubTileHandler;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.PlayerQueue;
 import org.sangraama.jsonprotocols.SendProtocol;
@@ -22,6 +18,11 @@ import org.sangraama.jsonprotocols.send.SyncPlayer;
 import org.sangraama.jsonprotocols.send.VirtualPointAccessLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public abstract class Player extends AbsPlayer {
 
@@ -33,7 +34,6 @@ public abstract class Player extends AbsPlayer {
     float angle;// actual angle
     float oldAngle;// actual angle
 
-    float v_x, v_y;
     float health;
     float score;
 
@@ -50,19 +50,29 @@ public abstract class Player extends AbsPlayer {
     Vec2 v = new Vec2(0.0f, 0.0f);
     PlayerDelta delta;
 
-    private float subTileEdgeX = 0.0f; // Store value of subTileOriginX + subtileWidth
-    private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subtileHeight
+    // player current sub-tile information
+    float currentSubTileOriginX = 0.0f;
+    float currentSubTileOriginY = 0.0f;
+    // Current subtile index at SubTileHandler: for efficient retrieval
+    float currentSubTileIndex;
+    private float subTileEdgeX = 0.0f; // Store value of subTileOriginX + subTileWidth
+    private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subTileHeight
 
     public Player(long userID, float x, float y, float w, float h, float health, float score,
             WebSocketConnection con, int type, int bulletType) {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
         super.con = con;
-        /* Set sub tile edge values without method */
-        this.subTileEdgeX = (x - (x % sangraamaMap.getSubTileWidth()))
-                + sangraamaMap.getSubTileWidth();
-        this.subTileEdgeY = (y - (y % sangraamaMap.getSubTileHeight()))
-                + sangraamaMap.getSubTileHeight();
+        /*
+         * Note: this should replace by sangraama map method. Player shouldn't responsible for
+         * Deciding it's sub-tile
+         */
+        this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
+        this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+        this.currentSubTileIndex = this.currentSubTileOriginY * Constants.subTileHashFactor
+                + this.currentSubTileOriginX;
+        this.setSubTileEgdeValues();
+
         this.health = health;
         this.score = score;
         PlayerQueue.INSTANCE.addToPlayerQueue(this);
@@ -150,7 +160,11 @@ public abstract class Player extends AbsPlayer {
     }
 
     /**
-     * Check whether player is inside current sub-tile
+     * Check whether player is inside current sub-tile of the server
+     * If it's in the current sub tile, do nothing
+     * If player is not in the current sub tile,  but belongs to current server
+     * change current sub tile origin.
+     * False if player is outside of the current map
      * 
      * @param x
      *            Player's current x coordination
@@ -159,41 +173,26 @@ public abstract class Player extends AbsPlayer {
      * @return if inside sub-tile return true, else false
      */
     protected boolean isInsideServerSubTile(float x, float y) {
-        boolean insideServerSubTile = true;
-        // Note : Inefficient code. Is it necessary to calculate at each iteration.
-        float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
-        float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-        // log.info(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
-        // + subTileOriX + ":" + subTileOriY);
-        if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
-            currentSubTileOriginX = subTileOriX;
-            currentSubTileOriginY = subTileOriY;
-            if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                insideServerSubTile = false;
-                // log.info(userID + " player is not inside a subtile of " +
-                // sangraamaMap.getHost());
-            }
-        }
-
-        return insideServerSubTile;
-    }
-
-    // Need to check before use
-    protected boolean isInsideServerSubTiles(float x, float y) {
         if (currentSubTileOriginX <= x && x <= this.subTileEdgeX && currentSubTileOriginY <= y
                 && y <= this.subTileEdgeY) { // true if player is in current sub tile
             return true;
         } else { // execute when player isn't in the current sub tile
+            // Remove form previous sub tile before assigning to another
+            SubTileHandler.INSTANCE
+                    .removePlayer(currentSubTileOriginX, currentSubTileOriginY, this);
+
             // Assign new sub tile origin coordinates
             currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
             currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
-            this.setSubtileEgdeValues(); // update edge values
+            this.setSubTileEgdeValues(); // update edge values
             // check whether players coordinates are in current map
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                // log.info(userID + " player is not inside a subtile of " +
-                // sangraamaMap.getHost());
+                log.info(userID + " player is not inside a sub tile of " + sangraamaMap.getHost());
                 return false;
             }
+            this.currentSubTileIndex = this.currentSubTileOriginY * Constants.subTileHashFactor
+                    + this.currentSubTileOriginX;
+            SubTileHandler.INSTANCE.addPlayer(this.currentSubTileIndex, this);
             return true;
         }
     }
@@ -210,7 +209,8 @@ public abstract class Player extends AbsPlayer {
      *            y coordination of interest location
      */
     public void reqInterestIn(float x, float y) {
-        if (!isInsideServerSubTile(x, y) && isInsideTotalMap(x, y)) {
+        if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))
+                && isInsideTotalMap(x, y)) {
             PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }
@@ -244,7 +244,7 @@ public abstract class Player extends AbsPlayer {
      */
     public void sendPassConnectionInfo(SendProtocol transferReq) {
         if (super.con != null) {
-            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
+            ArrayList<SendProtocol> transferReqList = new ArrayList<>();
             transferReqList.add(transferReq);
             con.sendNewConnection(transferReqList);
             /* Changed player type into dummy player and remove from the world */
@@ -269,7 +269,7 @@ public abstract class Player extends AbsPlayer {
      */
     public void sendUpdateConnectionInfo(SendProtocol transferReq) {
         if (this.con != null) {
-            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
+            ArrayList<SendProtocol> transferReqList = new ArrayList<>();
             transferReqList.add(transferReq);
             con.sendNewConnection(transferReqList);
         } else if (super.isPlayer == 1) {
@@ -292,7 +292,7 @@ public abstract class Player extends AbsPlayer {
      */
     public void sendTransferringGameObjectInfo(SendProtocol transferReq) {
         if (this.con != null) {
-            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
+            ArrayList<SendProtocol> transferReqList = new ArrayList<>();
             transferReqList.add(transferReq);
             con.sendPassGameObjInfo(transferReqList);
         }
@@ -382,8 +382,9 @@ public abstract class Player extends AbsPlayer {
         /*
          * If asking for same virtual point, then ignore it
          */
-        /*if (this.x_virtual == x_vp && this.y_virtual == y_vp)
-            return false;*/
+        /*
+         * if (this.x_virtual == x_vp && this.y_virtual == y_vp) return false;
+         */
 
         this.x_virtual = x_vp;
         this.y_virtual = y_vp;
@@ -417,27 +418,34 @@ public abstract class Player extends AbsPlayer {
             // log.info(userID + "  But set as vp x:" + x_vp + " y:" + y_vp);
         }
 
-        List<SendProtocol> data = new ArrayList<SendProtocol>();
+        List<SendProtocol> data = new ArrayList<>();
         data.add(new SyncPlayer(userID, x, y, x_virtual, y_virtual, angle, screenWidth,
                 screenHeight, vp_al));
-        // log.info(userID + " set Virtual point x" + x_virtual + " y" + y_virtual);
+        // log.info(userID + " set Virtual point x:" + x_virtual + " y:" + y_virtual);
         this.sendSyncData(data);
 
-        // Update values
-        this.x_vp_l = x_virtual - halfAOIWidth;
-        this.x_vp_r = x_virtual + halfAOIWidth;
-        this.y_vp_u = y_virtual - halfAOIHieght;
-        this.y_vp_d = y_virtual + halfAOIHieght;
+        calAOIBoxCorners();
         return true;
     }
 
-    private void setSubtileEgdeValues() {
+    public boolean addToSubTileHandler() {
+        calAOIBoxCorners();
+        return SubTileHandler.INSTANCE.addPlayer(this.currentSubTileIndex, this);
+    }
+
+    public boolean removeFromSubTileHandler() {
+        return SubTileHandler.INSTANCE.removePlayer(this.currentSubTileIndex, this);
+    }
+
+    /**
+     * Set sub tile edge values without method
+     */
+    private void setSubTileEgdeValues() {
         this.subTileEdgeX = currentSubTileOriginX + sangraamaMap.getSubTileWidth();
         this.subTileEdgeY = currentSubTileOriginY + sangraamaMap.getSubTileHeight();
     }
 
     /**
-     * 
      * @param body
      */
     public void setBody(Body body) {

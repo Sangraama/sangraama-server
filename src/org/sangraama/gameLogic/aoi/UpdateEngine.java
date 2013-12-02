@@ -1,4 +1,4 @@
-package org.sangraama.gameLogic;
+package org.sangraama.gameLogic.aoi;
 
 import java.util.concurrent.BlockingQueue;
 

@@ -13,6 +13,7 @@ import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Ship;
+import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.DummyQueue;
 import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.jsonprotocols.receive.ClientEvent;
@@ -37,7 +38,7 @@ public class WebSocketConnection extends MessageInbound {
     /**
      * Set the player who is own this web socket connection
      * 
-     * @param ship
+     * @param player
      *            the instance of player which is connect to client
      */
     public void setPlayer(Ship player) {
@@ -113,11 +114,12 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setV(0, 0);
                 this.player.setAngle(0);
                 this.player.shoot(0);
-//                log.info(T + " RESET user events ");
+                // log.info(T + " RESET user events ");
                 break;
 
             case 5: // Set Virtual point as the center of AOI in order to get updates
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
+                // log.info(T + " set virtual point x:" + event.getX_vp() + " y:" + event.getY_vp());
                 break;
 
             case 20: /*
@@ -130,7 +132,8 @@ public class WebSocketConnection extends MessageInbound {
                     BulletTransferReq bulletTransReq = gson.fromJson(event.getInfo(),
                             BulletTransferReq.class);
                     Bullet bullet = bulletTransReq.reCreateBullet(event.getInfo());
-                    ((DummyPlayer) this.player).addBulletToGameWorld(bullet);
+                    // Add the bullet transferred from the neighbor server to the game world
+                    BulletQueue.INSTANCE.addToBulletQueue(bullet);
                 }
 
                 break;
@@ -166,7 +169,7 @@ public class WebSocketConnection extends MessageInbound {
                 this.player.setAngle(event.getA());
                 this.player.setVirtualPoint(event.getX_vp(), event.getY_vp());
 
-//                log.info(T + " add new Player " + event.toString());
+                // log.info(T + " add new Player " + event.toString());
                 /*
                  * AOI and Virtual point will add to the player after creation of it NOTE: These
                  * player details should retrieved via a encrypted message. To create player type:
@@ -206,6 +209,7 @@ public class WebSocketConnection extends MessageInbound {
      * @param playerDeltaList
      *            delta updates of players who are located inside AOI
      */
+    @SuppressWarnings("deprecation")
     public void sendUpdate(List<SendProtocol> playerDeltaList) throws IOException {
         String convertedString = gson.toJson(playerDeltaList);
         getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));
@@ -218,6 +222,7 @@ public class WebSocketConnection extends MessageInbound {
      * @param transferReq
      *            details about new connection server ArrayList<ClientTransferReq>
      */
+    @SuppressWarnings("deprecation")
     public void sendNewConnection(ArrayList<SendProtocol> transferReq) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
@@ -233,6 +238,7 @@ public class WebSocketConnection extends MessageInbound {
      * @param tilesInfo
      *            ArrayList of details about tile of current server
      */
+    @SuppressWarnings("deprecation")
     public void sendTileSizeInfo(List<SendProtocol> tilesInfo) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tilesInfo)));
@@ -259,6 +265,7 @@ public class WebSocketConnection extends MessageInbound {
      * 
      * @param tranferReqList
      */
+    @SuppressWarnings("deprecation")
     public void sendPassGameObjInfo(List<SendProtocol> tranferReqList) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tranferReqList)));
@@ -273,6 +280,7 @@ public class WebSocketConnection extends MessageInbound {
      * 
      * @param scoreChangeReq
      */
+    @SuppressWarnings("deprecation")
     public void sendScoreChangeReq(List<SendProtocol> scoreChangeReq) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(scoreChangeReq)));
@@ -289,6 +297,7 @@ public class WebSocketConnection extends MessageInbound {
      * 
      * @return null
      */
+    @SuppressWarnings("deprecation")
     public void closeConnection() {
         try {
             getWsOutbound().flush();

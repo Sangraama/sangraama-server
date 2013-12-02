@@ -18,6 +18,8 @@ import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.assets.Wall;
 import org.sangraama.common.Constants;
+import org.sangraama.gameLogic.aoi.AOIEngine;
+import org.sangraama.gameLogic.aoi.subtile.SubTileHandler;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.DummyQueue;
 import org.sangraama.gameLogic.queue.PlayerQueue;
@@ -150,9 +152,9 @@ public enum GameEngine implements Runnable {
             if (this.playerList.remove(rmPlayer)) { // True if player contains
                 this.world.destroyBody(rmPlayer.getBody());
                 // log.info("Removed player :" + rmPlayer.getUserID());
-
+                rmPlayer.removeFromSubTileHandler();
             }
-            log.info("=> player remained:" + this.playerList.size() + " /max:" + maxPlayers
+            log.info("=> (in rm) player remained:" + this.playerList.size() + " /max:" + maxPlayers
                     + " #############");
             rmPlayer = null; // free the memory @need to add to garbage collector
         }
@@ -164,11 +166,12 @@ public enum GameEngine implements Runnable {
             newPlayerBody.createFixture(newPlayer.getFixtureDef());
             newPlayer.setBody(newPlayerBody);
             this.playerList.add(newPlayer);
+            newPlayer.addToSubTileHandler();
 
             if (this.playerList.size() > maxPlayers)
                 maxPlayers = this.playerList.size();
             // log.info("Added new player :" + newPlayer.getUserID());
-            log.info("=> player remained:" + this.playerList.size() + " / max:" + maxPlayers
+            log.info("=> (in add) player remained:" + this.playerList.size() + " / max:" + maxPlayers
                     + " #############");
             // Send size of the tile
             newPlayer.sendTileSizeInfo();
@@ -192,10 +195,11 @@ public enum GameEngine implements Runnable {
         DummyPlayer rmDummy;
         while ((rmDummy = this.removeDummyQueue.poll()) != null) {
             if (this.dummyList.remove(rmDummy)) { // True if player contains
+                rmDummy.removeFromSubTileHandler();
                 if (this.dummyList.size() > maxDummies)
                     maxDummies = this.dummyList.size();
                 // log.info("remove Dummy player :" + rmDummy.getUserID());
-                log.info("=> DUMMY remained:" + this.dummyList.size() + " / max:" + maxDummies
+                log.info("=> (in rm) DUMMY remained:" + this.dummyList.size() + " / max:" + maxDummies
                         + " **************");
             }
             rmDummy = null; // free the memory @need to add to garbage collector
@@ -205,9 +209,10 @@ public enum GameEngine implements Runnable {
         DummyPlayer newDummy;
         while ((newDummy = this.newDummyQueue.poll()) != null) {
             this.dummyList.add(newDummy);
+            newDummy.addToSubTileHandler();
             
             // log.info("add Dummy player :" + newDummy.getUserID());
-            log.info("=> DUMMY remained:" + this.dummyList.size() + " / max:" + maxDummies
+            log.info("=> (in add) DUMMY remained:" + this.dummyList.size() + " / max:" + maxDummies
                     + " **************");
             // Send size of the tile
             newDummy.sendTileSizeInfo();

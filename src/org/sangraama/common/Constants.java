@@ -17,6 +17,7 @@ public final class Constants {
     public static final int velocityIterations = 8; // Default 6
     public static final int positionIterations = 3; // Defaults 2
     public static final int fps = 20; // Default 20 ( 20 < fps < 30 ) refer : section 2.4 in manual
+    public static final int subTileHashFactor = 100; // Heuristic value for number of subtiles to be create by whole map
 
     /**
      * Auto calculated

@@ -25,6 +25,7 @@ public class PlayerConnectionHandlerServlet extends WebSocketServlet {
     protected StreamInbound createWebSocketInbound(String str, HttpServletRequest req) {
 
         // log.info("Get new request to " + req.getServerName() + ":" + req.getServerPort());
+        // System.out.println("Get new request to " + req.getServerName() + ":" + req.getServerPort());
 
         return new WebSocketConnection();
     }

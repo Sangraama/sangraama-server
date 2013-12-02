@@ -1,11 +1,10 @@
-package org.sangraama.coordination.staticPartition;
+package org.sangraama.coordination.dynamic;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.sangraama.coordination.MapCoordinator;
 import org.sangraama.coordination.SangraamaMap;
-import org.sangraama.gameLogic.aoi.subtile.SubTileHandler;
 import org.sangraama.jsonprotocols.send.SangraamaTile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public enum TileCoordinator implements MapCoordinator {
+public enum SubTileCoordinator implements MapCoordinator{
     INSTANCE;
-    private String TAG = "TileCoordinator: ";
-    private Logger log = LoggerFactory.getLogger(TileCoordinator.class);
+    private String TAG = "SubTileCoordinator: ";
+    private Logger log = LoggerFactory.getLogger(SubTileCoordinator.class);
 
     private HazelcastInstance hazelcastInstance;
 
@@ -29,7 +28,7 @@ public enum TileCoordinator implements MapCoordinator {
     private String serverURL;
     private List<SangraamaTile> tileInfo;
 
-    TileCoordinator() {
+    SubTileCoordinator() {
     }
 
     public void init() {
@@ -56,7 +55,6 @@ public enum TileCoordinator implements MapCoordinator {
                  * subTileOriginX + ", origin_y-" + subTileOriginY);
                  */
                 System.out.println(TAG + "host-" + serverURL + ", origin_x-" + subTileOriginX + ", origin_y-" + subTileOriginY);
-                SubTileHandler.INSTANCE.addSubTile(subTileOriginX, subTileOriginY);
             }
         }
         /*
@@ -82,7 +80,7 @@ public enum TileCoordinator implements MapCoordinator {
      * @return ArrayList<SangraamaTile> about coordinations of sub-tiles
      */
     private ArrayList<SangraamaTile> calSubTilesCoordinations() {
-        ArrayList<SangraamaTile> tiles = new ArrayList<>();
+        ArrayList<SangraamaTile> tiles = new ArrayList<SangraamaTile>();
         Set<String> keySet = subtileMap.keySet();
 
         // Iterate though all keys

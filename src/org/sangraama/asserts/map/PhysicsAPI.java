@@ -11,7 +11,7 @@ import org.sangraama.asserts.map.physics.PolygonObjectPhysics;
 import org.sangraama.asserts.map.physics.PolylineObjectPhysics;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.Player;
-import org.sangraama.assets.SangraamaMap;
+import org.sangraama.coordination.SangraamaMap;
 import org.sangraama.common.Constants;
 
 public class PhysicsAPI {

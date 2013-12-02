@@ -16,8 +16,6 @@ public class BulletTransferReq extends SendProtocol {
      * This method create the information needed to pass the bullet. Then the information is signed.
      * The information and signed information are kept together to send the neighbor server.
      * 
-     * 
-     * @param type
      * @param playerID
      * @param BulletId
      * @param x
@@ -29,10 +27,10 @@ public class BulletTransferReq extends SendProtocol {
      * @param screenWidth
      * @param newHost
      */
-    public BulletTransferReq(int type, long playerID, long BulletId, float x, float y,
+    public BulletTransferReq(long playerID, long BulletId, float x, float y,
             Vec2 velocity, float originX, float originY, float screenHeight, float screenWidth,
             String newHost, int bulletType) {
-        super(type, playerID);
+        super(20, playerID);
         BulletTransferInfo bulletInfo = new BulletTransferInfo(BulletId, playerID, x, y, velocity,
                 originX, originY, screenHeight, screenWidth, newHost, bulletType);
         Gson gson = new Gson();

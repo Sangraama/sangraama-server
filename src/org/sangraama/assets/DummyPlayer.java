@@ -1,12 +1,6 @@
 package org.sangraama.assets;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.sangraama.controller.WebSocketConnection;
-import org.sangraama.coordination.staticPartition.TileCoordinator;
-import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.DummyQueue;
 import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.jsonprotocols.send.SyncPlayer;
@@ -14,31 +8,23 @@ import org.sangraama.jsonprotocols.transfer.ScoreChangeTransferReq;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class DummyPlayer extends AbsPlayer {
 
     private static final Logger log = LoggerFactory.getLogger(DummyPlayer.class);
 
     private DummyQueue dummyQueue;
 
-    public boolean isUpdate() {
-        return this.isUpdate;
-    }
-
     /**
      * Create a dummy player in order to get updates to fulfill the player's AOI in client side
-     * 
-     * @param userID
-     *            userID of the player in server side
-     * @param x
-     *            player's current location x coordinates
-     * @param y
-     *            player's current location y coordinates
-     * @param w
-     *            width of player's AOI
-     * @param h
-     *            height of player's AOI
-     * @param con
-     *            web socket Connection
+     *
+     * @param userID userID of the player in server side
+     * @param w      width of player's AOI
+     * @param h      height of player's AOI
+     * @param con    web socket Connection
      */
     public DummyPlayer(long userID, float w, float h, WebSocketConnection con) {
         super(userID, 0.0f, 0.0f, w, h);
@@ -58,58 +44,30 @@ public class DummyPlayer extends AbsPlayer {
 
     /**
      * Check whether given location is inside current tile (map of current server)
-     * 
-     * @param x
-     *            Player's current x coordination
-     * @param y
-     *            Player's current y coordination
+     *
+     * @param x Player's current x coordination
+     * @param y Player's current y coordination
      * @return if inside tile return true, else false
      */
     private boolean isInsideMap(float x, float y) {
-        // System.out.println(TAG + "is inside "+x+":"+y);
-        if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
+        /*if (sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
                 && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY()) {
-            /*
-             * log.info(" x:" + x + " y:" + y + " inside of map x: " + sangraamaMap.getOriginX() +
-             * ":" + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":" +
-             * sangraamaMap.getEdgeY());
-             */
+
+            log.info(" x:" + x + " y:" + y + " inside of map x: " + sangraamaMap.getOriginX() +
+                    ":" + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":" +
+                    sangraamaMap.getEdgeY());
+
             return true;
         } else {
-            /*
-             * log.info(" x:" + x + " y:" + y + "Outside of map x: " + sangraamaMap.getOriginX() +
-             * ":" + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":" +
-             * sangraamaMap.getEdgeY());
-             */
+
+            log.info(" x:" + x + " y:" + y + "Outside of map x: " + sangraamaMap.getOriginX() +
+                    ":" + sangraamaMap.getOriginY() + " y:" + sangraamaMap.getEdgeX() + ":" +
+                    sangraamaMap.getEdgeY());
+
             return false;
-        }
-    }
-
-    /**
-     * Check whether player is inside current sub-tile
-     * 
-     * @param x
-     *            Player's current x coordination
-     * @param y
-     *            Player's current y coordination
-     * @return if inside sub-tile return true, else false
-     */
-    private boolean isInsideServerSubTile(float x, float y) {
-        boolean insideServerSubTile = true;
-        float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
-        float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
-        // System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
-        // + subTileOriX + ":" + subTileOriY);
-        if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
-            currentSubTileOriginX = subTileOriX;
-            currentSubTileOriginY = subTileOriY;
-            if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                insideServerSubTile = false;
-                // log.info("player is not inside a subtile of " + sangraamaMap.getHost());
-            }
-        }
-
-        return insideServerSubTile;
+        }*/
+        return sangraamaMap.getOriginX() <= x && x <= sangraamaMap.getEdgeX()
+                && sangraamaMap.getOriginY() <= y && y <= sangraamaMap.getEdgeY();
     }
 
     public void reqInterestIn(float x, float y) {
@@ -144,7 +102,7 @@ public class DummyPlayer extends AbsPlayer {
     // Need re factoring
     public void sendUpdateConnectionInfo(SendProtocol transferReq) {
         if (this.con != null) {
-            ArrayList<SendProtocol> transferReqList = new ArrayList<SendProtocol>();
+            ArrayList<SendProtocol> transferReqList = new ArrayList<>();
             transferReqList.add(transferReq);
             this.con.sendNewConnection(transferReqList);
         } else if (isPlayer == 2) {
@@ -198,24 +156,19 @@ public class DummyPlayer extends AbsPlayer {
                 || isInsideMap(x_vp + halfAOIWidth, y_vp + halfAOIHieght)) {
             // if one of point is located in server, set virtual point
 
-            List<SendProtocol> data = new ArrayList<SendProtocol>();
+            List<SendProtocol> data = new ArrayList<>();
             // Send updates which are related/interest to dummy player
             data.add(new SyncPlayer(userID, x_virtual, y_virtual, screenWidth, screenHeight));
             // log.info("set Virtual point x" + x_vp + " y" + y_vp);
             this.sendSyncData(data);
 
-            // Update values
-            this.x_vp_l = x_virtual - halfAOIWidth;
-            this.x_vp_r = x_virtual + halfAOIWidth;
-            this.y_vp_u = y_virtual - halfAOIHieght;
-            this.y_vp_d = y_virtual + halfAOIHieght;
+            calAOIBoxCorners();
 
         } else { // Otherwise drop the connection of getting updates
-            List<SendProtocol> data = new ArrayList<SendProtocol>();
+            List<SendProtocol> data = new ArrayList<>();
             // Send updates which are related/interest to closing a dummy player
             data.add(new SyncPlayer(userID));
-            // log.info("Virtual point x" + x_vp + " y" + y_vp +
-            // " is out from this map. Closing ... ");
+            // log.info("Virtual point x" + x_vp + " y" + y_vp + " is out from this map. Closing ... ");
             this.sendSyncData(data);
             con.closeConnection();
             this.dummyQueue.addToRemoveDummyQueue(this);
@@ -223,9 +176,18 @@ public class DummyPlayer extends AbsPlayer {
         return false;
     }
 
+    public boolean addToSubTileHandler() {
+        calAOIBoxCorners();
+        return true;
+    }
+
+    public boolean removeFromSubTileHandler() {
+        return true;
+    }
+
     public void sendScoreChange(ScoreChangeTransferReq scoreChangeReq) {
         if (this.con != null) {
-            ArrayList<SendProtocol> scoreChangeReqList = new ArrayList<SendProtocol>();
+            ArrayList<SendProtocol> scoreChangeReqList = new ArrayList<>();
             scoreChangeReqList.add(scoreChangeReq);
             con.sendScoreChangeReq(scoreChangeReqList);
         }
@@ -274,12 +236,4 @@ public class DummyPlayer extends AbsPlayer {
         return this.y;
     }
 
-    /**
-     * Add the bullet transferred from the neighbor server to the game world
-     * 
-     * @param bullet
-     */
-    public void addBulletToGameWorld(Bullet bullet) {
-        BulletQueue.INSTANCE.addToBulletQueue(bullet);
-    }
 }
