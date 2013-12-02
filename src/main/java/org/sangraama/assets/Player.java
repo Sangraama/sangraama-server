@@ -54,7 +54,7 @@ public abstract class Player extends AbsPlayer {
     private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subtileHeight
 
     public Player(long userID, float x, float y, float w, float h, float health, float score,
-            WebSocketConnection con, int type, int bulletType) {
+                  WebSocketConnection con, int type, int bulletType) {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
         super.con = con;
@@ -94,7 +94,7 @@ public abstract class Player extends AbsPlayer {
          */
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
-        this.oldAngle = this.body.getAngle();
+        this.oldAngle = this.body.getAngle() % 360;
         // Check whether player is inside the tile or not
         /*
          * Gave this responsibility to client if (!this.isInsideMap(this.x, this.y)) {
@@ -130,11 +130,9 @@ public abstract class Player extends AbsPlayer {
 
     /**
      * Check whether player is inside current sub-tile
-     * 
-     * @param x
-     *            Player's current x coordination
-     * @param y
-     *            Player's current y coordination
+     *
+     * @param x Player's current x coordination
+     * @param y Player's current y coordination
      * @return if inside sub-tile return true, else false
      */
     protected boolean isInsideServerSubTile(float x, float y) {
@@ -145,14 +143,12 @@ public abstract class Player extends AbsPlayer {
         // log.info(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
         // + subTileOriX + ":" + subTileOriY);
         if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
-            log.info("$$$$$$$$$ My test 2 cu x"+ currentSubTileOriginX +"cu y"+currentSubTileOriginY+"sub x"+subTileOriX+"sub y"+subTileOriY);
             currentSubTileOriginX = subTileOriX;
             currentSubTileOriginY = subTileOriY;
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
-                log.info("$$$$$$$$$ My test 3 cu x"+ currentSubTileOriginX +"cu y"+currentSubTileOriginY+"sub x"+subTileOriX+"sub y"+subTileOriY);
                 insideServerSubTile = false;
                 log.info(userID + " player is not inside a subtile of " +
-                sangraamaMap.getHost());
+                        sangraamaMap.getHost());
             }
         }
 
@@ -184,15 +180,12 @@ public abstract class Player extends AbsPlayer {
      * of Interest, it will ask for the updates of that area. This method checked in following
      * sequence, 1) check on own sub-tile 2) check whether location is inside current 3) check for
      * the server which own that location and send connection tag
-     * 
-     * @param x
-     *            x coordination of interest location
-     * @param y
-     *            y coordination of interest location
+     *
+     * @param x x coordination of interest location
+     * @param y y coordination of interest location
      */
     public void reqInterestIn(float x, float y) {
         if (!isInsideServerSubTile(x, y) && isInsideTotalMap(x, y)) {
-            log.info("$$$$$$$$$ My test 1");
             PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
         }
     }
@@ -220,9 +213,8 @@ public abstract class Player extends AbsPlayer {
 
     /**
      * Send New connection Address and other details to Client
-     * 
-     * @param transferReq
-     *            Object of Client transferring protocol
+     *
+     * @param transferReq Object of Client transferring protocol
      */
     public void sendPassConnectionInfo(SendProtocol transferReq) {
         if (super.con != null) {
@@ -245,9 +237,8 @@ public abstract class Player extends AbsPlayer {
 
     /**
      * Send update server connection Address and other details to Client to fulfill the AOI
-     * 
-     * @param transferReq
-     *            Object of Client transferring protocol
+     *
+     * @param transferReq Object of Client transferring protocol
      */
     public void sendUpdateConnectionInfo(SendProtocol transferReq) {
         if (this.con != null) {
@@ -268,9 +259,8 @@ public abstract class Player extends AbsPlayer {
     /**
      * This method is used to send the information of the transferring object to the neighbor
      * server.
-     * 
-     * @param transferReq
-     *            message which contains the information of the transferring object
+     *
+     * @param transferReq message which contains the information of the transferring object
      */
     public void sendTransferringGameObjectInfo(SendProtocol transferReq) {
         if (this.con != null) {
@@ -305,28 +295,33 @@ public abstract class Player extends AbsPlayer {
         if (s == 1) {
             float x = this.body.getPosition().x;
             float y = this.body.getPosition().y;
-            if (0 <= this.angle && this.angle <= 90) {
-                float ang = this.angle * Constants.TO_RADIANS;
+            float bulletAngle = this.angle % 360;
+            if (bulletAngle < 0) {
+                bulletAngle += 360;
+            }
+
+            if (0 <= bulletAngle && bulletAngle <= 90) {
+                float ang = bulletAngle * Constants.TO_RADIANS;
                 float rX = (float) (r * Math.cos(ang));
                 float rY = (float) (r * Math.sin(ang));
                 x = x + rX;
                 y = y + rY;
-            } else if (90 <= this.angle && this.angle <= 180) {
-                float ang = (180 - this.angle) * Constants.TO_RADIANS;
+            } else if (90 <= bulletAngle && bulletAngle <= 180) {
+                float ang = (180 - bulletAngle) * Constants.TO_RADIANS;
                 float rX = (float) (r * Math.cos(ang));
                 float rY = (float) (r * Math.sin(ang));
 
                 x = x - rX;
                 y = y + rY;
-            } else if (180 <= this.angle && this.angle <= 270) {
-                float ang = (this.angle - 180) * Constants.TO_RADIANS;
+            } else if (180 <= bulletAngle && bulletAngle <= 270) {
+                float ang = (bulletAngle - 180) * Constants.TO_RADIANS;
                 float rX = (float) (r * Math.cos(ang));
                 float rY = (float) (r * Math.sin(ang));
 
                 x = x - rX;
                 y = y - rY;
-            } else if (270 <= this.angle && this.angle <= 360) {
-                float ang = (360 - this.angle) * Constants.TO_RADIANS;
+            } else if (270 <= bulletAngle && bulletAngle <= 360) {
+                float ang = (360 - bulletAngle) * Constants.TO_RADIANS;
                 float rX = (float) (r * Math.cos(ang));
                 float rY = (float) (r * Math.sin(ang));
 
@@ -419,7 +414,6 @@ public abstract class Player extends AbsPlayer {
     }
 
     /**
-     * 
      * @param body
      */
     public void setBody(Body body) {
@@ -445,7 +439,7 @@ public abstract class Player extends AbsPlayer {
     }
 
     public void setAngle(float a) {
-        this.angle = a;
+        this.angle = a % 360;
         // log.info(TAG + userID + "  set angle : " + a + " > " + this.angle);
     }
 
