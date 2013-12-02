@@ -203,9 +203,14 @@ public abstract class AbsPlayer {
         set.add(this.calSubTileIndex(this.x_vp_r,this.y_vp_u));
         set.add(this.calSubTileIndex(this.x_vp_r,this.y_vp_d));
         for(float index : set){
-            if(SubTileHandler.INSTANCE.isAvailSubTile(index))
+            if(SubTileHandler.INSTANCE.isAvailSubTile(index)){
                 this.indexes.add(index);
+                System.out.print("Available in this server:" + index);
+            }else{
+                System.out.print("Not available in this server:" + index);
+            }
         }
+        System.out.println();
     }
 
     private float calSubTileIndex(float _x, float _y) {

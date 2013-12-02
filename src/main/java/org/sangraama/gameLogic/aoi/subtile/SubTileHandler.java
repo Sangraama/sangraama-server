@@ -82,6 +82,7 @@ public enum SubTileHandler {
      */
     public boolean addPlayer(float index, Player player) {
         // Not necessary to check. In Player class will make sure of it
+        System.out.println("Add player to subtile " + index);
         if (this.subTilesHashMap.containsKey(index)) {
             return this.subTilesHashMap.get(index).addPlayer(player);
         } else {
@@ -115,6 +116,7 @@ public enum SubTileHandler {
      */
     public boolean removePlayer(float index, Player player) {
         // Not necessary to check. In Player class will make sure of it
+        System.out.println("Remove player from subtile " + index);
         if (this.subTilesHashMap.containsKey(index)) {
             return this.subTilesHashMap.get(index).removePlayer(player);
         } else {

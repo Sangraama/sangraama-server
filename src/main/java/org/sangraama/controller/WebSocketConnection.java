@@ -209,6 +209,7 @@ public class WebSocketConnection extends MessageInbound {
      * @param playerDeltaList
      *            delta updates of players who are located inside AOI
      */
+    @SuppressWarnings("deprecation")
     public void sendUpdate(List<SendProtocol> playerDeltaList) throws IOException {
         String convertedString = gson.toJson(playerDeltaList);
         getWsOutbound().writeTextMessage(CharBuffer.wrap(convertedString));
@@ -221,6 +222,7 @@ public class WebSocketConnection extends MessageInbound {
      * @param transferReq
      *            details about new connection server ArrayList<ClientTransferReq>
      */
+    @SuppressWarnings("deprecation")
     public void sendNewConnection(ArrayList<SendProtocol> transferReq) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(transferReq)));
@@ -236,6 +238,7 @@ public class WebSocketConnection extends MessageInbound {
      * @param tilesInfo
      *            ArrayList of details about tile of current server
      */
+    @SuppressWarnings("deprecation")
     public void sendTileSizeInfo(List<SendProtocol> tilesInfo) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tilesInfo)));
@@ -262,6 +265,7 @@ public class WebSocketConnection extends MessageInbound {
      * 
      * @param tranferReqList
      */
+    @SuppressWarnings("deprecation")
     public void sendPassGameObjInfo(List<SendProtocol> tranferReqList) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(tranferReqList)));
@@ -276,6 +280,7 @@ public class WebSocketConnection extends MessageInbound {
      * 
      * @param scoreChangeReq
      */
+    @SuppressWarnings("deprecation")
     public void sendScoreChangeReq(List<SendProtocol> scoreChangeReq) {
         try {
             getWsOutbound().writeTextMessage(CharBuffer.wrap(gson.toJson(scoreChangeReq)));
@@ -292,6 +297,7 @@ public class WebSocketConnection extends MessageInbound {
      * 
      * @return null
      */
+    @SuppressWarnings("deprecation")
     public void closeConnection() {
         try {
             getWsOutbound().flush();

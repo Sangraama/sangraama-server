@@ -115,26 +115,6 @@ public enum AOIEngine implements Runnable {
      * @param p Player
      * @return ArrayList<PlayerDelta>
      */
-    private List<SendProtocol> getAreaOfInterests(Player p) {
-        List<SendProtocol> delta = new ArrayList<>();
-
-        Rectangle r = p.getAOIAsRect();
-        SaveToList v = new SaveToList();
-        for (float index : p.getSubTileIndexesInAOI()) {
-            SubTileHandler.INSTANCE.getPlayersInAOI(index, r, v);
-        }
-        for (long id : v.getIds())
-            delta.add(this.playerDelta.get(id));
-
-        return delta;
-    }
-
-    /**
-     * This method can replace with region query in 4.14 box2D manual
-     *
-     * @param p Player
-     * @return ArrayList<PlayerDelta>
-     */
     private List<SendProtocol> getAreaOfInterest(Player p) {
         List<SendProtocol> delta = new ArrayList<>();
 
@@ -144,6 +124,7 @@ public enum AOIEngine implements Runnable {
                 delta.add(this.playerDelta.get(player.getUserID()));
             }
         }*/
+        
         SaveToList v = new SaveToList();
         for (float index : p.getSubTileIndexesInAOI()) {
             SubTileHandler.INSTANCE.getPlayersInAOI(index, p.getAOIAsRect(), v);
