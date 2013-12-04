@@ -27,18 +27,25 @@ public enum TileCoordinator {
     private String serverURL;
     private List<SangraamaTile> tileInfo;
 
-    TileCoordinator() {
-    }
-
+    /**
+     * Initialize a Hazelcast instance for the game server. Load the map details to partition the
+     * game map.
+     */
     public void init() {
-        hazelcastInstance = Hazelcast.newHazelcastInstance(new Config());
+        hazelcastInstance = Hazelcast.newHazelcastInstance(new Config()); // initialize a hazelcast
+                                                                          // instance
         this.subtileMap = hazelcastInstance.getMap("subtile");
         this.sangraamaMap = SangraamaMap.INSTANCE;
-        this.subTileHeight = sangraamaMap.getSubTileWidth();
+        this.subTileHeight = sangraamaMap.getSubTileWidth(); // read sub partition details
         this.subTileWidth = sangraamaMap.getSubTileHeight();
         this.serverURL = sangraamaMap.getHost();
     }
 
+    /**
+     * Generate sub tiles of the map partition allocated to the game server. Sub tile dimensions are
+     * read from the game server configuration file.Generated sub tiles origins are stored with game
+     * server URL in the hazelcast instance.
+     */
     public void generateSubtiles() {
         String subTileOrigins;
         float subTileOriginX, subTileOriginY;
@@ -48,12 +55,12 @@ public enum TileCoordinator {
                 subTileOriginY = (j * subTileHeight) + sangraamaMap.getOriginY();
                 subTileOrigins = Float.toString(subTileOriginX) + ":"
                         + Float.toString(subTileOriginY);
-                subtileMap.put(subTileOrigins, serverURL);
+                subtileMap.put(subTileOrigins, serverURL); // store sub tile origin and server URL
+                                                           // in hazelcast instance
                 /*
-                 * log.info(TAG + "host-" + serverURL + ", origin_x-" +
-                 * subTileOriginX + ", origin_y-" + subTileOriginY);
+                 * System.out.println(TAG + "host-" + serverURL + ", origin_x-" + subTileOriginX +
+                 * ", origin_y-" + subTileOriginY);
                  */
-                System.out.println(TAG + "host-" + serverURL + ", origin_x-" + subTileOriginX + ", origin_y-" + subTileOriginY);
             }
         }
         /*
@@ -63,6 +70,16 @@ public enum TileCoordinator {
         this.tileInfo = this.calSubTilesCoordinations();
     }
 
+    /**
+     * Return the server URL where a specific point belongs to. The point can be any coordinate in
+     * the whole game map.
+     * 
+     * @param x
+     *            x coordinate of the point
+     * @param y
+     *            y coordinate of the point
+     * @return URL of the host server
+     */
     public String getSubTileHost(float x, float y) {
         String host = "";
         float subTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
@@ -75,7 +92,7 @@ public enum TileCoordinator {
     /**
      * Calculate (for storing purpose) coordination details of sub-tiles. Rationale :
      * Changing/moving of sub-tiles negligible with compared to game engine updating
-     *
+     * 
      * @return ArrayList<SangraamaTile> about coordinations of sub-tiles
      */
     private ArrayList<SangraamaTile> calSubTilesCoordinations() {
@@ -91,13 +108,13 @@ public enum TileCoordinator {
                         this.subTileWidth, this.subTileHeight));
             }
         }
-        // log.info("calculated size of tile (subtiles)");
+        log.info(TAG + "calculated size of tile (subtiles)");
         return tiles;
     }
 
     /**
-     * Get details of sub-tiles coordinations
-     *
+     * Get details of sub-tiles coordinations belongs to the game server
+     * 
      * @return ArrayList<SangraamaTile> about coordinations of sub-tiles
      */
     public List<SangraamaTile> getSubTilesCoordinations() {
@@ -105,6 +122,10 @@ public enum TileCoordinator {
         return this.tileInfo;
     }
 
+    /**
+     * 
+     * @return Hazelcast instance used to store sub tiles
+     */
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
     }
