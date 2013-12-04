@@ -34,4 +34,6 @@ public final class Constants {
     public static final int playersLimit = 20;
     /* Ex: 32 means 1 unit in JBox2D is showing as 32 pixels in client side */
 
+    public static final int loadBalancingDelay = 5000;
+
 }

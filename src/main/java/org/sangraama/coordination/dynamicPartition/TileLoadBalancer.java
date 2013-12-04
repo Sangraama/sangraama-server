@@ -18,6 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Author Amila
+ * This class responsible for dynamic load balancing
+ * It keeps a count of number of players in the system and
+ * then balance the load by passing exceeded players to another server
+ */
 public enum TileLoadBalancer implements Runnable {
     INSTANCE;
     private Logger log = LoggerFactory.getLogger(TileLoadBalancer.class);
@@ -43,13 +49,12 @@ public enum TileLoadBalancer implements Runnable {
     @Override
     public void run() {
 
-        Timer timer = new Timer(5000, new ActionListener() {
+        Timer timer = new Timer(Constants.loadBalancingDelay, new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 updateServerPlayerCount();
                 passPlayersToAnotherServer();
-//                System.out.println("$$$ Body count" + gameEngine.getWorld().getBodyCount());
 
             }
 
@@ -64,18 +69,26 @@ public enum TileLoadBalancer implements Runnable {
         countPlayersInServer();
     }
 
+    /**
+     * Count the total no of players in server by adding up players in sub tiles
+     */
     private void countPlayersInServer() {
         List<String> subTileList = tileCoordinator.getSubtilesInServer();
         int totalCount = 0;
+        log.info("Sub tiles in server {}", subTileList);
         for (String subTile : subTileList) {
             int subCount = countPlayersInSubTiles(subTile);
             totalCount += subCount;
-//            log.info("Sub tiles in server {}", subTile);
         }
-//        log.info("Total no of players in server : {}", totalNoOfPlayersInServer);
+        log.info("Total no of players in server : {}", totalNoOfPlayersInServer);
         totalNoOfPlayersInServer = totalCount;
     }
 
+    /**
+     * Count no of players inside sub tile
+     * @param subTile
+     * @return no of players in sub tile
+     */
     private int countPlayersInSubTiles(String subTile) {
         String[] s = subTile.split(":");
         if (s[0] != null && !s[0].equals(" ")) {
@@ -98,6 +111,10 @@ public enum TileLoadBalancer implements Runnable {
         return 0;
     }
 
+    /**
+     * If no of players inside server exceed the limit
+     * pass sub tile to another server
+     */
     private void passPlayersToAnotherServer() {
         if (totalNoOfPlayersInServer > Constants.playersLimit) {
             log.info("Server exceeded the player limit...");
@@ -114,6 +131,8 @@ public enum TileLoadBalancer implements Runnable {
                     updateServerAfterTransfer(transferringTile, transferringPlayerList.size());
                     updateTransferredServerWithNewData(newSvrUrl, transferringPlayerList.size(), transferringTile);
                     log.info("Successfully transferred {}", transferringPlayerList.size() + " players to " + newSvrUrl);
+                } else {
+                    log.info("Could not find a server to transfer sub tile");
                 }
             }
         } else {
@@ -121,8 +140,14 @@ public enum TileLoadBalancer implements Runnable {
         }
     }
 
-    private void updateTransferredServerWithNewData(String svrUrl, int size, String transferringTile) {
-        int newCount = tileCoordinator.getPlayersCountByServerMap().get(svrUrl) + size;
+    /**
+     * After sub tile transfer update server with new detail
+     * @param svrUrl
+     * @param transferredPlayers
+     * @param transferringTile
+     */
+    private void updateTransferredServerWithNewData(String svrUrl, int transferredPlayers, String transferringTile) {
+        int newCount = tileCoordinator.getPlayersCountByServerMap().get(svrUrl) + transferredPlayers;
         tileCoordinator.getPlayersCountByServerMap().put(svrUrl, newCount);
         tileCoordinator.getSubtileMap().put(transferringTile, svrUrl);
         List<String> str = tileCoordinator.getSubtilesInServerMap().get(svrUrl);
@@ -130,6 +155,11 @@ public enum TileLoadBalancer implements Runnable {
         tileCoordinator.getSubtilesInServerMap().put(svrUrl, str);
     }
 
+    /**
+     * After sub tile transfer update the server that received sub tile
+     * @param transferringTile
+     * @param transferringCount
+     */
     private void updateServerAfterTransfer(String transferringTile, int transferringCount) {
         tileCoordinator.getPlayersCountByServerMap().put(serverUrl, totalNoOfPlayersInServer - transferringCount);
         List<String> str = tileCoordinator.getSubtilesInServerMap().get(serverUrl);
@@ -141,13 +171,18 @@ public enum TileLoadBalancer implements Runnable {
         }
     }
 
-    private String findAServerToTransform(int size) {
+    /**
+     * Search for a server that can keep extra players
+     * @param transferringPlayers
+     * @return
+     */
+    private String findAServerToTransform(int transferringPlayers) {
         Map<String, Integer> severs = tileCoordinator.getPlayersCountByServerMap();
         String serverUrl = null;
         for (String svr : severs.keySet()) {
             int count = severs.get(svr);
             int maxCount = 0;
-            if ((count + size) < Constants.playersLimit) {
+            if ((count + transferringPlayers) < Constants.playersLimit) {
                 if (count >= maxCount) {
                     maxCount = count;
                     serverUrl = svr;
@@ -157,6 +192,11 @@ public enum TileLoadBalancer implements Runnable {
         return serverUrl;
     }
 
+    /**
+     * Find details of the players inside transferring tile
+     * @param transferringTile
+     * @return
+     */
     private List<Player> findPlayersInsideTransferringTile(String transferringTile) {
         List<Player> transferringPlayerList = new ArrayList<>();
         String[] s = transferringTile.split(":");
@@ -175,6 +215,10 @@ public enum TileLoadBalancer implements Runnable {
         return transferringPlayerList;
     }
 
+    /**
+     * Search for a sub tile to transfer
+     * @return
+     */
     private String findSubTileToTransfer() {
         int extraPlayerCount = totalNoOfPlayersInServer - Constants.playersLimit;
         int noOfPlayersToTransfer = 0;
