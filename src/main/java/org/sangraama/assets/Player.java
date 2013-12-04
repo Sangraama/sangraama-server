@@ -23,33 +23,38 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * **************************************************************************
+ * Player class have the main functionality of a player in the game world.
+ * It is also responsible for responding to client events. Player does not have
+ * body and fixture. Users of this class is suppose to extend and implement those.
+ *
+ * @version : v1.2
+ * @author: Gihan Karunarathne
+ * @email: gckarunarathne@gmail.com
+ * Date: 12/5/2013 4:00 PM
+ * ***************************************************************************
+ */
 public abstract class Player extends AbsPlayer {
 
     private static final Logger log = LoggerFactory.getLogger(Player.class);
     static Random generator = new Random();
     Body body;
-
     // Player Dynamic Parameters
     float angle;// actual angle
     float oldAngle;// actual angle
-
-    float v_x, v_y;
     float health;
     float score;
-
-    int a_rate = 2;
+    int a_rate = 2;  // angle acceleration rate
     float angularVelocity;
     int imgType;// image type of the player
     int bulletType;// bullet type of the player
-
     /* Player moving parameters */
     // Player speed factor
-
     float v_rate = 2.5f;
     float bullet_v_rate = 3.5f;
     Vec2 v = new Vec2(0.0f, 0.0f);
     PlayerDelta delta;
-
     private float subTileEdgeX = 0.0f; // Store value of subTileOriginX + subtileWidth
     private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subtileHeight
 
@@ -59,10 +64,8 @@ public abstract class Player extends AbsPlayer {
         super.isPlayer = 1;
         super.con = con;
         /* Set sub tile edge values without method */
-        this.subTileEdgeX = (x - (x % sangraamaMap.getSubTileWidth()))
-                + sangraamaMap.getSubTileWidth();
-        this.subTileEdgeY = (y - (y % sangraamaMap.getSubTileHeight()))
-                + sangraamaMap.getSubTileHeight();
+        this.subTileEdgeX = (x - (x % sangraamaMap.getSubTileWidth())) + sangraamaMap.getSubTileWidth();
+        this.subTileEdgeY = (y - (y % sangraamaMap.getSubTileHeight())) + sangraamaMap.getSubTileHeight();
         this.health = health;
         this.score = score;
         PlayerQueue.INSTANCE.addToPlayerQueue(this);
@@ -71,21 +74,17 @@ public abstract class Player extends AbsPlayer {
     }
 
     public PlayerDelta getPlayerDelta() {
-        // if (!isUpdate) {
-
         if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
-            /*
-             * System.out.print(TAG + "id : " + this.userID + " x:" + x * Constants.scale + " y:" +
-             * y Constants.scale + " angle:" + this.body.getAngle() + " & " +
-             * this.body.getAngularVelocity() + " # "); System.out.println(" x_virtual:" +
-             * this.x_virtual * Constants.scale + " y_virtual:" + this.y_virtual * Constants.scale);
-             */
+
+            System.out.print("id : " + this.userID + " x:" + x * Constants.scale + " y:" +
+                    y * Constants.scale + " angle:" + this.body.getAngle() + " & " +
+                    this.body.getAngularVelocity() + " # ");
+            System.out.println(" x_virtual:" + this.x_virtual * Constants.scale + " y_virtual:" + this.y_virtual * Constants.scale);
+
         }
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
-        // System.out.println(TAG + "id : " + this.userID + " x:" + x + " y:" + y + " health:" +
-        // this.getHealth() + " Score:"+this.getScore());
         this.delta = new PlayerDelta(this.body.getPosition().x, this.body.getPosition().y,
                 this.body.getAngle(), this.userID, this.health, this.score, this.imgType);
         /*
@@ -94,15 +93,13 @@ public abstract class Player extends AbsPlayer {
          */
         this.x = this.body.getPosition().x;
         this.y = this.body.getPosition().y;
-        this.oldAngle = this.body.getAngle()%360;
+        this.oldAngle = this.body.getAngle() % 360;
         // Check whether player is inside the tile or not
         /*
          * Gave this responsibility to client if (!this.isInsideMap(this.x, this.y)) {
          * PlayerPassHandler.INSTANCE.setPassPlayer(this); }
          */
 
-        // isUpdate = true;
-        // }
         if (!isInsideServerSubTile(this.x, this.y)) {
             PlayerPassHandler.INSTANCE.setPassPlayer(this);
             // log.info(userID + " outside of the subtile detected");
@@ -121,9 +118,6 @@ public abstract class Player extends AbsPlayer {
 
     }
 
-    /*
-     * This method isn't secure. Have to inherit from a interface both this and WebSocketConnection
-     */
     public void removeWebSocketConnection() {
         con = null;
     }
@@ -342,7 +336,9 @@ public abstract class Player extends AbsPlayer {
     public abstract FixtureDef getFixtureDef();
 
     /**
-     * Getters and Setters
+     * *****************************
+     * Getters and Setters         *
+     * *****************************
      */
 
     public boolean setVirtualPoint(float x_vp, float y_vp) {
@@ -410,19 +406,19 @@ public abstract class Player extends AbsPlayer {
         this.subTileEdgeY = currentSubTileOriginY + sangraamaMap.getSubTileHeight();
     }
 
-    /**
-     * @param body
-     */
-    public void setBody(Body body) {
-        this.body = body;
-    }
-
     public Body getBody(Body body) {
         return this.body;
     }
 
     public Body getBody() {
         return body;
+    }
+
+    /**
+     * @param body
+     */
+    public void setBody(Body body) {
+        this.body = body;
     }
 
     public Vec2 getV() {
@@ -435,11 +431,6 @@ public abstract class Player extends AbsPlayer {
         // log.info(TAG + userID + "  set V :" + this.v.x + ":" + this.v.y);
     }
 
-    public void setAngle(float a) {
-        this.angle = a%360;
-        // log.info(TAG + userID + "  set angle : " + a + " > " + this.angle);
-    }
-
     public void setAngularVelocity(float da) {
         this.angularVelocity = da % 2 * a_rate;
         // log.info(TAG + userID + "  set angular velocity : " + da + " > "
@@ -448,6 +439,18 @@ public abstract class Player extends AbsPlayer {
 
     public float getAngle() {
         return angle;
+    }
+
+    public void setAngle(float a) {
+        this.angle = a % 360;
+        // log.info(TAG + userID + "  set angle : " + a + " > " + this.angle);
+    }
+
+    public float getHealth() {
+        if (this.health < 0)
+            return 0;
+        else
+            return this.health;
     }
 
     public void setHealth(float healthChange) {
@@ -460,13 +463,6 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
-    public float getHealth() {
-        if (this.health < 0)
-            return 0;
-        else
-            return this.health;
-    }
-
     public float getScore() {
         if (this.score > 0) {
             return this.score;
@@ -475,16 +471,16 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
-    public int getType() {
-        return imgType;
-    }
-
     public void setScore(float scoreChange) {
         if ((this.score + scoreChange) > 0) {
             this.score += scoreChange;
         } else {
             this.score = 0;
         }
+    }
+
+    public int getType() {
+        return imgType;
     }
 
     public DefeatMsg getDefeatMsg() {
