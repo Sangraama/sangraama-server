@@ -6,10 +6,15 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 
+/**
+ *   The class containing physics related to polylines.
+ */
 public class PolylineObjectPhysics {
 
-    private BodyDef bodyDef;
-    private FixtureDef fixtureDef;
+    private BodyDef bodyDef;       //object body definition - details needed to build the body.
+    private FixtureDef fixtureDef;  //fixture of the object
+    private ChainShape chainShape;    //   efficient way to connect many edges together
+    private Vec2[] vector;
 
     public BodyDef getBodyDef() {
         return bodyDef;
@@ -26,9 +31,6 @@ public class PolylineObjectPhysics {
     public void setFixtureDef(FixtureDef fixtureDef) {
         this.fixtureDef = fixtureDef;
     }
-
-    private ChainShape chainShape;
-    private Vec2[] vector;
 
     public ChainShape getChainShape() {
         return chainShape;
@@ -53,22 +55,33 @@ public class PolylineObjectPhysics {
         chainShape.createLoop(vertices, count);
     }
 
+    /**
+     *
+     * @param x  coordinate
+     * @param y  coordinate
+     * define the body for the polyline object  and set the position.
+     */
     public void createBodyDef(int x, int y) {
         bodyDef = new BodyDef();
-        bodyDef.type = BodyType.STATIC;
-        bodyDef.position.set(x, y);
+        bodyDef.type = BodyType.STATIC;  // set the type of object to static
+        bodyDef.position.set(x, y);   //set the x, y position of the object
     }
 
+    /**
+     *
+     * @param vertices  - set of vertices of the object
+     * @param count     - number of vertices
+     *
+     */
     public void createFixtureDef(Vec2[] vertices, int count) {
         chainShape = new ChainShape();
-        // chainShape.createChain(vertices, count);
-        // System.out.println("Chain created");
-        chainShape.createLoop(vertices, count);
+        // chainShape.createChain(vertices, count);   // This does not connect the first and last vertices.
+        chainShape.createLoop(vertices, count);   //The first and last vertices are connected
         // chainShape.set(vertices, count);
         fixtureDef = new FixtureDef();
-        fixtureDef.shape = chainShape;
-        fixtureDef.filter.groupIndex = 2;
-        fixtureDef.userData = "island";
+        fixtureDef.shape = chainShape;  //set the shape of the body to chain shape.
+        fixtureDef.filter.groupIndex = 2;      //for collision purposes
+        fixtureDef.userData = "island";     //a hook to link objects to bodies.
     }
 
 }

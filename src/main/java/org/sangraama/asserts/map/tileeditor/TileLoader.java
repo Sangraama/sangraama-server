@@ -56,6 +56,9 @@ public class TileLoader {
         this.objects = objects;
     }
 
+    /**
+     * read the game world xml file and load the object hierarchy using JAXB.
+     */
     public void ParseMapFile() {
         try {
             jc = JAXBContext.newInstance(Map.class);
