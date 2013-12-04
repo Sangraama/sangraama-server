@@ -74,8 +74,8 @@ public enum TileLoadBalancer implements Runnable {
      */
     private void countPlayersInServer() {
         List<String> subTileList = tileCoordinator.getSubtilesInServer();
-        int totalCount = 0;
         log.info("Sub tiles in server {}", subTileList);
+        int totalCount = 0;
         for (String subTile : subTileList) {
             int subCount = countPlayersInSubTiles(subTile);
             totalCount += subCount;

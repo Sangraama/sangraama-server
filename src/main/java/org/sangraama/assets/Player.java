@@ -291,7 +291,7 @@ public abstract class Player extends AbsPlayer {
     }
 
     public void shoot(float s) {
-        float r = 3;
+        float r = 2;
         if (s == 1) {
             float x = this.body.getPosition().x;
             float y = this.body.getPosition().y;
