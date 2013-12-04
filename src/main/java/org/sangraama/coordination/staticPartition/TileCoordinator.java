@@ -13,6 +13,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This class partition the game map of the server into sub tiles. Then it stores sub tile
+ * origins with server URL in Hazelcast instance.
+ * 
+ * @author Dileepa Rajaguru
+ * 
+ */
+
 public enum TileCoordinator {
     INSTANCE;
     private String TAG = "TileCoordinator: ";
@@ -32,11 +40,10 @@ public enum TileCoordinator {
      * game map.
      */
     public void init() {
-        hazelcastInstance = Hazelcast.newHazelcastInstance(new Config()); // initialize a hazelcast
-                                                                          // instance
+        hazelcastInstance = Hazelcast.newHazelcastInstance(new Config());
         this.subtileMap = hazelcastInstance.getMap("subtile");
         this.sangraamaMap = SangraamaMap.INSTANCE;
-        this.subTileHeight = sangraamaMap.getSubTileWidth(); // read sub partition details
+        this.subTileHeight = sangraamaMap.getSubTileWidth();
         this.subTileWidth = sangraamaMap.getSubTileHeight();
         this.serverURL = sangraamaMap.getHost();
     }
@@ -55,12 +62,7 @@ public enum TileCoordinator {
                 subTileOriginY = (j * subTileHeight) + sangraamaMap.getOriginY();
                 subTileOrigins = Float.toString(subTileOriginX) + ":"
                         + Float.toString(subTileOriginY);
-                subtileMap.put(subTileOrigins, serverURL); // store sub tile origin and server URL
-                                                           // in hazelcast instance
-                /*
-                 * System.out.println(TAG + "host-" + serverURL + ", origin_x-" + subTileOriginX +
-                 * ", origin_y-" + subTileOriginY);
-                 */
+                subtileMap.put(subTileOrigins, serverURL);
             }
         }
         /*
@@ -99,9 +101,7 @@ public enum TileCoordinator {
         ArrayList<SangraamaTile> tiles = new ArrayList<SangraamaTile>();
         Set<String> keySet = subtileMap.keySet();
 
-        // Iterate though all keys
         for (String key : keySet) {
-            // If sub-tile is inside current server, add to list
             if (this.serverURL.equals(subtileMap.get(key))) {
                 String[] s = key.split(":");
                 tiles.add(new SangraamaTile(Float.parseFloat(s[0]), Float.parseFloat(s[1]),
