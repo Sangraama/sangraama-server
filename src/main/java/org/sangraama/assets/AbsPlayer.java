@@ -189,8 +189,17 @@ public abstract class AbsPlayer {
     }
 
     /**
-     * Abstract setter methods. Implementation will depends on whether it is a
-     * instance of player or dummy player
+     * ******************************************************************
+     * Abstract setter methods. Implementation will depends
+     * on whether it is a instance of player or dummy player
+     * ******************************************************************
+     */
+
+    /**
+     * Set velocity of the player
+     *
+     * @param x velocity in x direction
+     * @param y velocity in y direction
      */
     public abstract void setV(float x, float y);
 

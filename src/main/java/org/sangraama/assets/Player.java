@@ -29,10 +29,10 @@ import java.util.Random;
  * It is also responsible for responding to client events. Player does not have
  * body and fixture. Users of this class is suppose to extend and implement those.
  *
+ * @author : Gihan Karunarathne
  * @version : v1.2
- * @author: Gihan Karunarathne
- * @email: gckarunarathne@gmail.com
- * Date: 12/5/2013 4:00 PM
+ * @email : gckarunarathne@gmail.com
+ * Date : 12/5/2013 4:00 PM
  * ***************************************************************************
  */
 public abstract class Player extends AbsPlayer {
@@ -58,8 +58,22 @@ public abstract class Player extends AbsPlayer {
     private float subTileEdgeX = 0.0f; // Store value of subTileOriginX + subtileWidth
     private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subtileHeight
 
+    /**
+     * Create a player
+     *
+     * @param userID     player user ID
+     * @param x          x coordinate of the player
+     * @param y          y coordinate of the player
+     * @param w          width of AOI
+     * @param h          height of AOI
+     * @param health     current health of the player
+     * @param score      current score of the player
+     * @param con        web socket connection with client
+     * @param imgType    player's physical view in client side
+     * @param bulletType bullet's physical view in client side
+     */
     public Player(long userID, float x, float y, float w, float h, float health, float score,
-                  WebSocketConnection con, int type, int bulletType) {
+                  WebSocketConnection con, int imgType, int bulletType) {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
         super.con = con;
@@ -69,19 +83,24 @@ public abstract class Player extends AbsPlayer {
         this.health = health;
         this.score = score;
         PlayerQueue.INSTANCE.addToPlayerQueue(this);
-        this.imgType = type;
+        this.imgType = imgType;
         this.bulletType = bulletType;
     }
 
+    /**
+     * Generate and get delta of player updates (the among of change from previous data)
+     *
+     * @return Player's delta updates
+     */
     public PlayerDelta getPlayerDelta() {
-        if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
+        /*if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
 
             System.out.print("id : " + this.userID + " x:" + x * Constants.scale + " y:" +
                     y * Constants.scale + " angle:" + this.body.getAngle() + " & " +
                     this.body.getAngularVelocity() + " # ");
             System.out.println(" x_virtual:" + this.x_virtual * Constants.scale + " y_virtual:" + this.y_virtual * Constants.scale);
 
-        }
+        }*/
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
@@ -107,6 +126,9 @@ public abstract class Player extends AbsPlayer {
         return this.delta;
     }
 
+    /**
+     * Apply new player events to the game world object
+     */
     public void applyUpdate() {
         this.body.setLinearVelocity(this.getV());
         this.body.setAngularVelocity(0.0f);
@@ -166,15 +188,6 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
-    /**
-     * Request for client's Area of Interest around player. When player wants to fulfill it's Area
-     * of Interest, it will ask for the updates of that area. This method checked in following
-     * sequence, 1) check on own sub-tile 2) check whether location is inside current 3) check for
-     * the server which own that location and send connection tag
-     *
-     * @param x x coordination of interest location
-     * @param y y coordination of interest location
-     */
     public void reqInterestIn(float x, float y) {
         if (!isInsideServerSubTile(x, y) && isInsideTotalMap(x, y)) {
             PlayerPassHandler.INSTANCE.setPassConnection(x, y, this);
@@ -331,8 +344,18 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
+    /**
+     * Body definition of player
+     *
+     * @return Body definition
+     */
     public abstract BodyDef getBodyDef();
 
+    /**
+     * Fixture definition of player
+     *
+     * @return fixture definition
+     */
     public abstract FixtureDef getFixtureDef();
 
     /**
@@ -401,26 +424,38 @@ public abstract class Player extends AbsPlayer {
         return true;
     }
 
+    /**
+     * Set values of the corner opposite to origin of subtile
+     * Note: Efficient retrieve of data. Avoid recalculation
+     */
     private void setSubTileEgdeValues() {
         this.subTileEdgeX = currentSubTileOriginX + sangraamaMap.getSubTileWidth();
         this.subTileEdgeY = currentSubTileOriginY + sangraamaMap.getSubTileHeight();
     }
 
-    public Body getBody(Body body) {
+    /**
+     * Get body of player
+     *
+     * @return Body definition
+     */
+    public Body getBody() {
         return this.body;
     }
 
-    public Body getBody() {
-        return body;
-    }
-
     /**
-     * @param body
+     * Set body of the player
+     *
+     * @param body body of the player
      */
     public void setBody(Body body) {
         this.body = body;
     }
 
+    /**
+     * Get velocity of the player
+     *
+     * @return velocity of player
+     */
     public Vec2 getV() {
         return this.v;
     }
@@ -437,6 +472,11 @@ public abstract class Player extends AbsPlayer {
         // + this.angularVelocity);
     }
 
+    /**
+     * Get absolute angle of player
+     *
+     * @return absolute angle of player in degrees
+     */
     public float getAngle() {
         return angle;
     }
@@ -453,6 +493,11 @@ public abstract class Player extends AbsPlayer {
             return this.health;
     }
 
+    /**
+     * Set health of the player
+     *
+     * @param healthChange health level
+     */
     public void setHealth(float healthChange) {
         if ((this.health + healthChange) > 0) {
             this.health += healthChange;
@@ -471,6 +516,11 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
+    /**
+     * Set current score of the player
+     *
+     * @param scoreChange score value
+     */
     public void setScore(float scoreChange) {
         if ((this.score + scoreChange) > 0) {
             this.score += scoreChange;
@@ -479,10 +529,20 @@ public abstract class Player extends AbsPlayer {
         }
     }
 
+    /**
+     * Get player's physical shape in client side
+     *
+     * @return value that indicate client physical view
+     */
     public int getType() {
         return imgType;
     }
 
+    /**
+     * Generate and get defeat message to inform players
+     *
+     * @return Details about defeated player
+     */
     public DefeatMsg getDefeatMsg() {
         return new DefeatMsg(this.userID, this.body.getPosition().x, this.body.getPosition().y,
                 this.body.getAngle(), this.score, this.imgType);
