@@ -28,6 +28,7 @@ public class TestMapAPI {
       mapHeight=mapAPI.getMapHeight();
       mapWidth=mapAPI.getMapWidth();
       staticObjects=mapAPI.getStaticObjects();
+
     }
 
     @Test
