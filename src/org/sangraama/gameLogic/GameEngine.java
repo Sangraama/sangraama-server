@@ -224,7 +224,7 @@ public enum GameEngine implements Runnable {
         while ((rmvBullet = this.removeBulletQueue.poll()) != null) {
             if (this.bulletList.remove(rmvBullet)) {
                 this.world.destroyBody(rmvBullet.getBody());
-
+                rmvBullet.removeFromSubTileHandler();
             }
             // log.info("Removed bullet :" + rmvBullet.getId());
             rmvBullet = null;
@@ -239,6 +239,7 @@ public enum GameEngine implements Runnable {
             newBullet.setBody(newBulletBody);
             newBulletBody.setLinearVelocity(newBullet.getVelocity());
             this.bulletList.add(newBullet);
+            newBullet.addToSubTileHandler();
             /*
              * System.out.println(TAG + "Added new bullet :" + newBullet.getId() + "x : " +
              * newBulletBody.getPosition().x + "y : " + newBulletBody.getPosition().y);

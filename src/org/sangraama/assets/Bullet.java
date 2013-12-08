@@ -6,10 +6,13 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
+import org.sangraama.common.Constants;
 import org.sangraama.controller.BulletPassHandler;
 import org.sangraama.coordination.MapCoordinator;
 import org.sangraama.coordination.SangraamaMap;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
+import org.sangraama.gameLogic.aoi.subtile.Point;
+import org.sangraama.gameLogic.aoi.subtile.SubTileHandler;
 import org.sangraama.jsonprotocols.send.BulletDelta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +35,8 @@ public class Bullet {
     private SangraamaMap sangraamaMap;
     private float currentSubTileOriginX;
     private float currentSubTileOriginY;
+    // Current subtile index at SubTileHandler: for efficient retrieval
+    private float currentSubTileIndex;
     private float currentSubTileEndX;
     private float currentSubTileEndY;
     private int type; // bullet type
@@ -51,6 +56,8 @@ public class Bullet {
         this.sangraamaMap = SangraamaMap.INSTANCE;
         this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
         this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
+        this.currentSubTileIndex = this.currentSubTileOriginY * Constants.subTileHashFactor
+                + this.currentSubTileOriginX;
         this.currentSubTileEndX = (x - (x % sangraamaMap.getSubTileWidth()))
                 + sangraamaMap.getSubTileWidth();
         this.currentSubTileEndY = (y - (y % sangraamaMap.getSubTileHeight()))
@@ -89,11 +96,20 @@ public class Bullet {
     }
 
     public float getX() {
-        return this.body.getPosition().x;
+        return this.x;
     }
 
     public float getY() {
-        return this.body.getPosition().y;
+        return this.y;
+    }
+    
+    /**
+     * Get Player location as a point
+     *
+     * @return player location point
+     */
+    public Point getCoordination() {
+        return new Point(x, y);
     }
 
     public Vec2 getVelocity() {
@@ -153,19 +169,32 @@ public class Bullet {
                 && y <= currentSubTileEndY) {
             return true;
         } else {
+            SubTileHandler.INSTANCE.removeBullet(this.currentSubTileIndex, this);
             currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
             currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
             currentSubTileEndX = (x - (x % sangraamaMap.getSubTileWidth()))
                     + sangraamaMap.getSubTileWidth();
             currentSubTileEndY = (y - (y % sangraamaMap.getSubTileHeight()))
                     + sangraamaMap.getSubTileHeight();
+            
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 /*
                  * log.info(TAG + "Bullet is not inside a subtile of " + sangraamaMap.getHost());
                  */
                 return false;
             }
+            this.currentSubTileIndex = this.currentSubTileOriginY * Constants.subTileHashFactor
+                    + this.currentSubTileOriginX;
+            SubTileHandler.INSTANCE.addBullet(this.currentSubTileIndex, this);
             return true;
         }
+    }
+    
+    public boolean addToSubTileHandler() {
+        return SubTileHandler.INSTANCE.addBullet(this.currentSubTileIndex, this);
+    }
+
+    public boolean removeFromSubTileHandler() {
+        return SubTileHandler.INSTANCE.removeBullet(this.currentSubTileIndex, this);
     }
 }

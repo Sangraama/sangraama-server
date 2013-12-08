@@ -1,5 +1,6 @@
 package org.sangraama.gameLogic.aoi.subtile;
 
+import org.sangraama.assets.Bullet;
 import org.sangraama.assets.Player;
 import org.sangraama.common.Constants;
 
@@ -12,10 +13,10 @@ public enum SubTileHandler {
 
     final int hashFactor = Constants.subTileHashFactor;
     /* None block during readings: http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/ConcurrentHashMap.html */
-    private Hashtable<Float, SubTile> subTilesHashMap;
+    private ConcurrentHashMap<Float, SubTile> subTilesHashMap;
 
     SubTileHandler() {
-        this.subTilesHashMap = new Hashtable<>();
+        this.subTilesHashMap = new ConcurrentHashMap<>();
     }
 
     public void getPlayersInAOI(float index, Rectangle r, TraceBackNode v) {
@@ -54,6 +55,8 @@ public enum SubTileHandler {
         this.subTilesHashMap.remove(orgY * hashFactor + orgX);
     }
 
+    /********** Player ***************/
+    
     /**
      * Add player to subtile which it belongs to
      *
@@ -119,6 +122,78 @@ public enum SubTileHandler {
         System.out.println("Remove player from subtile " + index);
         if (this.subTilesHashMap.containsKey(index)) {
             return this.subTilesHashMap.get(index).removePlayer(player);
+        } else {
+            return false;
+        }
+    }
+    
+    /************* Bullet ****************/
+    
+    /**
+     * Add player to subtile which it belongs to
+     *
+     * @param orgX   x origin coordination of subtile to be add player
+     * @param orgY   y origin coordination of subtile to be add player
+     * @param bullet Player
+     * @return true if added the player, false otherwise
+     */
+    public boolean addBullet(float orgX, float orgY, Bullet bullet) {
+        // Not necessary to check. In Player class will make sure of it
+        if (this.subTilesHashMap.containsKey(orgY * hashFactor + orgX)) {
+            // System.out.println("Player added to the subtile of " + orgY + " : " + orgX);
+            return this.subTilesHashMap.get(orgY * hashFactor + orgX).addBullet(bullet);
+        } else {
+            // System.out.println("Player couldn't add to the subtiles");
+            return false;
+        }
+    }
+
+    /**
+     * Add player to subtile which it belongs to
+     *
+     * @param index  index of subtile to be add player
+     * @param bullet Player
+     * @return true if added the player, false otherwise
+     */
+    public boolean addBullet(float index, Bullet bullet) {
+        // Not necessary to check. In Player class will make sure of it
+        System.out.println("Add bullet to subtile " + index);
+        if (this.subTilesHashMap.containsKey(index)) {
+            return this.subTilesHashMap.get(index).addBullet(bullet);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Remove player from subtile which it belongs to
+     *
+     * @param orgX   x origin coordination of subtile to be remove player
+     * @param orgY   y origin coordination of subtile to be remove player
+     * @param bullet Player
+     * @return true if removed the player, false otherwise
+     */
+    public boolean removeBullet(float orgX, float orgY, Bullet bullet) {
+        // Not necessary to check. In Player class will make sure of it
+        if (this.subTilesHashMap.containsKey(orgY * hashFactor + orgX)) {
+            return this.subTilesHashMap.get(orgY * hashFactor + orgX).removeBullet(bullet);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Remove player from subtile which it belongs to
+     *
+     * @param index  index of subtile to be remove player
+     * @param bullet Player
+     * @return true if removed the player, false otherwise
+     */
+    public boolean removeBullet(float index, Bullet bullet) {
+        // Not necessary to check. In Player class will make sure of it
+        System.out.println("Remove bullet from subtile " + index);
+        if (this.subTilesHashMap.containsKey(index)) {
+            return this.subTilesHashMap.get(index).removeBullet(bullet);
         } else {
             return false;
         }
