@@ -8,6 +8,7 @@ import org.sangraama.common.Constants;
 import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
+import org.sangraama.gameLogic.aoi.subtile.Point;
 import org.sangraama.gameLogic.aoi.subtile.SubTileHandler;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.PlayerQueue;
@@ -83,14 +84,16 @@ public abstract class Player extends AbsPlayer {
     public PlayerDelta getPlayerDelta() {
         // if (!isUpdate) {
 
-        if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
-            /*
-             * System.out.print(TAG + "id : " + this.userID + " x:" + x * Constants.scale + " y:" +
-             * y Constants.scale + " angle:" + this.body.getAngle() + " & " +
-             * this.body.getAngularVelocity() + " # "); System.out.println(" x_virtual:" +
+        /*if ((this.body.getPosition().x - this.x) != 0f || (this.body.getPosition().y - this.y) != 0) {
+            
+              System.out.println("Player id : " + this.userID + " x:" + this.x * Constants.scale + " y:" +
+              this.y * Constants.scale + " angle:" + this.body.getAngle() + " & x:" +
+              this.currentSubTileOriginX * Constants.scale + " y:" + this.currentSubTileOriginY * Constants.scale);
+              
+              this.body.getAngularVelocity() + " # "); System.out.println(" x_virtual:" +
              * this.x_virtual * Constants.scale + " y_virtual:" + this.y_virtual * Constants.scale);
-             */
-        }
+             
+        }*/
 
         // this.delta = new PlayerDelta(this.body.getPosition().x - this.x,
         // this.body.getPosition().y - this.y, this.userID);
@@ -173,13 +176,13 @@ public abstract class Player extends AbsPlayer {
      * @return if inside sub-tile return true, else false
      */
     protected boolean isInsideServerSubTile(float x, float y) {
-        if (currentSubTileOriginX <= x && x <= this.subTileEdgeX && currentSubTileOriginY <= y
+        if (this.currentSubTileOriginX <= x && x <= this.subTileEdgeX && this.currentSubTileOriginY <= y
                 && y <= this.subTileEdgeY) { // true if player is in current sub tile
             return true;
         } else { // execute when player isn't in the current sub tile
             // Remove form previous sub tile before assigning to another
             SubTileHandler.INSTANCE
-                    .removePlayer(currentSubTileOriginX, currentSubTileOriginY, this);
+                    .removePlayer(this.currentSubTileIndex, this);
 
             // Assign new sub tile origin coordinates
             currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
@@ -424,12 +427,12 @@ public abstract class Player extends AbsPlayer {
         // log.info(userID + " set Virtual point x:" + x_virtual + " y:" + y_virtual);
         this.sendSyncData(data);
 
-        calAOIBoxCorners();
+        this.calAOIBoxCorners();
         return true;
     }
 
     public boolean addToSubTileHandler() {
-        calAOIBoxCorners();
+        this.calAOIBoxCorners();
         return SubTileHandler.INSTANCE.addPlayer(this.currentSubTileIndex, this);
     }
 
@@ -452,16 +455,8 @@ public abstract class Player extends AbsPlayer {
         this.body = body;
     }
 
-    public Body getBody(Body body) {
-        return this.body;
-    }
-
     public Body getBody() {
         return body;
-    }
-
-    public Vec2 getV() {
-        return this.v;
     }
 
     public void setV(float x, float y) {
@@ -481,10 +476,6 @@ public abstract class Player extends AbsPlayer {
         // + this.angularVelocity);
     }
 
-    public float getAngle() {
-        return angle;
-    }
-
     public void setHealth(float healthChange) {
         if ((this.health + healthChange) > 0) {
             this.health += healthChange;
@@ -493,6 +484,23 @@ public abstract class Player extends AbsPlayer {
             this.setScore(-200);
             PlayerQueue.INSTANCE.addToDefaetList(this);
         }
+    }
+    
+    public Vec2 getV() {
+        return this.v;
+    }
+    
+    /**
+     * Get Player location as a point
+     *
+     * @return player location point
+     */
+    public Point getCoordination() {
+        return new Point(this.x, this.y);
+    }
+    
+    public float getAngle() {
+        return angle;
     }
 
     public float getHealth() {

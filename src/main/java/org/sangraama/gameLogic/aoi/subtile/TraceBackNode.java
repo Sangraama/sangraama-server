@@ -19,7 +19,9 @@ public interface TraceBackNode {
      * @return true if additional invocations of the procedure are
      * allowed.
      */
-    boolean execute(long id);
+    boolean executePlayer(long id);
+    
+    boolean executeBullet(long id);
 
     boolean execute(PlayerDelta playerDelta);
 }

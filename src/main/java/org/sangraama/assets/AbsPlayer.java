@@ -66,6 +66,10 @@ public abstract class AbsPlayer {
     float screenWidth = 0.0f, screenHeight = 0.0f;
     float halfAOIWidth = 0.0f; // half width of AOI
     float halfAOIHieght = 0.0f; // half height of AOI
+    // Store whether AOI w or h is larger than the subtile w or h
+    // IDEA: One time calculation and efficient use
+    boolean isAOIWidthLarger = false, isAOIHeigthLarger = false;
+    
     List<SendProtocol> deltaList; // Store delta list
 
     public boolean isUpdate() {
@@ -174,15 +178,6 @@ public abstract class AbsPlayer {
         return this.y;
     }
 
-    /**
-     * Get Player location as a point
-     *
-     * @return player location point
-     */
-    public Point getCoord() {
-        return new Point(x, y);
-    }
-
     public abstract boolean setVirtualPoint(float x_v, float y_v);
 
     void calAOIBoxCorners() {
@@ -198,22 +193,34 @@ public abstract class AbsPlayer {
          */
         this.indexes = new ArrayList<>();
         Set<Float> set = new HashSet<>();
-        set.add(this.calSubTileIndex(this.x_vp_l,this.y_vp_u));
-        set.add(this.calSubTileIndex(this.x_vp_l,this.y_vp_d));
-        set.add(this.calSubTileIndex(this.x_vp_r,this.y_vp_u));
-        set.add(this.calSubTileIndex(this.x_vp_r,this.y_vp_d));
+        set.add(this.calcSubTileIndex(this.x_vp_l,this.y_vp_u));
+        set.add(this.calcSubTileIndex(this.x_vp_l,this.y_vp_d));
+        set.add(this.calcSubTileIndex(this.x_vp_r,this.y_vp_u));
+        set.add(this.calcSubTileIndex(this.x_vp_r,this.y_vp_d));
+        /*
+         * If you have players which AOI w or h is greater than the subtiles w or h 
+         */
+        if(this.isAOIWidthLarger){
+            set.add(this.calcSubTileIndex(this.x, this.y_vp_u));
+            set.add(this.calcSubTileIndex(this.x, this.y_vp_d));
+        }
+        if(this.isAOIHeigthLarger){
+            set.add(this.calcSubTileIndex(this.x_vp_l, this.y));
+            set.add(this.calcSubTileIndex(this.x_vp_r, this.y));
+        }
+        
         for(float index : set){
             if(SubTileHandler.INSTANCE.isAvailSubTile(index)){
                 this.indexes.add(index);
-                System.out.print("Available in this server:" + index);
+                // System.out.print(" Available in this server:" + index + " ");
             }else{
-                System.out.print("Not available in this server:" + index);
+                // System.out.print(" Not available in this server:" + index + " ");
             }
         }
-        System.out.println();
+        // System.out.println();
     }
 
-    private float calSubTileIndex(float _x, float _y) {
+    private float calcSubTileIndex(float _x, float _y) {
         return ((_y - (_y % sangraamaMap.getSubTileHeight())) * Constants.subTileHashFactor) + (_x - (_x % sangraamaMap.getSubTileWidth()));
     }
 
@@ -262,6 +269,9 @@ public abstract class AbsPlayer {
                 - (this.halfAOIWidth + 0.2f);
         this.totEdgeY = SangraamaMap.INSTANCE.getMaxHeight()
                 - (this.halfAOIHieght + 0.2f);
+        
+        this.isAOIWidthLarger = this.screenWidth > SangraamaMap.INSTANCE.getSubTileWidth();
+        this.isAOIHeigthLarger = this.screenHeight > SangraamaMap.INSTANCE.getSubTileHeight();
     }
 
     public float getScreenWidth() {

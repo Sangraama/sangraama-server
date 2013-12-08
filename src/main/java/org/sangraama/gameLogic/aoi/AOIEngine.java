@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.Timer;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -129,16 +130,21 @@ public enum AOIEngine implements Runnable {
         for (float index : p.getSubTileIndexesInAOI()) {
             SubTileHandler.INSTANCE.getPlayersInAOI(index, p.getAOIAsRect(), v);
         }
-        for (long id : v.getIds()) {
+        for (long id : v.getPlayersIds()) {
             delta.add(this.playerDelta.get(id));
         }
+        for(long id : v.getBulletIds()){
+            delta.add(this.bulletDelta.get(id));
+        }
 
-        for (Bullet bullet : bulletList) {
+        /*for (Bullet bullet : bulletList) {
             if (p.getXVPLeft() <= bullet.getX() && bullet.getX() <= p.getXVPRight()
                     && p.getYVPUp() <= bullet.getY() && bullet.getY() <= p.getYVPDown()) {
                 delta.add(this.bulletDelta.get(bullet.getId()));
             }
-        }
+        }*/
+        
+        
         for (Player player : defeatedPlayerList) {
             if (p.getXVPLeft() <= player.getX() && player.getX() <= p.getXVPRight()
                     && p.getYVPUp() <= player.getY() && player.getY() <= p.getYVPDown()) {
@@ -167,17 +173,21 @@ public enum AOIEngine implements Runnable {
         for (float index : d.getSubTileIndexesInAOI()) {
             SubTileHandler.INSTANCE.getPlayersInAOI(index, d.getAOIAsRect(), v);
         }
-        for (long id : v.getIds()) {
+        for (long id : v.getPlayersIds()) {
             delta.add(this.playerDelta.get(id));
         }
+        for(long id : v.getBulletIds()){
+            delta.add(this.bulletDelta.get(id));
+        }
 
-        for (Bullet bullet : bulletList) {
+        /*for (Bullet bullet : bulletList) {
             if (d.getXVPLeft() <= bullet.getX() && bullet.getX() <= d.getXVPRight()
                     && d.getYVPUp() <= bullet.getY() && bullet.getY() <= d.getYVPDown()) {
                 delta.add(this.bulletDelta.get(bullet.getId()));
             }
-        }
+        }*/
 
+        // The size of this list small compare to others
         for (Player player : defeatedPlayerList) {
             if (d.getXVPLeft() <= player.getX() && player.getX() <= d.getXVPRight()
                     && d.getYVPUp() <= player.getY() && player.getY() <= d.getYVPDown()) {
@@ -243,10 +253,16 @@ public enum AOIEngine implements Runnable {
     // In this example we want to save the results of the query
     // into a list, so that's what the execute() method does.
     class SaveToList implements TraceBackNode {
-        private List<Long> ids = new ArrayList<>();
+        private List<Long> players = new ArrayList<>();
+        private List<Long> bullets = new ArrayList<>();
 
-        public boolean execute(long id) {
-            ids.add(id);
+        public boolean executePlayer(long id) {
+            players.add(id);
+            return true;
+        }
+        
+        public boolean executeBullet(long id) {
+            bullets.add(id);
             return true;
         }
 
@@ -254,8 +270,12 @@ public enum AOIEngine implements Runnable {
             return true;
         }
 
-        private List<Long> getIds() {
-            return ids;
+        public List<Long> getPlayersIds() {
+            return players;
+        }
+        
+        public List<Long> getBulletIds(){
+            return bullets;
         }
     }
 
