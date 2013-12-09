@@ -1,11 +1,11 @@
 package org.sangraama.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.catalina.websocket.StreamInbound;
 import org.apache.catalina.websocket.WebSocketServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
 
 public class DummyPlayerConnection extends WebSocketServlet {
     public static final Logger log = LoggerFactory.getLogger(DummyPlayerConnection.class);

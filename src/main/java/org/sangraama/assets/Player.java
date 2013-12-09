@@ -60,7 +60,7 @@ public abstract class Player extends AbsPlayer {
     private float subTileEdgeY = 0.0f; // Store value of subTileOriginY + subTileHeight
 
     public Player(long userID, float x, float y, float w, float h, float health, float score,
-            WebSocketConnection con, int type, int bulletType) {
+                  WebSocketConnection con, int type, int bulletType) {
         super(userID, x, y, w, h);
         super.isPlayer = 1;
         super.con = con;
@@ -143,11 +143,9 @@ public abstract class Player extends AbsPlayer {
 
     /**
      * Check whether player is inside current tile
-     * 
-     * @param x
-     *            Player's current x coordination
-     * @param y
-     *            Player's current y coordination
+     *
+     * @param x Player's current x coordination
+     * @param y Player's current y coordination
      * @return if inside tile return true, else false
      */
     private boolean isInsideMap(float x, float y) {
@@ -168,11 +166,9 @@ public abstract class Player extends AbsPlayer {
      * If player is not in the current sub tile,  but belongs to current server
      * change current sub tile origin.
      * False if player is outside of the current map
-     * 
-     * @param x
-     *            Player's current x coordination
-     * @param y
-     *            Player's current y coordination
+     *
+     * @param x Player's current x coordination
+     * @param y Player's current y coordination
      * @return if inside sub-tile return true, else false
      */
     protected boolean isInsideServerSubTile(float x, float y) {
@@ -205,11 +201,9 @@ public abstract class Player extends AbsPlayer {
      * of Interest, it will ask for the updates of that area. This method checked in following
      * sequence, 1) check on own sub-tile 2) check whether location is inside current 3) check for
      * the server which own that location and send connection tag
-     * 
-     * @param x
-     *            x coordination of interest location
-     * @param y
-     *            y coordination of interest location
+     *
+     * @param x x coordination of interest location
+     * @param y y coordination of interest location
      */
     public void reqInterestIn(float x, float y) {
         if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))
@@ -241,9 +235,8 @@ public abstract class Player extends AbsPlayer {
 
     /**
      * Send New connection Address and other details to Client
-     * 
-     * @param transferReq
-     *            Object of Client transferring protocol
+     *
+     * @param transferReq Object of Client transferring protocol
      */
     public void sendPassConnectionInfo(SendProtocol transferReq) {
         if (super.con != null) {
@@ -266,9 +259,8 @@ public abstract class Player extends AbsPlayer {
 
     /**
      * Send update server connection Address and other details to Client to fulfill the AOI
-     * 
-     * @param transferReq
-     *            Object of Client transferring protocol
+     *
+     * @param transferReq Object of Client transferring protocol
      */
     public void sendUpdateConnectionInfo(SendProtocol transferReq) {
         if (this.con != null) {
@@ -289,9 +281,8 @@ public abstract class Player extends AbsPlayer {
     /**
      * This method is used to send the information of the transferring object to the neighbor
      * server.
-     * 
-     * @param transferReq
-     *            message which contains the information of the transferring object
+     *
+     * @param transferReq message which contains the information of the transferring object
      */
     public void sendTransferringGameObjectInfo(SendProtocol transferReq) {
         if (this.con != null) {
@@ -485,11 +476,11 @@ public abstract class Player extends AbsPlayer {
             PlayerQueue.INSTANCE.addToDefaetList(this);
         }
     }
-    
+
     public Vec2 getV() {
         return this.v;
     }
-    
+
     /**
      * Get Player location as a point
      *
@@ -498,7 +489,7 @@ public abstract class Player extends AbsPlayer {
     public Point getCoordination() {
         return new Point(this.x, this.y);
     }
-    
+
     public float getAngle() {
         return angle;
     }

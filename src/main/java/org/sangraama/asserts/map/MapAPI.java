@@ -1,10 +1,10 @@
 package org.sangraama.asserts.map;
 
+import org.sangraama.asserts.map.tileeditor.TileLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.sangraama.asserts.map.tileeditor.TileLoader;
 
 public class MapAPI {
     private int mapHeight;

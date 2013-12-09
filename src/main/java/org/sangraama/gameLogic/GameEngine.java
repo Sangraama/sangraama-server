@@ -1,13 +1,5 @@
 package org.sangraama.gameLogic;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import javax.swing.Timer;
-
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.World;
@@ -19,13 +11,19 @@ import org.sangraama.assets.Player;
 import org.sangraama.assets.Wall;
 import org.sangraama.common.Constants;
 import org.sangraama.gameLogic.aoi.AOIEngine;
-import org.sangraama.gameLogic.aoi.subtile.SubTileHandler;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.DummyQueue;
 import org.sangraama.gameLogic.queue.PlayerQueue;
 import org.sangraama.util.BoundaryCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public enum GameEngine implements Runnable {
 
@@ -130,7 +128,7 @@ public enum GameEngine implements Runnable {
         g.generate(); // generate the static objects into game engine, using any tile editor module.
         PhysicsAPI physicsAPI = new PhysicsAPI();
         physicsAPI.applyPhysics(g.getStaticObjects(), world);// apply physics to the static objects,
-                                                             // and add them to the game world.
+        // and add them to the game world.
         log.info("Static Game Objects added to the game world!!");
         this.sangraamaCollisionDet = new CollisionDetector();
         world.setContactListener(sangraamaCollisionDet);
@@ -210,7 +208,7 @@ public enum GameEngine implements Runnable {
         while ((newDummy = this.newDummyQueue.poll()) != null) {
             this.dummyList.add(newDummy);
             newDummy.addToSubTileHandler();
-            
+
             // log.info("add Dummy player :" + newDummy.getUserID());
             log.info("=> (in add) DUMMY remained:" + this.dummyList.size() + " / max:" + maxDummies
                     + " **************");

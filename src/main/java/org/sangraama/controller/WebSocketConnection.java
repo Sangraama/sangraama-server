@@ -1,18 +1,9 @@
 package org.sangraama.controller;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gson.Gson;
 import org.apache.catalina.websocket.MessageInbound;
 import org.apache.catalina.websocket.WsOutbound;
-import org.sangraama.assets.AbsPlayer;
-import org.sangraama.assets.Bullet;
-import org.sangraama.assets.DummyPlayer;
-import org.sangraama.assets.Player;
-import org.sangraama.assets.Ship;
+import org.sangraama.assets.*;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.gameLogic.queue.DummyQueue;
 import org.sangraama.jsonprotocols.SendProtocol;
@@ -23,7 +14,11 @@ import org.sangraama.util.VerifyMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WebSocketConnection extends MessageInbound {
     public static final Logger log = LoggerFactory.getLogger(WebSocketConnection.class);
@@ -37,9 +32,8 @@ public class WebSocketConnection extends MessageInbound {
 
     /**
      * Set the player who is own this web socket connection
-     * 
-     * @param player
-     *            the instance of player which is connect to client
+     *
+     * @param player the instance of player which is connect to client
      */
     public void setPlayer(Ship player) {
         this.player = null;
@@ -205,9 +199,8 @@ public class WebSocketConnection extends MessageInbound {
 
     /**
      * Send new updates of players states to the particular client
-     * 
-     * @param playerDeltaList
-     *            delta updates of players who are located inside AOI
+     *
+     * @param playerDeltaList delta updates of players who are located inside AOI
      */
     @SuppressWarnings("deprecation")
     public void sendUpdate(List<SendProtocol> playerDeltaList) throws IOException {
@@ -218,9 +211,8 @@ public class WebSocketConnection extends MessageInbound {
     /**
      * Send new connection details as a list. Because updates are send as a list, sending new single
      * connection details can't recognize by client side.
-     * 
-     * @param transferReq
-     *            details about new connection server ArrayList<ClientTransferReq>
+     *
+     * @param transferReq details about new connection server ArrayList<ClientTransferReq>
      */
     @SuppressWarnings("deprecation")
     public void sendNewConnection(ArrayList<SendProtocol> transferReq) {
@@ -234,9 +226,8 @@ public class WebSocketConnection extends MessageInbound {
 
     /**
      * Send coordination details about tile size on this server
-     * 
-     * @param tilesInfo
-     *            ArrayList of details about tile of current server
+     *
+     * @param tilesInfo ArrayList of details about tile of current server
      */
     @SuppressWarnings("deprecation")
     public void sendTileSizeInfo(List<SendProtocol> tilesInfo) {
@@ -250,9 +241,8 @@ public class WebSocketConnection extends MessageInbound {
 
     /**
      * Send coordination detail about tile
-     * 
-     * @param tileInfo
-     *            details about tile
+     *
+     * @param tileInfo details about tile
      */
     public void sendTileSizeInfo(SendProtocol tileInfo) {
         List<SendProtocol> tilesInfo = new ArrayList<SendProtocol>();
@@ -262,7 +252,7 @@ public class WebSocketConnection extends MessageInbound {
 
     /**
      * Send the information of the transferring object to the client.
-     * 
+     *
      * @param tranferReqList
      */
     @SuppressWarnings("deprecation")
@@ -277,7 +267,7 @@ public class WebSocketConnection extends MessageInbound {
 
     /**
      * Send the score change when a player in another server shoots a player in another server
-     * 
+     *
      * @param scoreChangeReq
      */
     @SuppressWarnings("deprecation")
@@ -292,9 +282,9 @@ public class WebSocketConnection extends MessageInbound {
 
     /**
      * Send coordination detail abo }
-     * 
+     * <p/>
      * /** Close the WebSocket connection of the player
-     * 
+     *
      * @return null
      */
     @SuppressWarnings("deprecation")

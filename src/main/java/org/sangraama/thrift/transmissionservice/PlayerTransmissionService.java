@@ -6,20 +6,15 @@
  */
 package org.sangraama.thrift.transmissionservice;
 
+import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
 import org.apache.thrift.scheme.StandardScheme;
-
 import org.apache.thrift.scheme.TupleScheme;
-import org.apache.thrift.protocol.TTupleProtocol;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Collections;
-import java.util.BitSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 public class PlayerTransmissionService {
 
@@ -49,7 +44,7 @@ public class PlayerTransmissionService {
             }
 
             public Client getClient(org.apache.thrift.protocol.TProtocol iprot,
-                    org.apache.thrift.protocol.TProtocol oprot) {
+                                    org.apache.thrift.protocol.TProtocol oprot) {
                 return new Client(iprot, oprot);
             }
         }
@@ -59,7 +54,7 @@ public class PlayerTransmissionService {
         }
 
         public Client(org.apache.thrift.protocol.TProtocol iprot,
-                org.apache.thrift.protocol.TProtocol oprot) {
+                      org.apache.thrift.protocol.TProtocol oprot) {
             super(iprot, oprot);
         }
 
@@ -85,7 +80,7 @@ public class PlayerTransmissionService {
             private org.apache.thrift.protocol.TProtocolFactory protocolFactory;
 
             public Factory(org.apache.thrift.async.TAsyncClientManager clientManager,
-                    org.apache.thrift.protocol.TProtocolFactory protocolFactory) {
+                           org.apache.thrift.protocol.TProtocolFactory protocolFactory) {
                 this.clientManager = clientManager;
                 this.protocolFactory = protocolFactory;
             }
@@ -97,13 +92,13 @@ public class PlayerTransmissionService {
         }
 
         public AsyncClient(org.apache.thrift.protocol.TProtocolFactory protocolFactory,
-                org.apache.thrift.async.TAsyncClientManager clientManager,
-                org.apache.thrift.transport.TNonblockingTransport transport) {
+                           org.apache.thrift.async.TAsyncClientManager clientManager,
+                           org.apache.thrift.transport.TNonblockingTransport transport) {
             super(protocolFactory, clientManager, transport);
         }
 
         public void passPlayer(org.sangraama.thrift.assets.TPlayer player,
-                org.apache.thrift.async.AsyncMethodCallback<passPlayer_call> resultHandler)
+                               org.apache.thrift.async.AsyncMethodCallback<passPlayer_call> resultHandler)
                 throws org.apache.thrift.TException {
             checkReady();
             passPlayer_call method_call = new passPlayer_call(player, resultHandler, this,
@@ -116,10 +111,10 @@ public class PlayerTransmissionService {
             private org.sangraama.thrift.assets.TPlayer player;
 
             public passPlayer_call(org.sangraama.thrift.assets.TPlayer player,
-                    org.apache.thrift.async.AsyncMethodCallback<passPlayer_call> resultHandler,
-                    org.apache.thrift.async.TAsyncClient client,
-                    org.apache.thrift.protocol.TProtocolFactory protocolFactory,
-                    org.apache.thrift.transport.TNonblockingTransport transport)
+                                   org.apache.thrift.async.AsyncMethodCallback<passPlayer_call> resultHandler,
+                                   org.apache.thrift.async.TAsyncClient client,
+                                   org.apache.thrift.protocol.TProtocolFactory protocolFactory,
+                                   org.apache.thrift.transport.TNonblockingTransport transport)
                     throws org.apache.thrift.TException {
                 super(client, protocolFactory, transport, resultHandler, true);
                 this.player = player;
@@ -203,6 +198,7 @@ public class PlayerTransmissionService {
                 "player", org.apache.thrift.protocol.TType.STRUCT, (short) 1);
 
         private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
         static {
             schemes.put(StandardScheme.class, new passPlayer_argsStandardSchemeFactory());
             schemes.put(TupleScheme.class, new passPlayer_argsTupleSchemeFactory());
@@ -274,6 +270,7 @@ public class PlayerTransmissionService {
 
         // isset id assignments
         public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
         static {
             Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(
                     _Fields.class);
@@ -326,7 +323,9 @@ public class PlayerTransmissionService {
             this.player = null;
         }
 
-        /** Returns true if field player is set (has been assigned a value) and false otherwise */
+        /**
+         * Returns true if field player is set (has been assigned a value) and false otherwise
+         */
         public boolean isSetPlayer() {
             return this.player != null;
         }
@@ -379,9 +378,7 @@ public class PlayerTransmissionService {
         public boolean equals(Object that) {
             if (that == null)
                 return false;
-            if (that instanceof passPlayer_args)
-                return this.equals((passPlayer_args) that);
-            return false;
+            return that instanceof passPlayer_args && this.equals((passPlayer_args) that);
         }
 
         public boolean equals(passPlayer_args that) {

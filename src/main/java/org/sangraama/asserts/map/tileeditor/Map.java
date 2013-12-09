@@ -1,88 +1,83 @@
 package org.sangraama.asserts.map.tileeditor;
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "map")
 public class Map {
-	@XmlAttribute(name="height")
-	private int mapheight;
-	@XmlAttribute(name="width")
-	private int mapwidth;
-	@XmlAttribute(name="tileheight")
-	private int tileheight;
-	@XmlAttribute(name="tilewidth")
-	private int tilewidth;
-	public int getTileheight() {
-		return tileheight;
-	}
+    @XmlAttribute(name = "height")
+    private int mapheight;
+    @XmlAttribute(name = "width")
+    private int mapwidth;
+    @XmlAttribute(name = "tileheight")
+    private int tileheight;
+    @XmlAttribute(name = "tilewidth")
+    private int tilewidth;
 
-	public void setTileheight(int tileheight) {
-		this.tileheight = tileheight;
-	}
+    public int getTileheight() {
+        return tileheight;
+    }
 
-	public int getTilewidth() {
-		return tilewidth;
-	}
+    public void setTileheight(int tileheight) {
+        this.tileheight = tileheight;
+    }
 
-	public void setTilewidth(int tilewidth) {
-		this.tilewidth = tilewidth;
-	}
+    public int getTilewidth() {
+        return tilewidth;
+    }
 
-	@XmlElement(name = "tileset")
-	private List<TileSet> tilesetList = new ArrayList<TileSet>();
-	@XmlElement(name = "layer")
-	private List<Layer> layerList = new ArrayList<Layer>();
-	@XmlElement(name = "objectgroup")
-	private ObjectGroup objectGroup =new ObjectGroup();
-	
-	
+    public void setTilewidth(int tilewidth) {
+        this.tilewidth = tilewidth;
+    }
 
-	public ObjectGroup getObjectGroup() {
-		return objectGroup;
-	}
+    @XmlElement(name = "tileset")
+    private List<TileSet> tilesetList = new ArrayList<TileSet>();
+    @XmlElement(name = "layer")
+    private List<Layer> layerList = new ArrayList<Layer>();
+    @XmlElement(name = "objectgroup")
+    private ObjectGroup objectGroup = new ObjectGroup();
 
-	public void setObjectGroup(ObjectGroup objectGroup) {
-		this.objectGroup = objectGroup;
-	}
 
-	public int getMapheight() {
-		return mapheight;
-	}
+    public ObjectGroup getObjectGroup() {
+        return objectGroup;
+    }
 
-	public void setMapheight(int mapheight) {
-		this.mapheight = mapheight;
-	}
+    public void setObjectGroup(ObjectGroup objectGroup) {
+        this.objectGroup = objectGroup;
+    }
 
-	public int getMapwidth() {
-		return mapwidth;
-	}
+    public int getMapheight() {
+        return mapheight;
+    }
 
-	public void setMapwidth(int mapwidth) {
-		this.mapwidth = mapwidth;
-	}
+    public void setMapheight(int mapheight) {
+        this.mapheight = mapheight;
+    }
 
-	public List<Layer> getLayerList() {
-		return layerList;
-	}
+    public int getMapwidth() {
+        return mapwidth;
+    }
 
-	public void setLayerList(List<Layer> layerList) {
-		this.layerList = layerList;
-	}
+    public void setMapwidth(int mapwidth) {
+        this.mapwidth = mapwidth;
+    }
 
-	public List<TileSet> getTilesetList() {
-		return tilesetList;
-	}
+    public List<Layer> getLayerList() {
+        return layerList;
+    }
 
-	public void setTilesetList(List<TileSet> tilesetList) {
-		this.tilesetList = tilesetList;
-	}
+    public void setLayerList(List<Layer> layerList) {
+        this.layerList = layerList;
+    }
+
+    public List<TileSet> getTilesetList() {
+        return tilesetList;
+    }
+
+    public void setTilesetList(List<TileSet> tilesetList) {
+        this.tilesetList = tilesetList;
+    }
 
 }

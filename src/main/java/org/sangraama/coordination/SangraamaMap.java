@@ -25,7 +25,7 @@ public enum SangraamaMap {
     }
 
     public void setMap(float originX, float originY, float width, float height, String host,
-            float maxWidth, float maxHeight) {
+                       float maxWidth, float maxHeight) {
         // Next milestone: map will load via DB
         this.originX = originX / Constants.scale;
         this.originY = originY / Constants.scale;
@@ -65,7 +65,7 @@ public enum SangraamaMap {
 
     /**
      * Get value of originX + mapWidth
-     * 
+     *
      * @return float (originX + mapWidth)
      */
     public float getEdgeX() {
@@ -74,7 +74,7 @@ public enum SangraamaMap {
 
     /**
      * Get value of originY + mapWidth
-     * 
+     *
      * @return float (originY + mapHeight)
      */
     public float getEdgeY() {

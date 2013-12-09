@@ -6,7 +6,6 @@ import org.sangraama.assets.DummyPlayer;
 import org.sangraama.assets.Player;
 import org.sangraama.common.Constants;
 import org.sangraama.gameLogic.GameEngine;
-import org.sangraama.gameLogic.aoi.subtile.Rectangle;
 import org.sangraama.gameLogic.aoi.subtile.SubTileHandler;
 import org.sangraama.gameLogic.aoi.subtile.TraceBackNode;
 import org.sangraama.gameLogic.queue.PlayerQueue;
@@ -18,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.Timer;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
@@ -125,7 +123,7 @@ public enum AOIEngine implements Runnable {
                 delta.add(this.playerDelta.get(player.getUserID()));
             }
         }*/
-        
+
         SaveToList v = new SaveToList();
         for (float index : p.getSubTileIndexesInAOI()) {
             SubTileHandler.INSTANCE.getPlayersInAOI(index, p.getAOIAsRect(), v);
@@ -133,7 +131,7 @@ public enum AOIEngine implements Runnable {
         for (long id : v.getPlayersIds()) {
             delta.add(this.playerDelta.get(id));
         }
-        for(long id : v.getBulletIds()){
+        for (long id : v.getBulletIds()) {
             delta.add(this.bulletDelta.get(id));
         }
 
@@ -143,8 +141,8 @@ public enum AOIEngine implements Runnable {
                 delta.add(this.bulletDelta.get(bullet.getId()));
             }
         }*/
-        
-        
+
+
         for (Player player : defeatedPlayerList) {
             if (p.getXVPLeft() <= player.getX() && player.getX() <= p.getXVPRight()
                     && p.getYVPUp() <= player.getY() && player.getY() <= p.getYVPDown()) {
@@ -176,7 +174,7 @@ public enum AOIEngine implements Runnable {
         for (long id : v.getPlayersIds()) {
             delta.add(this.playerDelta.get(id));
         }
-        for(long id : v.getBulletIds()){
+        for (long id : v.getBulletIds()) {
             delta.add(this.bulletDelta.get(id));
         }
 
@@ -260,7 +258,7 @@ public enum AOIEngine implements Runnable {
             players.add(id);
             return true;
         }
-        
+
         public boolean executeBullet(long id) {
             bullets.add(id);
             return true;
@@ -273,8 +271,8 @@ public enum AOIEngine implements Runnable {
         public List<Long> getPlayersIds() {
             return players;
         }
-        
-        public List<Long> getBulletIds(){
+
+        public List<Long> getBulletIds() {
             return bullets;
         }
     }

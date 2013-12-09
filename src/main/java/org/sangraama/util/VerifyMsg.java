@@ -14,7 +14,8 @@ public enum VerifyMsg {
 
     /**
      * Verify the signature of the message
-     * @param message original message
+     *
+     * @param message   original message
      * @param signature signature of the message
      * @return true if the message verification is successful
      */

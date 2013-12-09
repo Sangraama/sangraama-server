@@ -13,7 +13,7 @@ public class Ship extends Player {
     public static final Logger log = LoggerFactory.getLogger(Ship.class);
 
     public Ship(long userID, float x, float y, float w, float h, float health, float score,
-            WebSocketConnection con, int type, int bulletType) {
+                WebSocketConnection con, int type, int bulletType) {
         super(userID, x, y, w, h, health, score, con, type, bulletType);
     }
 

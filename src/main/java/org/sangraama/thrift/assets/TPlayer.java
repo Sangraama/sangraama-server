@@ -6,19 +6,14 @@
  */
 package org.sangraama.thrift.assets;
 
+import org.apache.thrift.EncodingUtils;
+import org.apache.thrift.protocol.TTupleProtocol;
 import org.apache.thrift.scheme.IScheme;
 import org.apache.thrift.scheme.SchemeFactory;
 import org.apache.thrift.scheme.StandardScheme;
-
 import org.apache.thrift.scheme.TupleScheme;
-import org.apache.thrift.protocol.TTupleProtocol;
-import org.apache.thrift.EncodingUtils;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Collections;
-import java.util.BitSet;
+
+import java.util.*;
 
 public class TPlayer implements org.apache.thrift.TBase<TPlayer, TPlayer._Fields>,
         java.io.Serializable, Cloneable {
@@ -37,6 +32,7 @@ public class TPlayer implements org.apache.thrift.TBase<TPlayer, TPlayer._Fields
             "v_y", org.apache.thrift.protocol.TType.DOUBLE, (short) 5);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+
     static {
         schemes.put(StandardScheme.class, new TPlayerStandardSchemeFactory());
         schemes.put(TupleScheme.class, new TPlayerTupleSchemeFactory());
@@ -126,6 +122,7 @@ public class TPlayer implements org.apache.thrift.TBase<TPlayer, TPlayer._Fields
     private static final int __V_Y_ISSET_ID = 4;
     private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+
     static {
         Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(
                 _Fields.class);
@@ -214,7 +211,9 @@ public class TPlayer implements org.apache.thrift.TBase<TPlayer, TPlayer._Fields
         __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __ID_ISSET_ID);
     }
 
-    /** Returns true if field id is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field id is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetId() {
         return EncodingUtils.testBit(__isset_bitfield, __ID_ISSET_ID);
     }
@@ -237,7 +236,9 @@ public class TPlayer implements org.apache.thrift.TBase<TPlayer, TPlayer._Fields
         __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __X_ISSET_ID);
     }
 
-    /** Returns true if field x is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field x is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetX() {
         return EncodingUtils.testBit(__isset_bitfield, __X_ISSET_ID);
     }
@@ -260,7 +261,9 @@ public class TPlayer implements org.apache.thrift.TBase<TPlayer, TPlayer._Fields
         __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __Y_ISSET_ID);
     }
 
-    /** Returns true if field y is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field y is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetY() {
         return EncodingUtils.testBit(__isset_bitfield, __Y_ISSET_ID);
     }
@@ -283,7 +286,9 @@ public class TPlayer implements org.apache.thrift.TBase<TPlayer, TPlayer._Fields
         __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __V_X_ISSET_ID);
     }
 
-    /** Returns true if field v_x is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field v_x is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetV_x() {
         return EncodingUtils.testBit(__isset_bitfield, __V_X_ISSET_ID);
     }
@@ -306,7 +311,9 @@ public class TPlayer implements org.apache.thrift.TBase<TPlayer, TPlayer._Fields
         __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __V_Y_ISSET_ID);
     }
 
-    /** Returns true if field v_y is set (has been assigned a value) and false otherwise */
+    /**
+     * Returns true if field v_y is set (has been assigned a value) and false otherwise
+     */
     public boolean isSetV_y() {
         return EncodingUtils.testBit(__isset_bitfield, __V_Y_ISSET_ID);
     }

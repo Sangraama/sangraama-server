@@ -7,7 +7,7 @@ public class PlayerDelta extends AbsDelta {
     private float score;
 
     public PlayerDelta(float dx, float dy, float da, long userID, float health, float score,
-            int imageType) {
+                       int imageType) {
         super(1, userID, dx, dy, da, imageType);
         this.score = score;
         this.health = health;

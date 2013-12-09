@@ -1,8 +1,8 @@
 package org.sangraama.gameLogic.aoi;
 
-import java.util.concurrent.BlockingQueue;
-
 import org.sangraama.assets.AbsPlayer;
+
+import java.util.concurrent.BlockingQueue;
 
 public class UpdateEngine extends Thread {
     private volatile boolean isRun = true;

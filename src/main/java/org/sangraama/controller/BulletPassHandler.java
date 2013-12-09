@@ -22,9 +22,8 @@ public enum BulletPassHandler {
     /**
      * This method is used to pass the bullet to the suitable neighbor server if bullet is out of
      * the area of the current server.
-     * 
-     * @param bullet
-     *            bullet which going to transferred to another server
+     *
+     * @param bullet bullet which going to transferred to another server
      */
     public void passBullets(Bullet bullet) {
         String newHost;

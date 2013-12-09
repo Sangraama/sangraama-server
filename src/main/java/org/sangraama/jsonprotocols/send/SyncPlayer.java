@@ -1,9 +1,7 @@
 package org.sangraama.jsonprotocols.send;
 
-import org.sangraama.coordination.staticPartition.TileCoordinator;
-import org.sangraama.jsonprotocols.SendProtocol;
-
 import com.google.gson.Gson;
+import org.sangraama.jsonprotocols.SendProtocol;
 
 
 public class SyncPlayer extends SendProtocol {
@@ -12,20 +10,18 @@ public class SyncPlayer extends SendProtocol {
 
     /**
      * For player
-     * 
+     *
      * @param userID
      * @param x
      * @param y
-     * @param x_vp
-     *            virtual x location
-     * @param y_vp
-     *            virtual y location
+     * @param x_vp   virtual x location
+     * @param y_vp   virtual y location
      * @param a
      * @param w
      * @param h
      */
     public SyncPlayer(long userID, float x, float y, float x_vp, float y_vp, float a, float w,
-            float h, VirtualPointAccessLevel vp_al) {
+                      float h, VirtualPointAccessLevel vp_al) {
         super(10, userID);
         this.x = x;
         this.y = y;
@@ -39,7 +35,7 @@ public class SyncPlayer extends SendProtocol {
 
     /**
      * For Dummy Player
-     * 
+     *
      * @param userID
      * @param x_vp
      * @param y_vp

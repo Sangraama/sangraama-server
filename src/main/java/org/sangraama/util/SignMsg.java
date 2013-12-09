@@ -14,6 +14,7 @@ public enum SignMsg {
 
     /**
      * Sign the message using a private key
+     *
      * @param message message to be signed
      * @return signature of the message
      */

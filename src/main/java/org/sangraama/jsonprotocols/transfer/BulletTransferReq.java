@@ -1,11 +1,10 @@
 package org.sangraama.jsonprotocols.transfer;
 
+import com.google.gson.Gson;
 import org.jbox2d.common.Vec2;
 import org.sangraama.assets.Bullet;
 import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.util.SignMsg;
-
-import com.google.gson.Gson;
 
 public class BulletTransferReq extends SendProtocol {
 
@@ -15,7 +14,7 @@ public class BulletTransferReq extends SendProtocol {
     /**
      * This method create the information needed to pass the bullet. Then the information is signed.
      * The information and signed information are kept together to send the neighbor server.
-     * 
+     *
      * @param playerID
      * @param BulletId
      * @param x
@@ -28,8 +27,8 @@ public class BulletTransferReq extends SendProtocol {
      * @param newHost
      */
     public BulletTransferReq(long playerID, long BulletId, float x, float y,
-            Vec2 velocity, float originX, float originY, float screenHeight, float screenWidth,
-            String newHost, int bulletType) {
+                             Vec2 velocity, float originX, float originY, float screenHeight, float screenWidth,
+                             String newHost, int bulletType) {
         super(20, playerID);
         BulletTransferInfo bulletInfo = new BulletTransferInfo(BulletId, playerID, x, y, velocity,
                 originX, originY, screenHeight, screenWidth, newHost, bulletType);
@@ -41,9 +40,8 @@ public class BulletTransferReq extends SendProtocol {
     /**
      * This method is used to extracted the information of the bullet which is passed. This returns
      * the bullet to generated it.
-     * 
-     * @param info
-     *            GSON string of the bullet information
+     *
+     * @param info GSON string of the bullet information
      * @return bullet Bullet object after extracting the information
      */
     public Bullet reCreateBullet(String info) {
@@ -57,11 +55,9 @@ public class BulletTransferReq extends SendProtocol {
     }
 
     /**
-     * 
      * This class has the information about the bullet which passed between the servers. 'url' is
      * the URL of the server which is bullet going to be transferred. originX and orginY are denotes
      * the position where bullet was fired.
-     * 
      */
     private class BulletTransferInfo {
         private long id;
@@ -77,8 +73,8 @@ public class BulletTransferReq extends SendProtocol {
         private String url = "";
 
         public BulletTransferInfo(long id, long playerID, float x, float y, Vec2 velocity,
-                float originX, float originY, float screenHeight, float screenWidth,
-                String newHost, int type) {
+                                  float originX, float originY, float screenHeight, float screenWidth,
+                                  String newHost, int type) {
             this.id = id;
             this.playerID = playerID;
             this.positionX = x;

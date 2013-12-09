@@ -4,7 +4,7 @@ import org.sangraama.jsonprotocols.send.PlayerDelta;
 
 /**
  * Interface for procedures with one int parameter.
- *
+ * <p/>
  * Created: Mon Nov  5 21:45:49 2013
  *
  * @author Gihan Karunarathne
@@ -17,10 +17,10 @@ public interface TraceBackNode {
      *
      * @param value a value of type <code>int</code>
      * @return true if additional invocations of the procedure are
-     * allowed.
+     *         allowed.
      */
     boolean executePlayer(long id);
-    
+
     boolean executeBullet(long id);
 
     boolean execute(PlayerDelta playerDelta);

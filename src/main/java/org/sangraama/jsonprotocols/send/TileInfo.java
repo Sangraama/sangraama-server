@@ -1,20 +1,18 @@
 package org.sangraama.jsonprotocols.send;
 
-import java.util.ArrayList;
-
+import com.google.gson.Gson;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.jsonprotocols.SendProtocol;
 
-import com.google.gson.Gson;
+import java.util.ArrayList;
 
 /**
  * This class may completely replace by SangraamaTile class by setting a userId. Then send those as
  * a ArrayList
- * 
+ *
  * @author gihan
- * 
  */
-public class TileInfo  extends SendProtocol{
+public class TileInfo extends SendProtocol {
     /* 11 : set the size of the tile */
     private String tiles;
 

@@ -8,7 +8,6 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.sangraama.common.Constants;
 import org.sangraama.controller.BulletPassHandler;
-import org.sangraama.coordination.MapCoordinator;
 import org.sangraama.coordination.SangraamaMap;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.aoi.subtile.Point;
@@ -42,7 +41,7 @@ public class Bullet {
     private int type; // bullet type
 
     public Bullet(long id, long playerId, float x, float y, Vec2 velocity, float originX,
-            float originY, float w, float h, int bulletType) {
+                  float originY, float w, float h, int bulletType) {
         this.id = id;
         this.playerId = playerId;
         this.originX = originX;
@@ -102,7 +101,7 @@ public class Bullet {
     public float getY() {
         return this.y;
     }
-    
+
     /**
      * Get Player location as a point
      *
@@ -157,11 +156,9 @@ public class Bullet {
 
     /**
      * This method check whether the x,y coordinates are out of the server controlled area or not
-     * 
-     * @param x
-     *            x coordination of the position
-     * @param y
-     *            y coordination of the position
+     *
+     * @param x x coordination of the position
+     * @param y y coordination of the position
      * @return true if coordinate is inside the server assingned area.
      */
     private boolean isInsideSeverSubTile(float x, float y) {
@@ -176,7 +173,7 @@ public class Bullet {
                     + sangraamaMap.getSubTileWidth();
             currentSubTileEndY = (y - (y % sangraamaMap.getSubTileHeight()))
                     + sangraamaMap.getSubTileHeight();
-            
+
             if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 /*
                  * log.info(TAG + "Bullet is not inside a subtile of " + sangraamaMap.getHost());
@@ -189,7 +186,7 @@ public class Bullet {
             return true;
         }
     }
-    
+
     public boolean addToSubTileHandler() {
         return SubTileHandler.INSTANCE.addBullet(this.currentSubTileIndex, this);
     }

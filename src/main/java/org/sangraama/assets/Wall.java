@@ -16,7 +16,7 @@ public class Wall {
 
     public Wall(float x, float y, float width, float height) {
         this.width = width;
-        this.height= height;
+        this.height = height;
         this.x = x;
         this.y = y;
     }
@@ -27,8 +27,8 @@ public class Wall {
         wallDef.type = BodyType.STATIC;
         return wallDef;
     }
-    
-    public FixtureDef getFixtureDef(){
+
+    public FixtureDef getFixtureDef() {
         PolygonShape wallShape = new PolygonShape();
         wallShape.setAsBox(width, height);
         wallFixture = new FixtureDef();

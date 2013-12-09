@@ -1,9 +1,8 @@
 package org.sangraama.jsonprotocols.transfer;
 
+import com.google.gson.Gson;
 import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.util.SignMsg;
-
-import com.google.gson.Gson;
 
 public class ClientTransferReq extends SendProtocol {
     /**
@@ -14,7 +13,7 @@ public class ClientTransferReq extends SendProtocol {
     private byte[] signedInfo;
 
     public ClientTransferReq(int type, long userID, float x, float y, float health, float score,
-            String newHost, int playerType) {
+                             String newHost, int playerType) {
         super(type, userID);
         this.type = type;
         this.userID = userID;
@@ -34,7 +33,7 @@ public class ClientTransferReq extends SendProtocol {
         private int pt;
 
         public ClientTransferInfo(float x, float y, float health, float score, String newHost,
-                int playerType) {
+                                  int playerType) {
             this.positionX = x;
             this.positionY = y;
             this.health = health;

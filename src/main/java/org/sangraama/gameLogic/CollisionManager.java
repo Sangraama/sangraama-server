@@ -1,12 +1,5 @@
 package org.sangraama.gameLogic;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.Timer;
-
 import org.jbox2d.dynamics.contacts.Contact;
 import org.sangraama.assets.Bullet;
 import org.sangraama.assets.DummyPlayer;
@@ -16,7 +9,14 @@ import org.sangraama.common.Constants;
 import org.sangraama.gameLogic.aoi.AOIEngine;
 import org.sangraama.gameLogic.queue.BulletQueue;
 import org.sangraama.jsonprotocols.transfer.ScoreChangeTransferReq;
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public enum CollisionManager implements Runnable {
     INSTANCE;
@@ -71,7 +71,7 @@ public enum CollisionManager implements Runnable {
         } else if ((collision.getFixtureA().getUserData().getClass() == Ship.class && collision
                 .getFixtureB().getUserData().getClass() == Bullet.class)
                 || (collision.getFixtureA().getUserData().getClass() == Bullet.class && collision
-                        .getFixtureB().getUserData().getClass() == Ship.class)) {
+                .getFixtureB().getUserData().getClass() == Ship.class)) {
             // System.out.println(TAG + "Hitting Bullet..");
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
                 Player ship = (Player) collision.getFixtureA().getUserData();
@@ -85,7 +85,7 @@ public enum CollisionManager implements Runnable {
         } else if (("island".equals(collision.getFixtureA().getUserData()) && collision
                 .getFixtureB().getUserData().getClass() == Ship.class)
                 || ("island".equals(collision.getFixtureB().getUserData()) && collision
-                        .getFixtureA().getUserData().getClass() == Ship.class)) {
+                .getFixtureA().getUserData().getClass() == Ship.class)) {
             Player ship;
             // System.out.println(TAG + "$$Hitting Island..");
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
@@ -97,7 +97,7 @@ public enum CollisionManager implements Runnable {
         } else if (("island".equals(collision.getFixtureA().getUserData()) && collision
                 .getFixtureB().getUserData().getClass() == Bullet.class)
                 || ("island".equals(collision.getFixtureB().getUserData()) && collision
-                        .getFixtureA().getUserData().getClass() == Bullet.class)) {
+                .getFixtureA().getUserData().getClass() == Bullet.class)) {
             Bullet bullet;
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
                 bullet = (Bullet) collision.getFixtureA().getUserData();
@@ -108,7 +108,7 @@ public enum CollisionManager implements Runnable {
         } else if (("wall".equals(collision.getFixtureA().getUserData()) && collision.getFixtureB()
                 .getUserData().getClass() == Bullet.class)
                 || ("wall".equals(collision.getFixtureB().getUserData()) && collision.getFixtureA()
-                        .getUserData().getClass() == Bullet.class)) {
+                .getUserData().getClass() == Bullet.class)) {
             Bullet bullet;
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
                 bullet = (Bullet) collision.getFixtureA().getUserData();
@@ -127,6 +127,7 @@ public enum CollisionManager implements Runnable {
 
     /**
      * TODO: Optimize for loop, may use hash map
+     *
      * @param ship
      * @param bullet
      */
@@ -149,6 +150,7 @@ public enum CollisionManager implements Runnable {
 
     /**
      * TODO: Optimize for loop, may use hash map
+     *
      * @param userID
      * @param valChange
      */
@@ -163,6 +165,7 @@ public enum CollisionManager implements Runnable {
 
     /**
      * TODO: Optimize for loop, may use hash map
+     *
      * @param shipID
      * @param scoreChange
      */
@@ -170,7 +173,7 @@ public enum CollisionManager implements Runnable {
         List<DummyPlayer> dummyList = AOIEngine.INSTANCE.getDummyList();
         for (DummyPlayer dummyPlayer : dummyList) {
             if (dummyPlayer.getUserID() == shipID) {
-                ScoreChangeTransferReq scoreChangeReq = new ScoreChangeTransferReq(21, shipID,
+                ScoreChangeTransferReq scoreChangeReq = new ScoreChangeTransferReq(shipID,
                         scoreChange);
                 dummyPlayer.sendScoreChange(scoreChangeReq);
             }

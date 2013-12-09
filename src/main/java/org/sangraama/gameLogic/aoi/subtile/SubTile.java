@@ -41,7 +41,7 @@ public class SubTile {
                 }
             }
         }
-        
+
         // go through every entry in the subtile to check if it is contained by the passed rectangle
         for (int i = 0; i < this.bulletList.size(); i++) {
             if (r.contains(this.bulletList.get(i).getCoordination())) {
@@ -72,7 +72,7 @@ public class SubTile {
     public boolean removePlayer(Player player) {
         return this.playerList.remove(player);
     }
-    
+
     /**
      * Add a new player to subtile
      *

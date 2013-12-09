@@ -67,7 +67,7 @@ public class ClientEvent {
 
     /**
      * Get Area of interest width
-     * 
+     *
      * @return AOI width
      */
     public float getW() {
@@ -76,7 +76,7 @@ public class ClientEvent {
 
     /**
      * Get Area of interest height
-     * 
+     *
      * @return AOI height
      */
     public float getH() {
@@ -108,6 +108,6 @@ public class ClientEvent {
     }
 
     // Update as necessary before using
-    
+
 
 }

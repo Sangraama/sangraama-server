@@ -1,11 +1,11 @@
 package org.sangraama.asserts.map.tileeditor;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TileLoader {
     private List<Tile> backgroundTiles = new ArrayList<Tile>();

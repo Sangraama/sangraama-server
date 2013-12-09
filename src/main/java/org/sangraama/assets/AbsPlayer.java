@@ -4,7 +4,6 @@ import org.sangraama.common.Constants;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.coordination.SangraamaMap;
 import org.sangraama.gameLogic.GameEngine;
-import org.sangraama.gameLogic.aoi.subtile.Point;
 import org.sangraama.gameLogic.aoi.subtile.Rectangle;
 import org.sangraama.gameLogic.aoi.subtile.SubTileHandler;
 import org.sangraama.jsonprotocols.SendProtocol;
@@ -69,7 +68,7 @@ public abstract class AbsPlayer {
     // Store whether AOI w or h is larger than the subtile w or h
     // IDEA: One time calculation and efficient use
     boolean isAOIWidthLarger = false, isAOIHeigthLarger = false;
-    
+
     List<SendProtocol> deltaList; // Store delta list
 
     public boolean isUpdate() {
@@ -193,27 +192,27 @@ public abstract class AbsPlayer {
          */
         this.indexes = new ArrayList<>();
         Set<Float> set = new HashSet<>();
-        set.add(this.calcSubTileIndex(this.x_vp_l,this.y_vp_u));
-        set.add(this.calcSubTileIndex(this.x_vp_l,this.y_vp_d));
-        set.add(this.calcSubTileIndex(this.x_vp_r,this.y_vp_u));
-        set.add(this.calcSubTileIndex(this.x_vp_r,this.y_vp_d));
+        set.add(this.calcSubTileIndex(this.x_vp_l, this.y_vp_u));
+        set.add(this.calcSubTileIndex(this.x_vp_l, this.y_vp_d));
+        set.add(this.calcSubTileIndex(this.x_vp_r, this.y_vp_u));
+        set.add(this.calcSubTileIndex(this.x_vp_r, this.y_vp_d));
         /*
          * If you have players which AOI w or h is greater than the subtiles w or h 
          */
-        if(this.isAOIWidthLarger){
+        if (this.isAOIWidthLarger) {
             set.add(this.calcSubTileIndex(this.x, this.y_vp_u));
             set.add(this.calcSubTileIndex(this.x, this.y_vp_d));
         }
-        if(this.isAOIHeigthLarger){
+        if (this.isAOIHeigthLarger) {
             set.add(this.calcSubTileIndex(this.x_vp_l, this.y));
             set.add(this.calcSubTileIndex(this.x_vp_r, this.y));
         }
-        
-        for(float index : set){
-            if(SubTileHandler.INSTANCE.isAvailSubTile(index)){
+
+        for (float index : set) {
+            if (SubTileHandler.INSTANCE.isAvailSubTile(index)) {
                 this.indexes.add(index);
                 // System.out.print(" Available in this server:" + index + " ");
-            }else{
+            } else {
                 // System.out.print(" Not available in this server:" + index + " ");
             }
         }
@@ -228,7 +227,7 @@ public abstract class AbsPlayer {
 
     public abstract boolean removeFromSubTileHandler();
 
-    public List<Float> getSubTileIndexesInAOI(){
+    public List<Float> getSubTileIndexesInAOI() {
         return this.indexes;
     }
 
@@ -269,7 +268,7 @@ public abstract class AbsPlayer {
                 - (this.halfAOIWidth + 0.2f);
         this.totEdgeY = SangraamaMap.INSTANCE.getMaxHeight()
                 - (this.halfAOIHieght + 0.2f);
-        
+
         this.isAOIWidthLarger = this.screenWidth > SangraamaMap.INSTANCE.getSubTileWidth();
         this.isAOIHeigthLarger = this.screenHeight > SangraamaMap.INSTANCE.getSubTileHeight();
     }

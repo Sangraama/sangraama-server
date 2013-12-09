@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public enum SubTileCoordinator implements MapCoordinator{
+public enum SubTileCoordinator implements MapCoordinator {
     INSTANCE;
     private String TAG = "SubTileCoordinator: ";
     private Logger log = LoggerFactory.getLogger(SubTileCoordinator.class);

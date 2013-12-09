@@ -4,8 +4,6 @@ import org.sangraama.assets.Bullet;
 import org.sangraama.assets.Player;
 import org.sangraama.common.Constants;
 
-import java.util.AbstractMap;
-import java.util.Hashtable;
 import java.util.concurrent.ConcurrentHashMap;
 
 public enum SubTileHandler {
@@ -56,7 +54,7 @@ public enum SubTileHandler {
     }
 
     /********** Player ***************/
-    
+
     /**
      * Add player to subtile which it belongs to
      *
@@ -67,13 +65,7 @@ public enum SubTileHandler {
      */
     public boolean addPlayer(float orgX, float orgY, Player player) {
         // Not necessary to check. In Player class will make sure of it
-        if (this.subTilesHashMap.containsKey(orgY * hashFactor + orgX)) {
-            // System.out.println("Player added to the subtile of " + orgY + " : " + orgX);
-            return this.subTilesHashMap.get(orgY * hashFactor + orgX).addPlayer(player);
-        } else {
-            // System.out.println("Player couldn't add to the subtiles");
-            return false;
-        }
+        return this.subTilesHashMap.containsKey(orgY * hashFactor + orgX) && this.subTilesHashMap.get(orgY * hashFactor + orgX).addPlayer(player);
     }
 
     /**
@@ -85,12 +77,8 @@ public enum SubTileHandler {
      */
     public boolean addPlayer(float index, Player player) {
         // Not necessary to check. In Player class will make sure of it
-        System.out.println("Add player to subtile " + index);
-        if (this.subTilesHashMap.containsKey(index)) {
-            return this.subTilesHashMap.get(index).addPlayer(player);
-        } else {
-            return false;
-        }
+        // System.out.println("Add player to subtile " + index);
+        return this.subTilesHashMap.containsKey(index) && this.subTilesHashMap.get(index).addPlayer(player);
     }
 
     /**
@@ -103,11 +91,7 @@ public enum SubTileHandler {
      */
     public boolean removePlayer(float orgX, float orgY, Player player) {
         // Not necessary to check. In Player class will make sure of it
-        if (this.subTilesHashMap.containsKey(orgY * hashFactor + orgX)) {
-            return this.subTilesHashMap.get(orgY * hashFactor + orgX).removePlayer(player);
-        } else {
-            return false;
-        }
+        return this.subTilesHashMap.containsKey(orgY * hashFactor + orgX) && this.subTilesHashMap.get(orgY * hashFactor + orgX).removePlayer(player);
     }
 
     /**
@@ -119,16 +103,12 @@ public enum SubTileHandler {
      */
     public boolean removePlayer(float index, Player player) {
         // Not necessary to check. In Player class will make sure of it
-        System.out.println("Remove player from subtile " + index);
-        if (this.subTilesHashMap.containsKey(index)) {
-            return this.subTilesHashMap.get(index).removePlayer(player);
-        } else {
-            return false;
-        }
+        // System.out.println("Remove player from subtile " + index);
+        return this.subTilesHashMap.containsKey(index) && this.subTilesHashMap.get(index).removePlayer(player);
     }
-    
+
     /************* Bullet ****************/
-    
+
     /**
      * Add player to subtile which it belongs to
      *
@@ -139,13 +119,7 @@ public enum SubTileHandler {
      */
     public boolean addBullet(float orgX, float orgY, Bullet bullet) {
         // Not necessary to check. In Player class will make sure of it
-        if (this.subTilesHashMap.containsKey(orgY * hashFactor + orgX)) {
-            // System.out.println("Player added to the subtile of " + orgY + " : " + orgX);
-            return this.subTilesHashMap.get(orgY * hashFactor + orgX).addBullet(bullet);
-        } else {
-            // System.out.println("Player couldn't add to the subtiles");
-            return false;
-        }
+        return this.subTilesHashMap.containsKey(orgY * hashFactor + orgX) && this.subTilesHashMap.get(orgY * hashFactor + orgX).addBullet(bullet);
     }
 
     /**
@@ -157,12 +131,8 @@ public enum SubTileHandler {
      */
     public boolean addBullet(float index, Bullet bullet) {
         // Not necessary to check. In Player class will make sure of it
-        System.out.println("Add bullet to subtile " + index);
-        if (this.subTilesHashMap.containsKey(index)) {
-            return this.subTilesHashMap.get(index).addBullet(bullet);
-        } else {
-            return false;
-        }
+        // System.out.println("Add bullet to subtile " + index);
+        return this.subTilesHashMap.containsKey(index) && this.subTilesHashMap.get(index).addBullet(bullet);
     }
 
     /**
@@ -175,11 +145,7 @@ public enum SubTileHandler {
      */
     public boolean removeBullet(float orgX, float orgY, Bullet bullet) {
         // Not necessary to check. In Player class will make sure of it
-        if (this.subTilesHashMap.containsKey(orgY * hashFactor + orgX)) {
-            return this.subTilesHashMap.get(orgY * hashFactor + orgX).removeBullet(bullet);
-        } else {
-            return false;
-        }
+        return this.subTilesHashMap.containsKey(orgY * hashFactor + orgX) && this.subTilesHashMap.get(orgY * hashFactor + orgX).removeBullet(bullet);
     }
 
     /**
@@ -191,11 +157,7 @@ public enum SubTileHandler {
      */
     public boolean removeBullet(float index, Bullet bullet) {
         // Not necessary to check. In Player class will make sure of it
-        System.out.println("Remove bullet from subtile " + index);
-        if (this.subTilesHashMap.containsKey(index)) {
-            return this.subTilesHashMap.get(index).removeBullet(bullet);
-        } else {
-            return false;
-        }
+        // System.out.println("Remove bullet from subtile " + index);
+        return this.subTilesHashMap.containsKey(index) && this.subTilesHashMap.get(index).removeBullet(bullet);
     }
 }
