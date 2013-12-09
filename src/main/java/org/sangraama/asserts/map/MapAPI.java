@@ -10,6 +10,8 @@ import org.sangraama.asserts.map.tileeditor.TileLoader;
  * This class acts as an interface for game engine and map editor module.
  * It extracts static game objects from the map editor and provide them for
  * the game engine to apply physics.
+ * @author denuwanthi
+ *
  */
 public class MapAPI {
     private int mapHeight;
@@ -17,13 +19,16 @@ public class MapAPI {
     private List<StaticObject> staticObjects = new ArrayList<>();
 
     /**
-     * get map details from the tile editor module and store all the static objects.
+     * This method get map details from the tile editor module and store all the static objects.
+     *
+     *
      */
     public void getMapDetails() {
         TileLoader tileLoader = new TileLoader();     //This can be replaced by any other map generating module
         tileLoader.ParseMapFile();     //load the game objects into object hierarchy.
         mapHeight = tileLoader.getMapHeight();
         mapWidth = tileLoader.getMapWidth();
+        if(tileLoader.getObjects()!=null){   //Arrays or Collections should never be null
         for (int i = 0; i < tileLoader.getObjects().size(); i++) {  //loop through all the static objects
             StaticObject staticObject = new StaticObject();
             staticObject.setName(tileLoader.getObjects().get(i).getName());      //set the name of the object
@@ -38,6 +43,7 @@ public class MapAPI {
             Pattern p = Pattern.compile(regex);
             String[] items = p.split(points);   //store the coordinate pairs of the vertices
             List<Points> coordinates = new ArrayList<Points>();
+            if(items!=null){      //Arrays or Collections should never be null
             for (String s : items) {      //extract the x, y coordinate of each vertex.
                 Pattern pattern = Pattern.compile(",");
                 String[] digits = pattern.split(s);
@@ -49,10 +55,11 @@ public class MapAPI {
                 coordinates.add(point);     //add the point objects to a list
 
             }
+            }
             staticObject.setCoordinates(coordinates);   //set the coordinates of the object
             staticObjects.add(staticObject);   //add this object to the list of objects to be passed to game engine
         }
-
+        }
     }
 
     public List<StaticObject> getStaticObjects() {
