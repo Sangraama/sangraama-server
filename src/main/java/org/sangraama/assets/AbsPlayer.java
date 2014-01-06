@@ -8,6 +8,7 @@ import org.sangraama.controller.PlayerPassHandler;
 import org.sangraama.controller.WebSocketConnection;
 import org.sangraama.coordination.staticPartition.TileCoordinator;
 import org.sangraama.gameLogic.GameEngine;
+import org.sangraama.gameLogic.queue.PlayerQueue;
 import org.sangraama.jsonprotocols.SendProtocol;
 import org.sangraama.jsonprotocols.send.SangraamaTile;
 import org.sangraama.jsonprotocols.send.TileInfo;
@@ -27,6 +28,7 @@ public abstract class AbsPlayer {
     TileCoordinator tileCoordinator;
 	// WebSocket Connection
 	WebSocketConnection con;
+    PlayerQueue playerQueue;
 
 	volatile boolean isUpdate = false;
 	short isPlayer = 2; // if player type is 1: primary connection player 2:
@@ -91,7 +93,7 @@ public abstract class AbsPlayer {
 		this.currentSubTileOriginX = x - (x % sangraamaMap.getSubTileWidth());
 		this.currentSubTileOriginY = y - (y % sangraamaMap.getSubTileHeight());
 		this.gameEngine = GameEngine.INSTANCE;
-
+        this.playerQueue = PlayerQueue.INSTANCE;
 		/*log.info(TAG + " init player : " + userID + " x-" + x + " : y-" + y
 				+ " w:" + screenWidth + " h:" + screenHeight);*/
 	}

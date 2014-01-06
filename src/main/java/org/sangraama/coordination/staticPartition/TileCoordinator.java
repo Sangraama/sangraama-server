@@ -1,5 +1,6 @@
 package org.sangraama.coordination.staticPartition;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,8 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
+import com.hazelcast.config.TcpIpConfig;
+import com.hazelcast.nio.Address;
 import org.apache.catalina.Server;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
@@ -45,7 +48,25 @@ public enum TileCoordinator {
     private List<SangraamaTile> tileInfo;
 
     TileCoordinator() {
-        hazelcastInstance = Hazelcast.newHazelcastInstance(new Config());
+        Config config = new Config();
+
+       /* TcpIpConfig tcpIpConfig = config.getNetworkConfig().getJoin().getTcpIpConfig();
+        tcpIpConfig.setEnabled(true);
+        int port = 12301;
+        config.setPortAutoIncrement(false);
+        config.setPort(port);
+        try{
+            String host = "10.8.99.3";
+            tcpIpConfig.addAddress(new Address(host + String.valueOf(0), port+1));
+        for (int i = 0; i < 4; i++) {
+
+            tcpIpConfig.addAddress(new Address(host + String.valueOf(i), port));
+        }
+        }catch (Exception e){
+          e.printStackTrace();
+        }*/
+
+        hazelcastInstance = Hazelcast.newHazelcastInstance(config);
         this.subtileMap = hazelcastInstance.getMap("subtile");
         this.playersCountByServerMap = hazelcastInstance.getMap("playersCountByServerMap");
         this.subtilesByUrlMap = hazelcastInstance.getMap("subtilesByUrlMap");
@@ -54,7 +75,7 @@ public enum TileCoordinator {
         this.subTileWidth = sangraamaMap.getSubTileHeight();
 
         Properties prop = new Properties();
-        this.serverPort = this.getHostPort();
+//        this.serverPort = this.getHostPort();
         try {
             prop.load(getClass().getResourceAsStream("/conf/sangraamaserver.properties"));
             this.serverURL = prop.getProperty("host") + ":" + this.serverPort + "/"

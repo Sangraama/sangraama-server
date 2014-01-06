@@ -72,16 +72,19 @@ public enum TileLoadBalancer implements Runnable {
     /**
      * Count the total no of players in server by adding up players in sub tiles
      */
-    private void countPlayersInServer() {
+    public int countPlayersInServer() {
         List<String> subTileList = tileCoordinator.getSubtilesInServer();
         log.info("Sub tiles in server {}", subTileList);
         int totalCount = 0;
+        if(subTileList!=null){
         for (String subTile : subTileList) {
             int subCount = countPlayersInSubTiles(subTile);
             totalCount += subCount;
         }
+        }
         log.info("Total no of players in server : {}", totalNoOfPlayersInServer);
         totalNoOfPlayersInServer = totalCount;
+        return totalCount;
     }
 
     /**
@@ -89,7 +92,7 @@ public enum TileLoadBalancer implements Runnable {
      * @param subTile
      * @return no of players in sub tile
      */
-    private int countPlayersInSubTiles(String subTile) {
+    public int countPlayersInSubTiles(String subTile) {
         String[] s = subTile.split(":");
         if (s[0] != null && !s[0].equals(" ")) {
             float subTileOriginX = Float.valueOf(s[0]);
@@ -197,7 +200,7 @@ public enum TileLoadBalancer implements Runnable {
      * @param transferringTile
      * @return
      */
-    private List<Player> findPlayersInsideTransferringTile(String transferringTile) {
+    public List<Player> findPlayersInsideTransferringTile(String transferringTile) {
         List<Player> transferringPlayerList = new ArrayList<>();
         String[] s = transferringTile.split(":");
         float subTileOriginX = Float.valueOf(s[0]);
@@ -219,7 +222,7 @@ public enum TileLoadBalancer implements Runnable {
      * Search for a sub tile to transfer
      * @return
      */
-    private String findSubTileToTransfer() {
+    public String findSubTileToTransfer() {
         int extraPlayerCount = totalNoOfPlayersInServer - Constants.playersLimit;
         int noOfPlayersToTransfer = 0;
         for (String key : playerCountInSubTiles.keySet()) {

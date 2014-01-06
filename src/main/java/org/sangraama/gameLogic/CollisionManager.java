@@ -70,7 +70,7 @@ public enum CollisionManager implements Runnable {
         } else if ((collision.getFixtureA().getUserData().getClass() == Ship.class && collision
                 .getFixtureB().getUserData().getClass() == Bullet.class)
                 || (collision.getFixtureA().getUserData().getClass() == Bullet.class && collision
-                        .getFixtureB().getUserData().getClass() == Ship.class)) {
+                .getFixtureB().getUserData().getClass() == Ship.class)) {
             // System.out.println(TAG + "Hitting Bullet..");
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
                 Player ship = (Player) collision.getFixtureA().getUserData();
@@ -84,7 +84,7 @@ public enum CollisionManager implements Runnable {
         } else if (("island".equals(collision.getFixtureA().getUserData()) && collision
                 .getFixtureB().getUserData().getClass() == Ship.class)
                 || ("island".equals(collision.getFixtureB().getUserData()) && collision
-                        .getFixtureA().getUserData().getClass() == Ship.class)) {
+                .getFixtureA().getUserData().getClass() == Ship.class)) {
             Player ship;
             // System.out.println(TAG + "$$Hitting Island..");
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
@@ -96,7 +96,7 @@ public enum CollisionManager implements Runnable {
         } else if (("island".equals(collision.getFixtureA().getUserData()) && collision
                 .getFixtureB().getUserData().getClass() == Bullet.class)
                 || ("island".equals(collision.getFixtureB().getUserData()) && collision
-                        .getFixtureA().getUserData().getClass() == Bullet.class)) {
+                .getFixtureA().getUserData().getClass() == Bullet.class)) {
             Bullet bullet;
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
                 bullet = (Bullet) collision.getFixtureA().getUserData();
@@ -107,7 +107,7 @@ public enum CollisionManager implements Runnable {
         } else if (("wall".equals(collision.getFixtureA().getUserData()) && collision.getFixtureB()
                 .getUserData().getClass() == Bullet.class)
                 || ("wall".equals(collision.getFixtureB().getUserData()) && collision.getFixtureA()
-                        .getUserData().getClass() == Bullet.class)) {
+                .getUserData().getClass() == Bullet.class)) {
             Bullet bullet;
             if (collision.getFixtureA().getUserData().getClass() == Ship.class) {
                 bullet = (Bullet) collision.getFixtureA().getUserData();
@@ -115,7 +115,17 @@ public enum CollisionManager implements Runnable {
                 bullet = (Bullet) collision.getFixtureB().getUserData();
             }
             this.bulletQueue.addToRemoveBulletQueue(bullet);
+        } else if (collision.getFixtureA()
+                .getUserData().getClass() == Bullet.class && collision.getFixtureB()
+                .getUserData().getClass() == Bullet.class) {
+            Bullet bulletA;
+            Bullet bulletB;
+            bulletA = (Bullet) collision.getFixtureA().getUserData();
+            bulletB = (Bullet) collision.getFixtureB().getUserData();
+            this.bulletQueue.addToRemoveBulletQueue(bulletA);
+            this.bulletQueue.addToRemoveBulletQueue(bulletB);
         }
+
     }
 
     private void processShipsCollision(Ship... ships) {

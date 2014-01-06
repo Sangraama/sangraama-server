@@ -126,6 +126,7 @@ public abstract class Player extends AbsPlayer {
      */
     public void removeWebSocketConnection() {
         con = null;
+        playerQueue.addToRemovePlayerQueue(this);
     }
 
     /**

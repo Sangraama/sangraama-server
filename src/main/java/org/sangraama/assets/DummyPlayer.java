@@ -62,14 +62,14 @@ public class DummyPlayer extends AbsPlayer {
      * @return if inside tile return true, else false
      */
     private boolean isInsideMap(float x, float y) {
-        List<String> subTiles = tileCoordinator.getSubtilesInServer();
+        List<String> subTiles = TileCoordinator.INSTANCE.getSubtilesInServer();
         for(String subTile : subTiles){
           String[] s = subTile.split(":");
           if(s[0]!=null && !s[0].equals(" ")){
               float subOriginX = Float.valueOf(s[0]);
               float subOriginY = Float.valueOf(s[1]);
-              float subEdgeX = subOriginX + sangraamaMap.getSubTileWidth();
-              float subEdgeY = subOriginY + sangraamaMap.getSubTileHeight();
+              float subEdgeX = subOriginX + SangraamaMap.INSTANCE.getSubTileWidth();
+              float subEdgeY = subOriginY + SangraamaMap.INSTANCE.getSubTileHeight();
               if( subOriginX<= x && x<=subEdgeX && subOriginY <=y && y<= subEdgeY){
                   return true;
               }
@@ -89,14 +89,14 @@ public class DummyPlayer extends AbsPlayer {
      */
     private boolean isInsideServerSubTile(float x, float y) {
         boolean insideServerSubTile = true;
-        float subTileOriX = x - (x % sangraamaMap.getSubTileWidth());
-        float subTileOriY = y - (y % sangraamaMap.getSubTileHeight());
+        float subTileOriX = x - (x % SangraamaMap.INSTANCE.getSubTileWidth());
+        float subTileOriY = y - (y % SangraamaMap.INSTANCE.getSubTileHeight());
         // System.out.println(TAG + currentSubTileOriginX + ":" + currentSubTileOriginY + " with "
         // + subTileOriX + ":" + subTileOriY);
         if (currentSubTileOriginX != subTileOriX || currentSubTileOriginY != subTileOriY) {
             currentSubTileOriginX = subTileOriX;
             currentSubTileOriginY = subTileOriY;
-            if (!sangraamaMap.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
+            if (!SangraamaMap.INSTANCE.getHost().equals(TileCoordinator.INSTANCE.getSubTileHost(x, y))) {
                 insideServerSubTile = false;
                 // log.info("player is not inside a subtile of " + sangraamaMap.getHost());
             }

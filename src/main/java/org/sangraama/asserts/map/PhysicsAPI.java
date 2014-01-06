@@ -1,7 +1,5 @@
 package org.sangraama.asserts.map;
 
-import java.util.List;
-
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -9,10 +7,9 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 import org.sangraama.asserts.map.physics.PolygonObjectPhysics;
 import org.sangraama.asserts.map.physics.PolylineObjectPhysics;
-import org.sangraama.assets.Bullet;
-import org.sangraama.assets.Player;
-import org.sangraama.assets.SangraamaMap;
 import org.sangraama.common.Constants;
+
+import java.util.List;
 
 public class PhysicsAPI {
     private BodyDef bodyDef;
